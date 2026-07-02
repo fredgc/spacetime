@@ -1,0 +1,36 @@
+application: fredgc-spacetime
+version: 5
+runtime: python27
+api_version: 1
+threadsafe: false
+
+handlers:
+- url: /
+  script: server.py
+  secure: optional
+
+- url: /hello/(.*)
+  script: server.py
+  secure: optional
+
+- url: /robots.txt
+  script: server.py
+  secure: optional
+
+- url: /(.*\.(html|js|css))
+  static_files: \1
+  upload: (.*\.(html|js|css))
+  secure: optional
+
+- url: /lessons
+  static_dir: lessons
+  secure: optional
+
+- url: /images
+  static_dir: images
+  secure: optional
+
+- url: /stylesheets
+  static_dir: stylesheets
+  secure: optional
+

@@ -1,0 +1,154 @@
+<!doctype html PUBLIC "-//W3C//DTD HTML 5.0//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js" ></script>
+    <script type="text/javascript" language="javascript" src="/doc_script.js"></script>
+    <link type="text/css" rel="stylesheet" href="/stylesheets/doc_style.css"/>
+    <title>Space Time Equations</title>
+
+  </head>
+  <body>
+
+    <div class="container">
+      <header class="round">
+        <a href="/"><img alt="Spacetime Drawing Tool" class="round"
+                         src="/images/logo.png" /></a>
+        <nav class="round">
+          <ul>
+            <li><a href="/">Tool</a></li>
+            <li><a href="/lessons/help.html">Help</a></li>
+            <li><a href="/lessons/discussion.html">Discussion</a></li>
+          </ul>
+        </nav>
+      </header>
+
+      <section class="round">
+
+
+
+<h3>First Draft</h3>
+<p>
+This page has some discussion about relativity and the concepts in the
+lessons that was too complicated to put in a lesson.
+
+</p>
+
+
+
+<a name="constant"><h3>Constant Speed of Light</h3></a>
+<p>
+  The basic experimental fact that lead to Einstein's relativity is that
+  the speed of light is constant.
+  This was based on experimental evidence from the famous
+  <a href="http://en.wikipedia.org/wiki/Michelson%E2%80%93Morley_experiment">
+    Michelson Morley experiment</a>.  This experiment measured the difference
+  between the speed of light in several different directions.  They found that
+  no matter which directions they measured, there was no difference in the
+  speed of light.  
+</p>
+
+<p>
+  <a name="lorentz"><h3>Lorentz Transformation</h3></a>
+  In classical Newtonian mechanics, if observer B is moving relative to A
+  with velocity <img src="/lessons/discussion-eqn1.svg" alt="$v$">, we see <img src="/lessons/discussion-eqn2.svg" alt="$x_B = x_A + vt$">.
+  If a third object is moving with respect to <img src="/lessons/discussion-eqn3.svg" alt="$B$"> with speed <img src="/lessons/discussion-eqn4.svg" alt="$s$">, then we find
+  its velocity with respect to <img src="/lessons/discussion-eqn5.svg" alt="$A$"> is <img src="/lessons/discussion-eqn6.svg" alt="$s+v$">.  Nothing can have the same
+  velocity with respect to <img src="/lessons/discussion-eqn5.svg" alt="$A$"> and <img src="/lessons/discussion-eqn3.svg" alt="$B$"> at the same time in classical mechanics.
+</p>
+
+<p>
+  The Lorentz transformation says when we change our viewpoint from <img src="/lessons/discussion-eqn5.svg" alt="$A$"> to <img src="/lessons/discussion-eqn3.svg" alt="$B$">,
+  both the <img src="/lessons/discussion-eqn7.svg" alt="$x$"> and <img src="/lessons/discussion-eqn8.svg" alt="$t$"> coordinates change:
+  
+<br><center><img src="/lessons/discussion-eqn9.svg" alt="$$ x_B = \gamma(x_A + v t_A) $$"></center><br>
+  
+<br><center><img src="/lessons/discussion-eqn10.svg" alt="$$ t_B = \gamma(t_A + v x_A) $$"></center><br>
+  This scaling factor <img src="/lessons/discussion-eqn11.svg" alt="$\gamma$"> is called the Lorentz factor, and depends on <img src="/lessons/discussion-eqn1.svg" alt="$v$">
+  and the speed of light, <img src="/lessons/discussion-eqn12.svg" alt="$c$">:
+  
+<br><center><img src="/lessons/discussion-eqn13.svg" alt="$$ \gamma = \frac{1}{\sqrt{1- v^2/c^2}} $$"></center><br>
+  With the Lorentz transformation, 
+  if a third object is moving with respect to <img src="/lessons/discussion-eqn3.svg" alt="$B$"> with speed <img src="/lessons/discussion-eqn4.svg" alt="$s$">, 
+  its velocity with respect to <img src="/lessons/discussion-eqn5.svg" alt="$A$"> is not <img src="/lessons/discussion-eqn6.svg" alt="$s+v$">.  In fact, if <img src="/lessons/discussion-eqn14.svg" alt="$s = c$">, then the
+  velocity will be <img src="/lessons/discussion-eqn12.svg" alt="$c$"> with respect to any other object, too.
+</p>
+  <p>
+  You should visit the Wikipedia page on 
+  <a href="http://en.wikipedia.org/wiki/Lorentz_transformation">Lorentz
+    Transformation</a> or read a good physics book for more information.
+</p>
+
+<p>
+<a name="coincident"><h3>Same Time or Same Place?</h3></a>
+In classical mechanics, if two observers are moving relative to each other,
+<img src="/lessons/discussion-eqn15.svg" alt="$x_A = x_B + vt$">,   It's almost obvious that something that is stationary with
+respect to <img src="/lessons/discussion-eqn5.svg" alt="$A$"> is not stationary with respect to <img src="/lessons/discussion-eqn3.svg" alt="$B$">.  That means the set of
+events that have the same <img src="/lessons/discussion-eqn7.svg" alt="$x$"> coordinates for <img src="/lessons/discussion-eqn5.svg" alt="$A$"> will not have the same <img src="/lessons/discussion-eqn7.svg" alt="$x$">
+coordinates for <img src="/lessons/discussion-eqn3.svg" alt="$B$">.  
+
+
+</p>
+<p>
+This is also true in Einstein's Relativity, 
+<img src="/lessons/discussion-eqn16.svg" alt="$ x_B = \gamma(x_A + v t_A) $">.
+However, the same is also true for the <img src="/lessons/discussion-eqn8.svg" alt="$t$"> coordinate:
+<img src="/lessons/discussion-eqn17.svg" alt="$ t_B = \gamma(t_A + v x_A) $">.
+The set of events that have the same <img src="/lessons/discussion-eqn8.svg" alt="$t$"> coordinates for <img src="/lessons/discussion-eqn5.svg" alt="$A$"> will not have the same <img src="/lessons/discussion-eqn7.svg" alt="$x$">
+coordinates for <img src="/lessons/discussion-eqn3.svg" alt="$B$">.   That means that an "instant" for <img src="/lessons/discussion-eqn5.svg" alt="$A$"> is not the same as
+an instant for <img src="/lessons/discussion-eqn3.svg" alt="$B$">.
+
+</p>
+<p>
+<a name="avg_time"><h3>Averaging Velocity</h3></a>
+
+There seems to be a paradox when we try to find an average velocity.
+Think of a boat that travels up a river  for a fixed distance, and then turns
+around and
+travels down the river.  Assume that the boat's speed relative to the
+river is constant.  That means if the speed of the river is <img src="/lessons/discussion-eqn18.svg" alt="$r$">, the speed of
+the boat will be <img src="/lessons/discussion-eqn19.svg" alt="$s_d = s + r$"> going downstream and <img src="/lessons/discussion-eqn20.svg" alt="$s_u = s - r$"> going up stream.
+At first thought, it seems like the total time that the
+boat takes should be the same no matter what <img src="/lessons/discussion-eqn18.svg" alt="$r$"> is, because the average of
+<img src="/lessons/discussion-eqn21.svg" alt="$s_u$"> and <img src="/lessons/discussion-eqn22.svg" alt="$s_d$"> is <img src="/lessons/discussion-eqn4.svg" alt="$s$">, the speed of the boat.  But this is not true, because
+the boat is not traveling at speed <img src="/lessons/discussion-eqn22.svg" alt="$s_d$"> and <img src="/lessons/discussion-eqn21.svg" alt="$s_u$"> for the same amount of
+time.  The time traveled upstream is 
+<br><center><img src="/lessons/discussion-eqn23.svg" alt="$$T_u = \frac{L}{s_u} = \frac{L}{s-r}$$"></center><br>
+The time traveled downstream is 
+<br><center><img src="/lessons/discussion-eqn24.svg" alt="$$T_d = \frac{L}{s_d} = \frac{L}{s+r}$$"></center><br>
+If this is confusing, you should plug in some numbers until you believe that
+
+<br><center><img src="/lessons/discussion-eqn25.svg" alt="$$ T_u + T_d \ge \frac{2L}{s} $$"></center><br>
+and that they are only equal when <img src="/lessons/discussion-eqn26.svg" alt="$r=0$">.  If you're daring, you can use a
+little Calculus to prove it.
+
+</p>
+
+<p>
+Further Reading.
+<ul>
+  <li>Einstein <a>Relativity</a>
+    This is a great introduction by the biggest name in the field.
+    </li>
+<li> <a href="http://en.wikipedia.org/wiki/Lorentz_transformation">Lorentz
+    Transformation</a></li>
+<li> <a href="http://en.wikipedia.org/wiki/Minkowski_diagram">Minkowski
+    Diagram</a></li>
+<li> The <a href="http://en.wikipedia.org/wiki/Michelson%E2%80%93Morley_experiment">
+    Michelson Morley experiment</a>  showed the speed of light was constant.
+  </li>
+</ul>
+</p>
+
+      </section>
+
+    </div>
+
+    <footer class="round">
+        <ul>
+          <li>Version: v5 (23 Dec 2016)</li>
+          <li>Author: <a href="mailto:fredgc@gchouse.org">Fred Gylys-Colwell</a></li>
+        </ul>
+    </footer>
+  </body>
+</html>

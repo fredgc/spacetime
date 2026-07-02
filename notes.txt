@@ -1,0 +1,70 @@
+/*
+Notes: from class.
+color and font attributes cascade down.
+geometry attributes do not.
+block: use div -- div's fill the whole width.
+inline: use span - like text, etc. can change stuff inline.
+
+images -- also inline.  but they sit on the text baseline.  So instead put your
+images in a div, then they don't get the text's formatting and margins.
+
+positioning:
+golden rule: width + padding + border + margin = parent.width
+
+classes in css: .classname
+.reveal .progress,  --- this means progress that is a decendent of reveal.
+.reveal .slides>section -- this means slides that is a decendent of reveal,
+                           and section that is direct child of slides.
+.reveal section -- means
+
+new attribute text-shadow ....
+
+look at www.csszengarden.com -- good example.
+
+from outside in: margin, border, padding, element box.
+offsetHeight = total height - margin.
+
+margin is collapsed:  i.e. margin between two boxes is max(two margins)
+padding is not: padding between two boxes = sum(two paddings)
+
+difference between class and id?  There is only one id.  So use id for javascript
+and use class for styling all the stuff in css.
+
+
+to force css styling you can use doctype STRICT and it will force you.
+
+Other ways to position:
+float: originally used for pictures with text around it.  Clever and magical.
+
+position: absolute; -- used to position absolutely. in pixels.
+
+You can even try reading the CSS2 standard.
+
+*/
+
+
+----------------------------------------------------------------------
+Notes on the Javascript class.
+
+ECMA script
+
+Use !! to force cast to boolean, because 0, undefined, null, NaN.. are all false.
+
+Use === intead of == to avoid type conversion.
+
+"with" is deprecated.
+
+Google javascript looks more like C++ now.  It is used a more like an object oriented
+language.
+
+add "debugger;" keyword to add break point from code.
+
+global variables:
+shared by all scripts.  In strict mode it will complain about global variables.
+To make something global, explicitly add "var x" outside of any functions,
+or use window.x
+
+What is chrome/java script interface.  DOM manipulation is usally done at the low
+level.
+
+Recommendation: JQuery is top of list.

@@ -1,0 +1,217 @@
+center:
+X add center button
+X add center property.
+X make center property unique to one object.
+debug dump scene.
+verify only one center item.
+save and load to make sure center property  saved and locaded.
+
+
+
+<<<<<<< HEAD
+- audio control doesn't show up on firefox.
+
+use this instead:
+
+        // The start point - the center/left of the ellipse
+        context.moveTo(10,50);
+        
+        // Draw the top half - a bezier curve to the center right of the ellipse
+        context.bezierCurveTo(10,10,240,10,240,50);
+        
+        // Draw the bottom half - a bezier curve back to the center left of the ellipse
+        context.bezierCurveTo(240,90,10,90,10,50);
+
+arc seems ok, too.
+=======
+- acon.ellipse is not defined in firefox.
+
+>>>>>>> 197242d17813f3a1b93323128c58dec8392843e0
+
+
+turn on https?
+- review save/load/etc.
+- review share file.
+
+- fix style of text.
+
+- intro.  turn lorentz off at the start.
+- put hover out whenever a tools is clicked.
+- turn menu hover off when '3' key is pressed and recording.
+- adjust ppos -- remove ppos.
+- recording of move does not work.
+
+Start writing lessons.
+Decide which features are important and which are just nice.
+- how to add, move, edit items save files, get help.
+- difference between lorentz and newtonian transformation.
+- the twin problem.
+- train in barn.
+- worm holes lead to time travel.
+- constant acceleration.s
+
+
+- play back mouse moves.
+- play back seek.
+- play back reload still has errors.
+- audio range is off.
+
+
+X Double check save/restore still works.
+
+X clock icon:  use dT = sqrt( dt^2 - dx^2 ) at each point in path.
+
+X pause when t reaches end of screen.
+- update time when time bar moves.
+X use three digits for time box.
+X use only half light cones.
+X make sure bookmark/url points to current lesson or saved document.
+
+X selection draws wrong.  fix it.
+X selection draws animation on spacetime paper. fix it.
+X can't change position of selected item in animation.
+X create new item on animation should select hieght, too.
+
+
+X edit color, line type, icon
+- user real animation frames.
+- clean up mouse moves.
+- turn off fake pointer when done.
+- don't use animation move if other has better.
+- velocity and time aren't recorded correctly.
+- record velocity position for mouse on slider.
+- animate paths items.
+- show path item while adding.
+- time animation should stop at end or loop.
+
+X when adding or deleting item, save index and reload to pointer.
+
+- don't double call pair setter.
+
+- change cursor for different tools.
+- change fake cursor. (use drawing tool)
+
+- make animation more smooth.
+
+- draw mouse icons.
+- clean tool icons (better colors)
+
+- pan/zoom
+- select object/deselect object/record selecting.
+- deselect when tool change.
+------------------
+
+recording save array of objects and replace ptrs with index.
+
+------------------
+
+- record/playback buttons (record/stop/delete recording)
+X fix color of menus
+X record stream.
+X save recording.
+X do/undo with recording.
+- record menu hover.
+- playback menu hover.
+
+X- popup subtitle window. (checkbox for view subtitle)
+-- pick key stroke for advancing.
+
+
+- rewrite help.
+- rewrite about.
+
+width of icon. (change icon changes to default width.)
+
+
+----------------------------------------------------------------------
+
+CSS:
+
+X- setup sizes so the nav section is just right.
+X- put some links and title bar in top.
+X- add "about", "help", stuff on top.
+- add optional css for android.
+- play with color/style design.
+- add tool box for select color/etc. (with icons)
+- put tool box above if it is more than 50% width?
+- change mouse cursor.
+- lesson box, with record/playback of lessons. (arbitrary number + record)
+- text at event point.
+- clean css (remove extra -webkit headers?)
+
+- turn save/load array of objects from stack.
+
+- import (merge) another file.
+
+Add pan/zoom as default option.
+Add axis labels.
+Add select and edit item. 
+Delete item.
+Add labels to items.
+edit line type.
+edit items.
+
+-- rewind audio.
+
+Undo/redo stack.
+- can undo entire recording?
+
+actions on undo stack:
+-- change velocity. (slider or text)
+-- change object type for adding.
+-- change selected object (color, icon, # end points, other property)
+-- add object
+-- delete object
+---- for recording, action can have button click, text change, slider change.
+
+recorded actions not on undo stack:
+-- move mouse.
+
+Active tool choice is separate for recording playback and user.
+
+-- path object has color, icon, name/text, # end points, size(width,height), alititude, line style
+-- light cone has color, name/text, size, alititude.
+
+
+Load file.
+ = review save/load etc for drive. 
+   - share, new, open, rename, make a copy, 
+ - share file with another - from drive.
+ - share file with another - from app.
+
+Add Animation.
+X add icons to paths/objects.
+X add drawing style to lines.
+
+Hangout example:
+-- like recording.
+-- record hangout?
+
+- help text can be in "window.open(URL,name,spec,replace)"
+  name="subtitles"
+  spec="height=400,width=300" -- or maybe w/2, h/2.
+  replace=false
+
+-------------------------
+Include this:
+<img src="https://developers.google.com/appengine/images/appengine-noborder-120x30.gif" 
+alt="Powered by Google App Engine" />
+
+----------------------------------------------------------------------
+Look at Channel API to record audio?
+
+# This works: Can record on the local machine and save a WAV file.
+Can use "arecord  -t wav -max-file_time 30 output.wav"
+-- make recorder run under appengine, and can appengine tell
+if url is localhost.
+
+-- save recording as blob -- upload as part of datastore.
+-- write data uploader.
+
+----------------------------------------------------------------------
+
+X- cache files on local file system.
+
+----------------------------------------------------------------------
+
+https://developer.mozilla.org/en-US/docs/DOM/window.requestAnimationFrame?redirectlocale=en-US&redirectslug=DOM%2Fwindow.mozRequestAnimationFrame
