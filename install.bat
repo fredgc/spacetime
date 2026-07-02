@@ -1,0 +1,19 @@
+copy code.jar c:\windows\temp
+copy cyl.htm c:\windows\temp
+copy index.htm c:\windows\temp
+copy space.htm c:\windows\temp
+copy zz1.cls c:\windows\temp\Cylinder.class
+copy zz2.cls c:\windows\temp\MyCanvas.class
+copy zz3.cls c:\windows\temp\Sample2.class
+copy zz4.cls c:\windows\temp\DrawCone.class
+copy zz5.cls c:\windows\temp\PaneComponent.class
+copy zz6.cls c:\windows\temp\Scene.class
+copy zz7.cls c:\windows\temp\DrawLine.class
+copy zz8.cls c:\windows\temp\PaneLayout.class
+copy zz9.cls c:\windows\temp\ScrollAction.class
+copy zz10.cls c:\windows\temp\DrawThing.class
+copy zz11.cls c:\windows\temp\PaneRow.class
+copy zz12.cls c:\windows\temp\ScrollFloat.class
+copy zz13.cls c:\windows\temp\Drawing.class
+copy zz14.cls c:\windows\temp\Sample1.class
+
