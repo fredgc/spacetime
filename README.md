@@ -1,3 +1,2 @@
-Original java applets for relativity drawings.
-
-These were applets used to teach Maths 388, Spring 1998 at BSU.
+Javascript version released while working at Google, 2013-2016.
+(Most of work done in 2013)

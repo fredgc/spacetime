@@ -1,0 +1,202 @@
+<!doctype html PUBLIC "-//W3C//DTD HTML 5.0 Strict//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+    <title>Space Time Drawing Tool</title>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js" ></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <!-- <script type="text/javascript" src="paper.js"></script> -->
+    <script type="text/javascript" language="javascript" src="files.js"></script>
+    <script type="text/javascript" language="javascript" src="main.js"></script>
+    <script type="text/javascript" src="https://apis.google.com/js/api.js"></script>
+    <script type="text/javascript"
+            src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
+    <link type="text/css" rel="stylesheet" href="/stylesheets/style.css">
+  </head>
+  <body>
+    <noscript>
+      <div style="width: 22em; position: absolute; left: 50%; margin-left: -11em; color: red; background-color: white; border: 1px solid red; padding: 4px; font-family: sans-serif">
+        Your web browser must have JavaScript enabled
+        in order for this application to display correctly.
+      </div>
+    </noscript>
+    <!-- <div id="main_container"> -->
+    <div id="main">
+    <header>
+      <div id="menubar">
+      <ul>
+        <li><input type="text" id="filename" value="New Drawing" /> </li>
+        <li class="menu allowHover" id="file_menu">File
+          <ul>
+            <li> <a class="action" id="newdoc"
+                    title="Create a new drawing">New</a> </li>
+            <li> <a class="action" id="load"
+                    title="Load a drawing from your Google Drive.">Open</a></li>
+            <li> <a class="action" id="save"
+                    title="Save this drawing to your Google Drive.">Save</a> </li>
+            <li> <a class="action" id="reload"
+                    title="Reload the current drawing.">Reload</a> </li>
+            <li> <a class="action" id="copy_file"
+                    title="Save this drawing to a new document.">
+                Make a copy</a> </li>
+            <li> <a class="action" id="share_file"
+                    title="Share this drawing with others.">Share</a> </li>
+          </ul>
+        </li>
+        <li class="menu allowHover" id="edit_menu">Edit
+           <ul>
+             <li> <a class="action" id="undo">Undo</a> </li>
+             <li> <a class="action" id="redo">Redo</a> </li>
+             <li> <a class="action" id="del">Delete</a> </li> 
+             <!-- <li> <a class="action" id="cut">Cut</a> </li>  -->
+             <!-- <li> <a class="action" id="copy">Copy</a> </li>  -->
+             <!-- <li> <a class="action" id="paste">Paste</a> </li >  -->
+           </ul>
+        </li>
+        <li class="menu allowHover" id="view_menu">View
+          <ul>
+            <li> <a class="action" id="zoom_in">Zoom In</a> </li>
+            <li> <a class="action" id="zoom_out">Zoom Out</a> </li>
+            <li> <a class="action" id="reset_view">Reset View</a> </li>
+            <li> <input id="lorentz_check" type="checkbox" >Lorentz</input></li>
+            <li> <input id="view_subtitles" type="checkbox" >View Text</input></li>
+            <!-- future -->
+          </ul>
+        </li>
+        <li class="menu allowHover" id="lesson_menu">Lesson
+          <ul>
+            <li> <a class="action" id="free_form">Free Form</a> </li>
+            <li> <a class="player" id="intro"  >0 - Introduction</a> </li>
+            <li> <a class="player" id="lesson1">1 - constant speed</a> </li>
+            <li> <a class="player" id="lesson2">2 - time dilation</a> </li>
+            <li> <a class="player" id="lesson3">3 - length contraction</a> </li>
+            <li> <a class="player" id="lesson4">4 - twin paradox</a> </li>
+            <li> <a class="player" id="lesson5">5 - FTL = time travel</a> </li>
+            <li> <a class="action" id="recorder">Record</a> </li>
+            <li> <a class="action" id="recorder2">Record Actions</a> </li>
+          </ul>
+        </li>
+        <li class="future"> <a class="action" id="dump_scene"> dump</a> </li>
+        <li class="future" id="debug_audio"> (debug) </li>
+        <li> <input type="image" id="debug_page" value="" src="images/a5_play.svg"
+             class="action anim_button future"></li>
+
+        <li class="spacer">   </li>
+        <li class="menu allowHover right" id="help_menu">
+          <a href="/lessons/help.html" rel="help" target="help">Help</a>
+        </li>
+      </ul>
+      </div>
+      <div id="toolbar">
+        <ul>
+          <li class="toolbox">
+            <input type="image" id="pick" value="" src="images/pick.svg"
+                   class="selected"
+                   alt="select item, or pan/zoom."
+                   title="select item, or pan/zoom."> </li>
+          <!-- <li class="toolbox"> -->
+          <!--   <input type="image" id="boxpick" value="" src="images/box.svg" -->
+          <!--          alt="select region." -->
+          <!--          title="select region."> </li> -->
+          <li class="toolbox">
+            <input type="image" id="event" value=""  src="images/event.svg"
+                   alt="Add an event object."
+                   title="Add an event object."> </li>
+          <li class="toolbox">
+            <input type="image" id="instant" value="" src="images/instant.svg"
+                   alt="Add instant"
+                   title="Add an instant object."> </li>
+          <li class="toolbox">
+            <input type="image" id="location" value="" src="images/location.svg"
+                   alt="add location"
+                   title="add a location object."> </li>
+          <li class="toolbox">
+            <input type="image" id="cone" value="" src="images/cone.svg"
+                   alt="add light cone"
+                   title="add a light cone object."> </li>
+          <li class="toolbox">
+            <input type="image" id="path" value="" src="images/path.svg"
+                   alt="add path"
+                   title="add a time-like path."> </li>
+          <li> <input id="item_name" type="text" class="text_entry" value="P1"></li>
+          <li> Color:
+            <select id="color_list" name="colors"> </select>
+          </li>
+          <li> Icon:
+            <select id="icon_list" name="icons"> </select>
+          </li>
+          <!-- <li> Width: -->
+          <!--   <input id="icon_width" type="number" class="text_entry" value="1.0" -->
+          <!--          step="0.1"></li> -->
+          <li> <input id="clock_check" type="checkbox">Clock</li>
+          <li> <input id="center_check" type="checkbox">Center</li>
+        </ul>
+      </div>
+    </header> <!-- menubar -->
+    <div class="broken_canvas">
+      <h3> Drawing Not Available</h3>
+      <p> Either the javascript did not load correctly, or your browswer does not
+        support the new canvas drawing feature.  Try looking at the browser's
+        javascript log.
+      </p>
+      <p> If you are using a broswer that supports HTML5, please report a bug to
+        <a href="mailto:fredgc@gchouse.org">the author</a>.
+      </p>
+    </div>
+    <div id="canvas_div"><canvas id="spacetime_canvas"></canvas></div>
+    <div id="initial_popup">
+      <p>
+      To begin the lesson, click the play button on the audio controls
+      on the lower left.
+      </p>
+      <p>
+        Pull down the "View" menu and select "View Text" if you want to read the lesson.
+        You must have allow a popup window to see the lesson text.
+      </p>
+      <br>
+      <center>
+                <button id="dismiss_popup">Dismiss</button>
+                </center>
+    </div>
+    <div id="animation_div"> <canvas id="anim_canvas"></canvas></div>
+    <div id="animation_controls" class="stretchy">
+      <label for="time_text">Time:</label>
+      <input id="time_text" type="text" class="text_entry" >
+      <input id="time_slider" type="range" name="time" class="myslider">
+
+      <select id="animation_speed" name="speed">
+        <option value="0.1">very slow</option>
+        <option value="0.5">slow</option>
+        <option value="1.0" selected="selected">normal</option>
+        <option value="2.0">fast</option>
+        <option value="4.0">very fast</option>
+      </select>
+      <input type="image" id="pause_animation" value="" src="images/a4_pause.svg"
+             class="action anim_button"
+             alt="pause time animation"
+             title="pause time animation">
+      <input type="image" id="play_animation" value="" src="images/a5_play.svg"
+             class="action anim_button"
+             alt="play time animation"
+             title="play time animation">
+
+    </div>
+    <div id="velocity_holder" class="stretchy">
+      <span id="recording_controls">
+        <audio controls="controls" id="audio" class="playback">
+          <source id="audio_mp3" src="none.mp3">
+          <source id="audio_ogg" src="none.ogg">
+          Audio Not Supported</audio>
+        <button id="start_recording" class="action recording">Start Rec</button>
+      </span>
+      <label for="velocity_text">Observer Velocity:</label>
+      <input id="velocity_text" type="text"  class="text_entry">
+      <input id="velocity_slider" type="range" name="velocity" class="myslider">
+      <span id="gamma_text">&gamma;</span>
+    </div> <!-- velocity_holder. -->
+    </div> <!-- main -->
+    <div id="fake_pointer" class="fake_pointer"><img src="images/mouse.svg"></div>
+  </body>
+</html>

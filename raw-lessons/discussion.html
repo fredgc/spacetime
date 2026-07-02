@@ -1,0 +1,108 @@
+<title>Space Time Equations</title>
+
+<h3>First Draft</h3>
+<p>
+This page has some discussion about relativity and the concepts in the
+lessons that was too complicated to put in a lesson.
+
+</p>
+
+
+
+<a name="constant"><h3>Constant Speed of Light</h3></a>
+<p>
+  The basic experimental fact that lead to Einstein's relativity is that
+  the speed of light is constant.
+  This was based on experimental evidence from the famous
+  <a href="http://en.wikipedia.org/wiki/Michelson%E2%80%93Morley_experiment">
+    Michelson Morley experiment</a>.  This experiment measured the difference
+  between the speed of light in several different directions.  They found that
+  no matter which directions they measured, there was no difference in the
+  speed of light.  
+</p>
+
+<p>
+  <a name="lorentz"><h3>Lorentz Transformation</h3></a>
+  In classical Newtonian mechanics, if observer B is moving relative to A
+  with velocity $v$, we see $x_B = x_A + vt$.
+  If a third object is moving with respect to $B$ with speed $s$, then we find
+  its velocity with respect to $A$ is $s+v$.  Nothing can have the same
+  velocity with respect to $A$ and $B$ at the same time in classical mechanics.
+</p>
+
+<p>
+  The Lorentz transformation says when we change our viewpoint from $A$ to $B$,
+  both the $x$ and $t$ coordinates change:
+  $$ x_B = \gamma(x_A + v t_A) $$
+  $$ t_B = \gamma(t_A + v x_A) $$
+  This scaling factor $\gamma$ is called the Lorentz factor, and depends on $v$
+  and the speed of light, $c$:
+  $$ \gamma = \frac{1}{\sqrt{1- v^2/c^2}} $$
+  With the Lorentz transformation, 
+  if a third object is moving with respect to $B$ with speed $s$, 
+  its velocity with respect to $A$ is not $s+v$.  In fact, if $s = c$, then the
+  velocity will be $c$ with respect to any other object, too.
+</p>
+  <p>
+  You should visit the Wikipedia page on 
+  <a href="http://en.wikipedia.org/wiki/Lorentz_transformation">Lorentz
+    Transformation</a> or read a good physics book for more information.
+</p>
+
+<p>
+<a name="coincident"><h3>Same Time or Same Place?</h3></a>
+In classical mechanics, if two observers are moving relative to each other,
+$x_A = x_B + vt$,   It's almost obvious that something that is stationary with
+respect to $A$ is not stationary with respect to $B$.  That means the set of
+events that have the same $x$ coordinates for $A$ will not have the same $x$
+coordinates for $B$.  
+
+
+</p>
+<p>
+This is also true in Einstein's Relativity, 
+$ x_B = \gamma(x_A + v t_A) $.
+However, the same is also true for the $t$ coordinate:
+$ t_B = \gamma(t_A + v x_A) $.
+The set of events that have the same $t$ coordinates for $A$ will not have the same $x$
+coordinates for $B$.   That means that an "instant" for $A$ is not the same as
+an instant for $B$.
+
+</p>
+<p>
+<a name="avg_time"><h3>Averaging Velocity</h3></a>
+
+There seems to be a paradox when we try to find an average velocity.
+Think of a boat that travels up a river  for a fixed distance, and then turns
+around and
+travels down the river.  Assume that the boat's speed relative to the
+river is constant.  That means if the speed of the river is $r$, the speed of
+the boat will be $s_d = s + r$ going downstream and $s_u = s - r$ going up stream.
+At first thought, it seems like the total time that the
+boat takes should be the same no matter what $r$ is, because the average of
+$s_u$ and $s_d$ is $s$, the speed of the boat.  But this is not true, because
+the boat is not traveling at speed $s_d$ and $s_u$ for the same amount of
+time.  The time traveled upstream is $$T_u = \frac{L}{s_u} = \frac{L}{s-r}$$
+The time traveled downstream is $$T_d = \frac{L}{s_d} = \frac{L}{s+r}$$
+If this is confusing, you should plug in some numbers until you believe that
+$$ T_u + T_d \ge \frac{2L}{s} $$
+and that they are only equal when $r=0$.  If you're daring, you can use a
+little Calculus to prove it.
+
+</p>
+
+<p>
+Further Reading.
+<ul>
+  <li>Einstein <a>Relativity</a>
+    This is a great introduction by the biggest name in the field.
+    </li>
+<li> <a href="http://en.wikipedia.org/wiki/Lorentz_transformation">Lorentz
+    Transformation</a></li>
+<li> <a href="http://en.wikipedia.org/wiki/Minkowski_diagram">Minkowski
+    Diagram</a></li>
+<li> The <a href="http://en.wikipedia.org/wiki/Michelson%E2%80%93Morley_experiment">
+    Michelson Morley experiment</a>  showed the speed of light was constant.
+  </li>
+</ul>
+</p>
