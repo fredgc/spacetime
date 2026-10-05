@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Spacetime Objects</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+  </style>
+  <link rel="stylesheet" href="css/doc_style.css" />
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Spacetime Objects</h1>
+</header>
+<p>You can place several different types of entities in a spacetime
+drawing:</p>
+<h2 id="events">1. Events</h2>
+<p>An <strong>Event</strong> represents a single point in space and time
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mi>x</mi><mo>,</mo><mi>t</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(x, t)</annotation></semantics></math>.</p>
+<ul>
+<li><p><strong>In Spacetime Diagram</strong>: Drawn as a dot.</p></li>
+<li><p><strong>In Observer View</strong>: Appears at the exact time the
+event occurs and slowly fades out as time progresses.</p></li>
+</ul>
+<h2 id="light-cones">2. Light Cones</h2>
+<p>A <strong>Light Cone</strong> represents the path of light emitted
+from a single event.</p>
+<ul>
+<li><p><strong>In Spacetime Diagram</strong>: Drawn as a V-shape
+extending upward and outward at 45-degree angles (representing the speed
+of light
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mo>=</mo><mn>1.0</mn></mrow><annotation encoding="application/x-tex">c = 1.0</annotation></semantics></math>).</p></li>
+<li><p><strong>In Observer View</strong>: Appears as expanding
+wavefronts moving outward from the emission point.</p></li>
+</ul>
+<p>If you switch from the Lorentz view to the emitter or ether view,
+then the light cone might not be at a 45-degree angle — the speed might
+not be 1.0 in the current observer’s reference frame.</p>
+<h2 id="instants-planes-of-simultaneity">3. Instants (Planes of
+Simultaneity)</h2>
+<p>An <strong>Instant</strong> represents a set of coordinates that an
+observer considers to be at the same time.</p>
+<ul>
+<li><p><strong>In Spacetime Diagram</strong>: Drawn as a tilted line
+representing the observer’s plane of simultaneity.</p></li>
+<li><p><strong>In Observer View</strong>: Represents the spatial slice
+shown at the selected time.</p></li>
+</ul>
+<p>If you switch from the Lorentz view to the emitter or ether view,
+then an instant is a horizontal line in the main view.</p>
+<h2 id="locations-worldlines">4. Locations (Worldlines)</h2>
+<p><strong>Locations</strong> are entities that persist over time,
+represented by their worldlines. You can choose from different
+sprites:</p>
+<ul>
+<li><p><strong>Person</strong>: A walking figure.</p></li>
+<li><p><strong>Train</strong>: A moving train compartment. Useful for
+visualizing Einstein’s train-and-platform experiments.</p></li>
+<li><p><strong>Barn</strong>: A stationary or moving barn structure.
+Useful for the “ladder/train in barn” paradox.</p></li>
+<li><p><strong>Flag</strong>: A marker flag.</p></li>
+<li><p><strong>Clock</strong>: Displays the proper time elapsed along
+that worldline.</p></li>
+</ul>
+<p>Clocks and other location sprites automatically reflect length
+contraction and time dilation in the Side View based on their relative
+speed to the current observer frame.</p>
+</body>
+</html>

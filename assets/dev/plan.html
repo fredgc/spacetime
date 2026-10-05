@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>plan</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+  </style>
+  <link rel="stylesheet" href="../css/doc_style.css" />
+</head>
+<body>
+<h1 id="spacetime-project-plan-v6.0.12">Spacetime Project Plan
+(v6.0.1+2)</h1>
+<p>This document outlines the roadmap for the <strong>Spacetime</strong>
+Flutter project. It is intended as a reminder for the human what we are
+working on, and as an explanation for Gemini what we are planning.</p>
+<p>Here are some tips: use /usage to see quota usage. use /clear to
+clear ai state between tasks.</p>
+<h3 id="cleanup-and-bug-fix">Cleanup and Bug Fix</h3>
+<ul class="task-list">
+<li><p><label><input type="checkbox" />fix broken tests.
+local_file_test.dart: Save/Load Error Details Expansion Verification
+drive_cache_test.dart: DriveTab Widget renders</label></p></li>
+<li><p><label><input type="checkbox" /><strong>Style &amp; Code
+Refactoring</strong> - Refactor variable/file names to match standard
+Dart style guidelines. - Make appropriate fields/methods private and
+split unwieldy classes.</label></p></li>
+</ul>
+<h3 id="file-loadsave">File Load/Save</h3>
+<ul>
+<li><p>[o] save of unnamed file should turn into save as, instead there
+is error “save failed for empty file”. (maybe fixed?)</p></li>
+<li><p><label><input type="checkbox" />Verify saving json as url
+works.</label></p></li>
+<li><p><label><input type="checkbox" />Don’t forget to update google
+drive api integration after we’ve published the first release.
+https://console.cloud.google.com/apis/api/drive.googleapis.com/drive_sdk?project=fredgc-spacetime</label></p></li>
+<li><p><label><input type="checkbox" /><strong>Counter Increment on
+Save-As</strong> - When doing save-as, check for existing files with
+same name, increment the counter in the name, and give the user a chance
+to edit it.</label></p></li>
+</ul>
+<h3 id="ui-interaction-gestures">UI, Interaction &amp; Gestures</h3>
+<ul class="task-list">
+<li><label><input type="checkbox" />Re-do transform and then check all
+the mouse and distance computations. We want the numbers on the axis to
+change.</label></li>
+</ul>
+<h3 id="correctness">Correctness</h3>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="" /><strong>Lorentz
+Transformation &amp; Relativity Physics Unit Tests</strong> Verify
+Lorentz transformation interval invariance, time dilation, length
+contraction, velocity addition, relativity of simultaneity, and light
+cone slope.</label></li>
+</ul>
+<h3 id="path-objects">Path Objects</h3>
+<p>Create objects that have variable velocity.</p>
+<h3 id="help-pages">Help Pages</h3>
+<p>Write a few help pages to explain how to use the tools.</p>
+<ul>
+<li><p>side view versions space-time view.</p></li>
+<li><p>File save/load for upload/download or drive.</p></li>
+<li><p>object creation and properties.</p></li>
+<li><p>veolicty and time sliders, animation.</p></li>
+</ul>
+<h3 id="tutorials">Tutorials</h3>
+<p>Design a tutorial system that prompts the user to use the controls.
+This would be similar to the way a game tutorial works. A tutorial would
+be a sequence of steps that have prompt that tells the user what to do.
+A control (button/slider/etc) or object would be highlighted until the
+user does an action, like click on the button or adjust the slider.</p>
+<p>Look up the old tutorials and make sure they are all covered. The
+list would include:</p>
+<ul>
+<li><p>Basic control usage, including the different speed-of-light
+assumptions.</p></li>
+<li><p>contraction/dilation</p></li>
+<li><p>Train entering a barn paradox.</p></li>
+<li><p>twin paradox</p></li>
+</ul>
+<h3 id="dynamic-files">Dynamic Files</h3>
+<p>Research collaborative editing where two users can edit the same file
+simultaneously and see real-time updates.</p>
+<p>One option is to store the scene in a google sheet. Explore saving
+individual objects as spreadsheet rows (Google Sheets) or Firebase
+Realtime Database records.</p>
+<p>Another option is to use a firebase db. Sharing would require
+recreating Google drive files access?</p>
+<p>Research pricing, limits, and monetization schemes to support
+free/cheap tiers.</p>
+<h3 id="android-release">Android Release</h3>
+<ul>
+<li><p>Document publishing new versions of the web app to
+<code>spacetime.gchouse.org</code>.</p></li>
+<li><p>Document building and publishing the Android package
+(<code>org.gchouse.spacetime</code>).</p></li>
+</ul>
+</body>
+</html>

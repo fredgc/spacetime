@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Toolbar and Sliders</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+  </style>
+  <link rel="stylesheet" href="css/doc_style.css" />
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Toolbar and Sliders</h1>
+</header>
+<p>The top and bottom bars of the application contain controls to
+manipulate and explore the spacetime diagram:</p>
+<h2 id="menu">Menu</h2>
+<h3 id="settings">Settings</h3>
+<p>Clicking on the gear icon will open the settings page. Settings are
+saved locally. Colors are tied to settings – not to the drawing.</p>
+<h3 id="file">File</h3>
+<p>Save or load files. See <a href="files.html">File Management</a> for
+help.</p>
+<h3 id="edit-menu">Edit Menu</h3>
+<p>Cut and Paste.</p>
+<h3 id="view">View</h3>
+<p>Choose Lorentz, Ether, or Emitter for the light speed transformation.
+See <a href="transformations.html">Relativistic Transformations</a> for
+more information.</p>
+<h2 id="editor-tools-top-bar">Editor Tools (Top Bar)</h2>
+<ul>
+<li><p><strong>Add/Select</strong>: Tap this button to change whether
+you are adding or selecting an object.</p>
+<ul>
+<li><p><strong>Select</strong>: Allows selecting objects in the
+Spacetime Diagram or Side View to view details, edit names, or change
+colors.</p></li>
+<li><p><strong>Add</strong>: Add an object to the scene. Click in the
+main view or the side view to add an object.</p></li>
+</ul></li>
+<li><p><strong>Name</strong>: The color of the selected object, or the
+color of the object that will be added. Tap on the text to change the
+name.</p></li>
+<li><p><strong>Type</strong>: The type of the selected object, or the
+type of object that will be added.</p>
+<ul>
+<li><p><strong>Event</strong>. A single point in time and
+space.</p></li>
+<li><p><strong>Instant</strong>. An instant in time, relative to the the
+current observer. This is a horizontal line when you are not using the
+Lorentz transformation.</p></li>
+<li><p><strong>Light Cone</strong>. A pair of light rays moving left and
+right. The speed of light is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mo>=</mo><mn>1.0</mn></mrow><annotation encoding="application/x-tex">c = 1.0</annotation></semantics></math>.</p></li>
+<li><p><strong>Location (Clock/Person/Train/Barn/Flag)</strong>: A
+single location, relative to the current observer.</p></li>
+</ul></li>
+<li><p><strong>Color</strong>: The color of the selected object, or the
+color of the object that will be added.</p></li>
+</ul>
+<h2 id="sliders-bottom-bar">Sliders (Bottom Bar)</h2>
+<ul>
+<li><p><strong>Time
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>)
+Slider</strong>: Moves the current observer time forward and backward.
+Adjusting this slider animates the position of locations and the state
+of events/clocks in the Side View. Press the arrow to the right of the
+slider to start animating time forward. The arrow on the left animates
+time backwards.</p></li>
+<li><p><strong>Velocity
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>v</mi><annotation encoding="application/x-tex">v</annotation></semantics></math>)
+Slider</strong>: Changes the relative velocity of the observer frame.
+Modifying the velocity instantly recalculates and transforms the
+positions of all objects on both diagrams according to the selected
+transformation model.</p></li>
+</ul>
+</body>
+</html>

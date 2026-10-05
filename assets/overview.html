@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Spacetime Overview</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+  </style>
+  <link rel="stylesheet" href="css/doc_style.css" />
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Spacetime Overview</h1>
+</header>
+<p>The Spacetime Drawing Tool features a split-screen view that shows
+relativity from two different perspectives:</p>
+<h2 id="spacetime-diagram-top-view">1. Spacetime Diagram (Top View)</h2>
+<p>The top canvas displays a <strong>Spacetime Diagram</strong> with one
+dimension of space
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>
+on the horizontal axis) and one dimension of time
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>
+on the vertical axis).</p>
+<ul>
+<li><p><strong>Location</strong> or <strong>Worldlines</strong>:
+Represent moving entities over time. A vertical line represents a
+stationary object, a tilted line represents a moving object, and a line
+tilted at 45 degrees represents something moving at the speed of light
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mo>=</mo><mn>1.0</mn></mrow><annotation encoding="application/x-tex">c = 1.0</annotation></semantics></math>).</p></li>
+<li><p><strong>Events</strong>: Individual points representing
+occurrences at a specific coordinate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mi>x</mi><mo>,</mo><mi>t</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(x, t)</annotation></semantics></math>.</p></li>
+<li><p><strong>Instant</strong> or <strong>Planes of
+Simultaneity</strong>: Represent space as perceived at a single instant
+of time by a given observer. Using a Newtonian transformation, these are
+horizontal, but with the Lorentz transformation they are not
+horizontal.</p></li>
+<li><p><strong>Light Cones</strong>: Show the propagation of light
+outward from an event.</p></li>
+</ul>
+<h2 id="observer-view-side-view-bottom-view">2. Observer View / Side
+View (Bottom View)</h2>
+<p>The bottom canvas displays the <strong>Observer View</strong> (also
+called the <strong>Side View</strong>). It shows a spatial
+representation of what the observer sees at the current instant of time
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>),
+as selected by the Time slider.</p>
+<ul>
+<li><p><strong>Length Contraction</strong>: Moving objects appear
+contracted in width along their direction of motion relative to the
+observer, computed using the relative velocity addition formula and the
+Lorentz factor.</p></li>
+<li><p><strong>Time Dilation</strong>: Clocks on moving objects run
+slower compared to the observer’s clocks.</p></li>
+<li><p><strong>Relativity of Simultaneity</strong>: Events that are
+simultaneous in one frame occur at different times in a moving frame,
+represented by the tilt of the simultaneity plane.</p></li>
+</ul>
+</body>
+</html>

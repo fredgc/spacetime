@@ -1,0 +1,32 @@
+{
+  "title": "Person",
+  "drawables": [
+    {
+      "type": "person",
+      "name": "P1",
+      "pt": {
+        "x": -0.36615811373092927,
+        "t": 0.3640776699029126,
+        "z": 0
+      },
+      "color": 0,
+      "frame": {
+        "center": {
+          "x": 0,
+          "t": 0,
+          "z": 0
+        },
+        "velocity": 0
+      }
+    }
+  ],
+  "time": 0,
+  "velocity": 0,
+  "center": {
+    "x": 0,
+    "t": 0,
+    "z": 0
+  },
+  "zoom": 240.33333333333334,
+  "version": "2.0.0"
+}

@@ -1,0 +1,353 @@
+Resolving dependencies...
+Downloading packages...
+  _fe_analyzer_shared 99.0.0 (105.0.0 available)
+  _flutterfire_internals 1.3.75 (1.3.76 available)
+  analyzer 12.1.0 (14.1.0 available)
+  build 4.0.7 (4.0.10 available)
+  build_config 1.3.1 (1.3.2 available)
+  build_daemon 4.1.2 (4.1.5 available)
+  build_runner 2.15.1 (2.16.0 available)
+  built_value 8.12.6 (8.12.7 available)
+  cli_util 0.4.2 (0.5.2 available)
+  dart_style 3.1.8 (3.1.12 available)
+  dio 5.10.0 (5.11.0 available)
+  dio_web_adapter 2.2.0 (2.2.1 available)
+  firebase_auth 6.5.6 (6.5.7 available)
+  firebase_auth_platform_interface 9.0.5 (9.0.6 available)
+  firebase_auth_web 6.2.5 (6.2.6 available)
+  firebase_core 4.12.1 (4.13.0 available)
+  firebase_core_platform_interface 8.0.0 (8.1.0 available)
+  firebase_core_web 3.9.1 (3.10.0 available)
+  flutter_secure_storage 10.3.1 (11.0.0 available)
+  flutter_secure_storage_darwin 0.3.2 (0.4.0 available)
+  flutter_secure_storage_linux 3.0.1 (3.0.2 available)
+  flutter_secure_storage_platform_interface 2.0.1 (2.0.3 available)
+  go_router 17.3.0 (17.5.0 available)
+  google_fonts 8.2.0 (8.2.1 available)
+  google_sign_in_android 7.2.15 (7.2.16 available)
+  hooks 2.0.2 (2.1.0 available)
+  image 4.8.0 (4.9.1 available)
+  jni 1.0.0 (1.0.3 available)
+  jni_flutter 1.0.1 (1.0.2 available)
+  json_serializable 6.14.0 (6.14.1 available)
+  matcher 0.12.19 (0.12.20 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  meta 1.18.0 (1.19.0 available)
+  mockito 5.6.4 (5.8.1 available)
+  objective_c 9.4.1 (9.5.0 available)
+  package_config 2.2.0 (3.0.0 available)
+  posix 6.5.0 (6.5.2 available)
+  record_use 0.6.0 (1.1.0 available)
+  source_gen 4.2.3 (4.2.4 available)
+  source_helper 1.3.12 (1.3.13 available)
+  test 1.31.0 (1.31.2 available)
+  test_api 0.7.11 (0.7.13 available)
+  test_core 0.6.17 (0.6.19 available)
+  vector_math 2.2.0 (2.4.2 available)
+  win32 6.3.0 (6.4.0 available)
+  xml 6.6.1 (7.0.1 available)
+Got dependencies!
+46 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+Analyzing spacetime...                                          
+
+   info • The imported package 'args' isn't a dependency of the importing package. Try adding a dependency for 'args' in the 'pubspec.yaml' file • html_tweak/bin/html_tweak.dart:6:8 • depend_on_referenced_packages
+warning • Dead code. Try removing the code, or fixing the code before it so that it can be reached • html_tweak/bin/html_tweak.dart:39:3 • dead_code
+   info • The variable name 'tick_provider' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/animate.dart:45:45 • non_constant_identifier_names
+warning • The value of the field '_paintCount' isn't used. Try removing the field, or using it • lib/axis.dart:15:7 • unused_field
+warning • The value of the field '_paintCount' isn't used. Try removing the field, or using it • lib/axis.dart:55:7 • unused_field
+warning • The value of the field '_paintCount' isn't used. Try removing the field, or using it • lib/axis.dart:103:7 • unused_field
+   info • The variable name '_sys_brightness' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/color.dart:250:14 • non_constant_identifier_names
+   info • The variable name 'theme_color' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/color.dart:251:16 • non_constant_identifier_names
+   info • The variable name 'background_color' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/color.dart:257:16 • non_constant_identifier_names
+   info • The variable name 'theme_mode' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/color.dart:264:13 • non_constant_identifier_names
+   info • The variable name 'theme_data' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/color.dart:265:13 • non_constant_identifier_names
+   info • The variable name 'pt_obs' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/drawable.dart:83:9 • non_constant_identifier_names
+   info • The variable name 'text_painter' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/drawable.dart:84:20 • non_constant_identifier_names
+   info • Missing a corresponding override of 'hashCode'. Try overriding 'hashCode' or removing '==' • lib/drawable.dart:157:17 • hash_and_equals
+   info • The variable name 'v_obs' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/drawable.dart:448:10 • non_constant_identifier_names
+   info • The variable name 'v_obs' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/drawable.dart:565:10 • non_constant_identifier_names
+   info • The variable name 'contracted_width' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/drawable.dart:572:10 • non_constant_identifier_names
+   info • Missing a corresponding override of 'hashCode'. Try overriding 'hashCode' or removing '==' • lib/drawable.dart:759:17 • hash_and_equals
+   info • The variable name 'type_name' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/drive.dart:23:23 • non_constant_identifier_names
+   info • The variable name 'skip_recent' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/drive.dart:29:12 • non_constant_identifier_names
+   info • The variable name 'create_string' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/drive.dart:30:23 • non_constant_identifier_names
+   info • Don't put any logic in 'createState'. Try moving the logic out of 'createState' • lib/drive.dart:128:34 • no_logic_in_create_state
+   info • The variable name 'debug_counter' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/drive.dart:130:14 • non_constant_identifier_names
+   info • The variable name 'debug_id' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/drive.dart:131:13 • non_constant_identifier_names
+   info • The variable name 'debug_counter' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/drive.dart:145:14 • non_constant_identifier_names
+   info • The variable name 'debug_id' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/drive.dart:146:13 • non_constant_identifier_names
+   info • The variable name 'fetch_files' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/drive.dart:176:8 • non_constant_identifier_names
+   info • The constant name 'LoggedOut' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/drive.dart:261:26 • constant_identifier_names
+   info • The constant name 'LoggedIn' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/drive.dart:261:37 • constant_identifier_names
+   info • The constant name 'Authorized' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/drive.dart:261:47 • constant_identifier_names
+   info • The variable name 'mime_type' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/drive.dart:276:23 • non_constant_identifier_names
+   info • The variable name 'was_authorized_string' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/drive.dart:294:23 • non_constant_identifier_names
+   info • The variable name 'remember_me_string' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/drive.dart:295:23 • non_constant_identifier_names
+   info • The variable name 'debug_counter' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/drive.dart:297:14 • non_constant_identifier_names
+   info • The variable name 'debug_id' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/drive.dart:298:13 • non_constant_identifier_names
+   info • Don't use 'BuildContext's across async gaps. Try rewriting the code to not use the 'BuildContext', or guard the use with a 'mounted' check • lib/drive.dart:573:11 • use_build_context_synchronously
+   info • The variable name 'debug_counter' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/drive.dart:898:14 • non_constant_identifier_names
+   info • The variable name 'debug_id' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/drive.dart:899:13 • non_constant_identifier_names
+   info • The variable name 'debug_counter' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/drive.dart:921:14 • non_constant_identifier_names
+   info • The variable name 'debug_id' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/drive.dart:922:13 • non_constant_identifier_names
+   info • The variable name 'debug_counter' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/file_holder.dart:14:14 • non_constant_identifier_names
+   info • The variable name 'debug_id' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/file_holder.dart:15:13 • non_constant_identifier_names
+   info • The variable name 'skip_recent' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/file_holder.dart:29:12 • non_constant_identifier_names
+   info • Missing a corresponding override of 'hashCode'. Try overriding 'hashCode' or removing '==' • lib/file_holder.dart:33:17 • hash_and_equals
+   info • The variable name 'json_count' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/file_holder.dart:103:14 • non_constant_identifier_names
+   info • The variable name 'skip_recent' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/file_holder.dart:109:12 • non_constant_identifier_names
+   info • The variable name 'type_name' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/file_holder.dart:111:23 • non_constant_identifier_names
+   info • The variable name 'make_url' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/file_holder.dart:147:8 • non_constant_identifier_names
+   info • The variable name 'type_name' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/file_holder.dart:150:23 • non_constant_identifier_names
+   info • The constant name 'NotInitialized' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/file_manager.dart:18:22 • constant_identifier_names
+   info • The constant name 'Initialized' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/file_manager.dart:18:38 • constant_identifier_names
+   info • The constant name 'Loading' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/file_manager.dart:18:51 • constant_identifier_names
+   info • The constant name 'Loaded' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/file_manager.dart:18:60 • constant_identifier_names
+   info • The constant name 'Error' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/file_manager.dart:18:68 • constant_identifier_names
+   info • The variable name 'drive_access' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/file_manager.dart:63:17 • non_constant_identifier_names
+   info • Don't use 'BuildContext's across async gaps. Try rewriting the code to not use the 'BuildContext', or guard the use with a 'mounted' check • lib/file_manager.dart:736:34 • use_build_context_synchronously
+   info • Don't use 'BuildContext's across async gaps. Try rewriting the code to not use the 'BuildContext', or guard the use with a 'mounted' check • lib/file_manager.dart:747:34 • use_build_context_synchronously
+   info • The variable name 'make_url' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/file_manager.dart:800:8 • non_constant_identifier_names
+   info • The variable name 'file_manager' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/file_manager.dart:893:15 • non_constant_identifier_names
+   info • Empty catch block. Try adding statements to the block, adding a comment to the block, or removing the 'catch' clause • lib/help.dart:127:19 • empty_catches
+   info • The imported package 'web' isn't a dependency of the importing package. Try adding a dependency for 'web' in the 'pubspec.yaml' file • lib/js_interface.dart:2:8 • depend_on_referenced_packages
+   info • The variable name 'type_name' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/local_file.dart:14:23 • non_constant_identifier_names
+   info • The variable name 'skip_recent' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/local_file.dart:18:12 • non_constant_identifier_names
+   info • The variable name 'local_file_label' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/local_file.dart:22:23 • non_constant_identifier_names
+   info • The variable name 'id_label' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/local_file.dart:23:23 • non_constant_identifier_names
+   info • 'onReorder' is deprecated and shouldn't be used. Use the onReorderItem callback instead. The onReorderItem callback adjusts the newIndex parameter for a removed item at the oldIndex. This feature was deprecated after v3.41.0-0.0.pre. Try replacing the use of the deprecated member with the replacement • lib/local_file.dart:168:7 • deprecated_member_use
+   info • Invalid use of a private type in a public API. Try making the private type public, or making the API that uses the private type also be private • lib/menus.dart:7:8 • library_private_types_in_public_api
+   info • Invalid use of a private type in a public API. Try making the private type public, or making the API that uses the private type also be private • lib/menus.dart:9:12 • library_private_types_in_public_api
+   info • The variable name 'scene_viewer' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/mouse.dart:19:19 • non_constant_identifier_names
+warning • The value of the local variable 'dis' isn't used. Try removing the variable or using it • lib/mouse.dart:42:17 • unused_local_variable
+   info • The variable name 'scene_viewer' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/mouse.dart:105:13 • non_constant_identifier_names
+   info • The variable name 'previous_scale' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/mouse.dart:114:10 • non_constant_identifier_names
+   info • The variable name 'scene_viewer' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/mouse.dart:116:26 • non_constant_identifier_names
+   info • The variable name 'scene_viewer' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/mouse.dart:152:11 • non_constant_identifier_names
+   info • The variable name 'scene_count' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/my_app.dart:107:7 • non_constant_identifier_names
+   info • Missing type annotation. Try replacing 'var' with a type annotation • lib/printer.dart:18:16 • strict_top_level_inference
+   info • Missing type annotation. Try replacing 'var' with a type annotation • lib/printer.dart:24:17 • strict_top_level_inference
+   info • The constant name 'mouse_scale' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/printer.dart:60:3 • constant_identifier_names
+   info • The constant name 'text_edit' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/printer.dart:70:3 • constant_identifier_names
+   info • The variable name 'remote_logging' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/printer.dart:85:22 • non_constant_identifier_names
+   info • The variable name 'group_active' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/printer.dart:92:28 • non_constant_identifier_names
+   info • The variable name 'include_verbose' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/printer.dart:93:15 • non_constant_identifier_names
+   info • The variable name 'remote_logger' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/printer.dart:94:23 • non_constant_identifier_names
+   info • The variable name 'running_tests' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/printer.dart:95:15 • non_constant_identifier_names
+   info • Don't invoke 'print' in production code. Try using a logging framework • lib/printer.dart:117:5 • avoid_print
+   info • The variable name 'internal_log' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/printer.dart:125:8 • non_constant_identifier_names
+   info • Don't invoke 'print' in production code. Try using a logging framework • lib/printer.dart:133:7 • avoid_print
+   info • Don't invoke 'print' in production code. Try using a logging framework • lib/printer.dart:139:5 • avoid_print
+   info • The variable name 'total_message' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/printer.dart:146:10 • non_constant_identifier_names
+   info • The variable name 'last_error' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/printer.dart:148:12 • non_constant_identifier_names
+   info • Don't invoke 'print' in production code. Try using a logging framework • lib/printer.dart:175:9 • avoid_print
+   info • The variable name 'print_debug' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/printer.dart:184:14 • non_constant_identifier_names
+   info • The variable name 'pad_zzz' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/printer.dart:185:14 • non_constant_identifier_names
+   info • Don't invoke 'print' in production code. Try using a logging framework • lib/printer.dart:193:7 • avoid_print
+   info • The variable name 'add_delay' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/printer.dart:218:15 • non_constant_identifier_names
+   info • The variable name 'recent_list_label' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/recent_file.dart:15:23 • non_constant_identifier_names
+   info • The variable name 'max_recent_count' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/recent_file.dart:16:20 • non_constant_identifier_names
+warning • The value of the local variable 'r' isn't used. Try removing the variable or using it • lib/recent_file.dart:22:14 • unused_local_variable
+warning • The value of the local variable 'r' isn't used. Try removing the variable or using it • lib/recent_file.dart:43:14 • unused_local_variable
+   info • The import of 'package:flutter/gestures.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart'. Try removing the import directive • lib/scene.dart:2:8 • unnecessary_import
+   info • The variable name 'debug_counter' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/scene.dart:49:14 • non_constant_identifier_names
+   info • The variable name 'debug_id' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/scene.dart:50:13 • non_constant_identifier_names
+   info • Missing a corresponding override of 'hashCode'. Try overriding 'hashCode' or removing '==' • lib/scene.dart:77:17 • hash_and_equals
+   info • The variable name 'json_string' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/scene.dart:138:43 • non_constant_identifier_names
+   info • The variable name 'undo_manager' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/scene.dart:233:17 • non_constant_identifier_names
+   info • The variable name 'file_manager' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/scene.dart:234:15 • non_constant_identifier_names
+   info • The variable name 'x_axis' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/scene.dart:243:12 • non_constant_identifier_names
+   info • The variable name 't_axis' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/scene.dart:244:12 • non_constant_identifier_names
+   info • The variable name 'light_speed' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/scene.dart:245:28 • non_constant_identifier_names
+   info • The variable name 'current_tool' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/scene.dart:249:21 • non_constant_identifier_names
+   info • The variable name 'current_type' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/scene.dart:250:25 • non_constant_identifier_names
+   info • The variable name 'current_name' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/scene.dart:252:25 • non_constant_identifier_names
+   info • The variable name 'current_color' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/scene.dart:253:20 • non_constant_identifier_names
+   info • The variable name 'main_listener' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/scene.dart:261:18 • non_constant_identifier_names
+   info • The variable name 'side_listener' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/scene.dart:262:18 • non_constant_identifier_names
+   info • The variable name 'repaint_counter' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/scene.dart:265:22 • non_constant_identifier_names
+   info • The variable name 'time_buffer' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/scene.dart:270:25 • non_constant_identifier_names
+   info • The variable name 'paint_counter' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/scene.dart:277:7 • non_constant_identifier_names
+   info • The variable name 'side_paint_counter' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/scene.dart:278:7 • non_constant_identifier_names
+   info • The variable name 'build_counter' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/scene.dart:279:7 • non_constant_identifier_names
+   info • The variable name 'debug_counter' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/scene.dart:281:14 • non_constant_identifier_names
+   info • The variable name 'debug_id' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/scene.dart:282:13 • non_constant_identifier_names
+   info • The variable name 'time_slice_color' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/scene.dart:327:23 • non_constant_identifier_names
+   info • The variable name 'axis_color' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/scene.dart:333:23 • non_constant_identifier_names
+   info • The variable name 'select_color' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/scene.dart:339:23 • non_constant_identifier_names
+   info • The variable name 'color_list_dark' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/scene.dart:349:28 • non_constant_identifier_names
+   info • The variable name 'color_list_light' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/scene.dart:360:28 • non_constant_identifier_names
+   info • The variable name 'color_list' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/scene.dart:372:28 • non_constant_identifier_names
+   info • The variable name 'use_debug_rect' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/scene.dart:381:22 • non_constant_identifier_names
+   info • The variable name 'fade_time' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/scene.dart:386:24 • non_constant_identifier_names
+   info • The variable name 'dot_size' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/scene.dart:392:24 • non_constant_identifier_names
+   info • The variable name 'show_clock_time' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/scene.dart:398:22 • non_constant_identifier_names
+   info • The variable name 'show_gridlines' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/scene.dart:403:22 • non_constant_identifier_names
+   info • The variable name 'line_width' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/scene.dart:409:24 • non_constant_identifier_names
+   info • String literals shouldn't be concatenated by the '+' operator. Try removing the operator to use adjacent strings • lib/scene.dart:587:55 • prefer_adjacent_string_concatenation
+warning • The value of the local variable 'd' isn't used. Try removing the variable or using it • lib/scene.dart:827:12 • unused_local_variable
+warning • The value of the local variable 'text' isn't used. Try removing the variable or using it • lib/scene.dart:1024:12 • unused_local_variable
+   info • Missing a corresponding override of 'hashCode'. Try overriding 'hashCode' or removing '==' • lib/scene.dart:1036:17 • hash_and_equals
+   info • The variable name 'scene_viewer' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/scene.dart:1044:13 • non_constant_identifier_names
+   info • Parameter 'repaint' could be a super parameter. Trying converting 'repaint' to a super parameter • lib/scene.dart:1045:3 • use_super_parameters
+   info • The variable name 'scene_viewer' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/scene.dart:1045:31 • non_constant_identifier_names
+   info • The variable name 'scene_viewer' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/scene.dart:1060:13 • non_constant_identifier_names
+   info • Parameter 'repaint' could be a super parameter. Trying converting 'repaint' to a super parameter • lib/scene.dart:1061:3 • use_super_parameters
+   info • The variable name 'scene_viewer' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/scene.dart:1061:34 • non_constant_identifier_names
+   info • The constant name 'NotInitialized' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/settings.dart:31:3 • constant_identifier_names
+   info • The constant name 'Initialized' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/settings.dart:32:3 • constant_identifier_names
+   info • The variable name 'app_name' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/settings.dart:208:10 • non_constant_identifier_names
+   info • The variable name 'build_number' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/settings.dart:210:10 • non_constant_identifier_names
+   info • The variable name 'no_keyboard' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/settings.dart:211:8 • non_constant_identifier_names
+   info • The variable name '_loading_future' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/settings.dart:212:17 • non_constant_identifier_names
+   info • The variable name 'savables_map' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/settings.dart:215:24 • non_constant_identifier_names
+   info • The variable name 'background_color' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/settings.dart:218:13 • non_constant_identifier_names
+   info • The variable name '_load_future' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/settings.dart:288:16 • non_constant_identifier_names
+   info • Invalid use of a private type in a public API. Try making the private type public, or making the API that uses the private type also be private • lib/settings.dart:383:3 • library_private_types_in_public_api
+   info • Unnecessary instance of 'Container'. Try removing the 'Container' (but not its children) from the widget tree • lib/settings.dart:426:16 • avoid_unnecessary_containers
+   info • Don't use 'BuildContext's across async gaps. Try rewriting the code to not use the 'BuildContext', or guard the use with a 'mounted' check • lib/settings.dart:506:15 • use_build_context_synchronously
+   info • Don't use 'BuildContext's across async gaps. Try rewriting the code to not use the 'BuildContext', or guard the use with a 'mounted' check • lib/settings.dart:513:15 • use_build_context_synchronously
+   info • The imported package 'google_sign_in_web' isn't a dependency of the importing package. Try adding a dependency for 'google_sign_in_web' in the 'pubspec.yaml' file • lib/sign_in_button_web.dart:6:8 • depend_on_referenced_packages
+   info • The variable name 'speed_delta' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/slider.dart:29:16 • non_constant_identifier_names
+   info • The variable name 'allow_animate' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/slider.dart:30:8 • non_constant_identifier_names
+   info • The variable name 'current_sticky' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/slider.dart:32:7 • non_constant_identifier_names
+   info • The variable name 'next_sticky' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/slider.dart:33:7 • non_constant_identifier_names
+   info • The variable name 'current_time_at_sticky_point' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/slider.dart:34:10 • non_constant_identifier_names
+   info • The variable name 'background_color' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/slider.dart:38:9 • non_constant_identifier_names
+   info • The variable name 'text_color' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/slider.dart:39:9 • non_constant_identifier_names
+   info • The variable name 'grid_color' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/slider.dart:40:9 • non_constant_identifier_names
+   info • The variable name 'paint_counter' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/slider.dart:44:7 • non_constant_identifier_names
+   info • The variable name 'build_counter' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/slider.dart:45:7 • non_constant_identifier_names
+   info • The variable name 'debug_counter' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/slider.dart:47:14 • non_constant_identifier_names
+   info • The variable name 'debug_id' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/slider.dart:48:13 • non_constant_identifier_names
+   info • The variable name 'allow_animate' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/slider.dart:57:10 • non_constant_identifier_names
+   info • The variable name 'sticky_delay' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/slider.dart:66:24 • non_constant_identifier_names
+   info • The variable name 'sticky_radius' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/slider.dart:72:24 • non_constant_identifier_names
+   info • Unnecessary instance of 'Container'. Try removing the 'Container' (but not its children) from the widget tree • lib/slider.dart:385:20 • avoid_unnecessary_containers
+   info • Parameter 'repaint' could be a super parameter. Trying converting 'repaint' to a super parameter • lib/slider.dart:496:3 • use_super_parameters
+   info • The variable name 'initial_size' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/splitter.dart:8:16 • non_constant_identifier_names
+   info • The variable name 'initial_size' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/splitter.dart:16:19 • non_constant_identifier_names
+   info • Don't put any logic in 'createState'. Try moving the logic out of 'createState' • lib/splitter.dart:23:42 • no_logic_in_create_state
+   info • The variable name 'minimum_size' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/splitter.dart:27:16 • non_constant_identifier_names
+   info • The variable name 'bottom_size' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/splitter.dart:28:10 • non_constant_identifier_names
+   info • The variable name 'init_running' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/sprites.dart:71:15 • non_constant_identifier_names
+   info • Missing a corresponding override of 'hashCode'. Try overriding 'hashCode' or removing '==' • lib/transform.dart:86:17 • hash_and_equals
+   info • Missing a corresponding override of 'hashCode'. Try overriding 'hashCode' or removing '==' • lib/transform.dart:160:17 • hash_and_equals
+   info • Missing a corresponding override of 'hashCode'. Try overriding 'hashCode' or removing '==' • lib/transform.dart:209:17 • hash_and_equals
+warning • The value of the field '_debugId' isn't used. Try removing the field, or using it • lib/transform.dart:259:13 • unused_field
+   info • 'allowMultiple' is deprecated and shouldn't be used. use pickFile for single-file selection; this parameter will be removed in a future release. Try replacing the use of the deprecated member with the replacement • lib/upload.dart:73:7 • deprecated_member_use
+   info • 'withData' is deprecated and shouldn't be used. Use PlatformFile.readAsBytes(); this parameter will be removed in a future release. Try replacing the use of the deprecated member with the replacement • lib/upload.dart:74:7 • deprecated_member_use
+   info • The type of the right operand ('int') isn't a subtype or a supertype of the left operand ('bool'). Try changing one or both of the operands • lib/upload.dart:77:48 • unrelated_type_equality_checks
+   info • 'bytes' is deprecated and shouldn't be used. Use readAsBytes() instead to avoid out-of-memory issues with large files. Try replacing the use of the deprecated member with the replacement • lib/upload.dart:86:24 • deprecated_member_use
+   info • 'bytes' is deprecated and shouldn't be used. Use readAsBytes() instead to avoid out-of-memory issues with large files. Try replacing the use of the deprecated member with the replacement • lib/upload.dart:86:63 • deprecated_member_use
+   info • The variable name 'type_name' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/upload.dart:94:23 • non_constant_identifier_names
+   info • The variable name 'skip_recent' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/upload.dart:98:12 • non_constant_identifier_names
+   info • The variable name 'download_manager' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/upload.dart:103:26 • non_constant_identifier_names
+warning • The value of the local variable 'result' isn't used. Try removing the variable or using it • lib/upload.dart:125:14 • unused_local_variable
+   info • Don't put any logic in 'createState'. Try moving the logic out of 'createState' • lib/upload.dart:162:34 • no_logic_in_create_state
+   info • The imported package 'webview_flutter_platform_interface' isn't a dependency of the importing package. Try adding a dependency for 'webview_flutter_platform_interface' in the 'pubspec.yaml' file • lib/webview_web.dart:1:8 • depend_on_referenced_packages
+   info • The variable name 'file_manager' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/widget.dart:41:21 • non_constant_identifier_names
+   info • The variable name 'debug_counter' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/widget.dart:43:14 • non_constant_identifier_names
+   info • The variable name 'debug_id' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/widget.dart:44:13 • non_constant_identifier_names
+   info • The variable name '_settings_listener' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/widget.dart:62:27 • non_constant_identifier_names
+   info • The variable name '_file_listener' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/widget.dart:63:27 • non_constant_identifier_names
+   info • The variable name 'debug_counter' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/widget.dart:65:14 • non_constant_identifier_names
+   info • The variable name 'debug_id' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/widget.dart:66:13 • non_constant_identifier_names
+   info • The variable name 'build_count' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/widget.dart:130:7 • non_constant_identifier_names
+   info • The variable name 'scene_viewer' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/widget.dart:260:19 • non_constant_identifier_names
+   info • The variable name 'file_manager' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/widget.dart:261:21 • non_constant_identifier_names
+   info • The variable name 'undo_manager' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/widget.dart:262:23 • non_constant_identifier_names
+   info • The variable name 'file_menu' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/widget.dart:263:16 • non_constant_identifier_names
+   info • The variable name 'edit_menu' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/widget.dart:264:18 • non_constant_identifier_names
+   info • The variable name 'debug_counter' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/widget.dart:266:14 • non_constant_identifier_names
+   info • The variable name 'debug_id' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/widget.dart:267:13 • non_constant_identifier_names
+   info • Don't put any logic in 'createState'. Try moving the logic out of 'createState' • lib/widget.dart:280:34 • no_logic_in_create_state
+   info • The variable name 'view_menu' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/widget.dart:289:16 • non_constant_identifier_names
+   info • The variable name 'shortcut_manager' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/widget.dart:290:27 • non_constant_identifier_names
+   info • The variable name 'debug_timer' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/widget.dart:295:20 • non_constant_identifier_names
+   info • The variable name 'timer_counter' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/widget.dart:296:7 • non_constant_identifier_names
+   info • The variable name 'build_count' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/widget.dart:297:7 • non_constant_identifier_names
+   info • The variable name 'debug_counter' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/widget.dart:299:14 • non_constant_identifier_names
+   info • The variable name 'debug_id' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/widget.dart:300:13 • non_constant_identifier_names
+   info • The variable name 'debug_logs' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/widget.dart:309:22 • non_constant_identifier_names
+   info • The variable name '_settings_listener' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/widget.dart:316:33 • non_constant_identifier_names
+   info • Unnecessary instance of 'Container'. Try removing the 'Container' (but not its children) from the widget tree • lib/widget.dart:454:21 • avoid_unnecessary_containers
+   info • The variable name 'debug_counter' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/widget.dart:764:14 • non_constant_identifier_names
+   info • The variable name 'debug_id' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/widget.dart:765:13 • non_constant_identifier_names
+   info • The variable name 'initial_data' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/worker.dart:11:20 • non_constant_identifier_names
+   info • The variable name 'update_counter' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/worker.dart:17:7 • non_constant_identifier_names
+   info • The variable name 'debug_counter' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/worker.dart:21:14 • non_constant_identifier_names
+   info • The variable name 'debug_id' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • lib/worker.dart:22:13 • non_constant_identifier_names
+   info • The imported package 'shared_preferences_platform_interface' isn't a dependency of the importing package. Try adding a dependency for 'shared_preferences_platform_interface' in the 'pubspec.yaml' file • test/app_tester.dart:12:8 • depend_on_referenced_packages
+   info • The imported package 'shared_preferences_platform_interface' isn't a dependency of the importing package. Try adding a dependency for 'shared_preferences_platform_interface' in the 'pubspec.yaml' file • test/app_tester.dart:13:8 • depend_on_referenced_packages
+   info • An uninitialized field should have an explicit type annotation. Try adding a type annotation • test/app_tester.dart:55:9 • prefer_typing_uninitialized_variables
+   info • Missing type annotation. Try adding a type annotation • test/app_tester.dart:55:9 • strict_top_level_inference
+   info • The variable name 'download_manager' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • test/app_tester.dart:57:23 • non_constant_identifier_names
+   info • The variable name 'local_files' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • test/app_tester.dart:58:23 • non_constant_identifier_names
+   info • The variable name 'debug_time' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • test/app_tester.dart:62:19 • non_constant_identifier_names
+   info • The variable name 'recent_count' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • test/app_tester.dart:64:7 • non_constant_identifier_names
+   info • Missing type annotation. Try adding a type annotation • test/edit_test.dart:21:26 • strict_top_level_inference
+   info • Don't invoke 'print' in production code. Try using a logging framework • test/edit_test.dart:42:7 • avoid_print
+   info • Don't invoke 'print' in production code. Try using a logging framework • test/edit_test.dart:43:7 • avoid_print
+   info • Don't invoke 'print' in production code. Try using a logging framework • test/edit_test.dart:44:7 • avoid_print
+   info • Don't invoke 'print' in production code. Try using a logging framework • test/edit_test.dart:45:7 • avoid_print
+   info • Don't invoke 'print' in production code. Try using a logging framework • test/edit_test.dart:47:9 • avoid_print
+   info • Don't invoke 'print' in production code. Try using a logging framework • test/edit_test.dart:50:7 • avoid_print
+   info • Don't invoke 'print' in production code. Try using a logging framework • test/edit_test.dart:53:9 • avoid_print
+   info • Don't invoke 'print' in production code. Try using a logging framework • test/edit_test.dart:55:7 • avoid_print
+   info • Don't invoke 'print' in production code. Try using a logging framework • test/edit_test.dart:58:9 • avoid_print
+warning • The value of the local variable 'initialUnsavedCount' isn't used. Try removing the variable or using it • test/edit_test.dart:85:11 • unused_local_variable
+   info • Don't invoke 'print' in production code. Try using a logging framework • test/edit_test.dart:165:9 • avoid_print
+   info • Don't invoke 'print' in production code. Try using a logging framework • test/edit_test.dart:166:9 • avoid_print
+   info • Don't invoke 'print' in production code. Try using a logging framework • test/edit_test.dart:167:9 • avoid_print
+   info • Missing type annotation. Try adding a type annotation • test/edit_test.dart:173:27 • strict_top_level_inference
+   info • The variable name 'dump_json' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • test/json_test.dart:17:6 • non_constant_identifier_names
+   info • Don't invoke 'print' in production code. Try using a logging framework • test/json_test.dart:29:18 • avoid_print
+   info • Don't invoke 'print' in production code. Try using a logging framework • test/json_test.dart:30:18 • avoid_print
+   info • Don't invoke 'print' in production code. Try using a logging framework • test/json_test.dart:32:18 • avoid_print
+   info • Don't invoke 'print' in production code. Try using a logging framework • test/json_test.dart:34:18 • avoid_print
+   info • Don't invoke 'print' in production code. Try using a logging framework • test/json_test.dart:42:18 • avoid_print
+   info • Don't invoke 'print' in production code. Try using a logging framework • test/json_test.dart:43:18 • avoid_print
+   info • Don't invoke 'print' in production code. Try using a logging framework • test/json_test.dart:46:18 • avoid_print
+   info • Missing type annotation. Try adding a type annotation • test/layout_test.dart:13:20 • strict_top_level_inference
+warning • The value of the local variable 'textWidget' isn't used. Try removing the variable or using it • test/layout_test.dart:17:9 • unused_local_variable
+   info • Missing type annotation. Try replacing 'var' with a type annotation • test/local_file_test.dart:19:31 • strict_top_level_inference
+   info • Don't invoke 'print' in production code. Try using a logging framework • test/mock_delay.dart:31:7 • avoid_print
+   info • Don't invoke 'print' in production code. Try using a logging framework • test/mock_delay.dart:45:7 • avoid_print
+   info • Don't invoke 'print' in production code. Try using a logging framework • test/mock_delay.dart:59:7 • avoid_print
+warning • The value of the local variable 'obj' isn't used. Try removing the variable or using it • test/mouse_test.dart:108:13 • unused_local_variable
+   info • The variable name 'original_title' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • test/nav_test.dart:18:14 • non_constant_identifier_names
+   info • The variable name 'edited_title' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • test/nav_test.dart:19:14 • non_constant_identifier_names
+   info • The variable name 'can_load' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • test/nav_test.dart:31:17 • non_constant_identifier_names
+   info • The variable name 'changes_original' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • test/nav_test.dart:32:17 • non_constant_identifier_names
+   info • The variable name 'start_load' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • test/nav_test.dart:33:21 • non_constant_identifier_names
+   info • The variable name 'handle_response' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • test/nav_test.dart:34:21 • non_constant_identifier_names
+   info • The variable name 'post_check' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • test/nav_test.dart:36:22 • non_constant_identifier_names
+   info • The variable name 'start_load' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • test/nav_test.dart:73:21 • non_constant_identifier_names
+   info • An uninitialized field should have an explicit type annotation. Try adding a type annotation • test/scene_editor.dart:17:7 • prefer_typing_uninitialized_variables
+   info • Missing type annotation. Try replacing 'var' with a type annotation • test/scene_editor.dart:17:7 • strict_top_level_inference
+   info • The variable name 'unsaved_count' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • test/scene_editor.dart:19:7 • non_constant_identifier_names
+   info • Missing type annotation. Try replacing 'var' with a type annotation • test/scene_editor.dart:287:30 • strict_top_level_inference
+warning • The value of the local variable 'drawable' isn't used. Try removing the variable or using it • test/scene_editor.dart:504:14 • unused_local_variable
+   info • The variable name 'side_edit' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • test/scene_editor.dart:637:12 • non_constant_identifier_names
+warning • The value of the local variable 'drawable' isn't used. Try removing the variable or using it • test/scene_editor.dart:649:14 • unused_local_variable
+   info • The variable name 'relative_location' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • test/scene_editor.dart:664:10 • non_constant_identifier_names
+warning • The value of the local variable 'listener' isn't used. Try removing the variable or using it • test/settings_test.dart:15:24 • unused_local_variable
+   info • The variable name 'debug_lists' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • test/simple_test.dart:8:6 • non_constant_identifier_names
+   info • The variable name 'debug_settings' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • test/simple_test.dart:9:6 • non_constant_identifier_names
+   info • Don't invoke 'print' in production code. Try using a logging framework • test/simple_test.dart:34:22 • avoid_print
+   info • Don't invoke 'print' in production code. Try using a logging framework • test/simple_test.dart:63:24 • avoid_print
+   info • Don't invoke 'print' in production code. Try using a logging framework • test/simple_test.dart:64:24 • avoid_print
+   info • Don't invoke 'print' in production code. Try using a logging framework • test/simple_test.dart:69:24 • avoid_print
+   info • Don't invoke 'print' in production code. Try using a logging framework • test/simple_test.dart:70:24 • avoid_print
+   info • Don't invoke 'print' in production code. Try using a logging framework • test/simple_test.dart:75:9 • avoid_print
+warning • This class (or a class that this class inherits from) is marked as '@immutable', but one or more of its instance fields aren't final: SliderHolder.controller, SliderHolder.ticks, SliderHolder.previous_clock, SliderHolder.status • test/slider_test.dart:6:7 • must_be_immutable
+   info • The variable name 'previous_clock' isn't a lowerCamelCase identifier. Try changing the name to follow the lowerCamelCase style • test/slider_test.dart:12:10 • non_constant_identifier_names
+warning • The value of the local variable 'changed' isn't used. Try removing the variable or using it • test/slider_test.dart:56:10 • unused_local_variable
+warning • The value of the local variable 'epsilon' isn't used. Try removing the variable or using it • test/transform_test.dart:74:20 • unused_local_variable
+warning • The value of the local variable 'delta' isn't used. Try removing the variable or using it • test/transform_test.dart:197:18 • unused_local_variable
+   info • The imported package 'plugin_platform_interface' isn't a dependency of the importing package. Try adding a dependency for 'plugin_platform_interface' in the 'pubspec.yaml' file • test/webview_mock.dart:3:8 • depend_on_referenced_packages
+   info • The imported package 'shared_preferences_platform_interface' isn't a dependency of the importing package. Try adding a dependency for 'shared_preferences_platform_interface' in the 'pubspec.yaml' file • test/widget_test.dart:3:8 • depend_on_referenced_packages
+   info • The imported package 'shared_preferences_platform_interface' isn't a dependency of the importing package. Try adding a dependency for 'shared_preferences_platform_interface' in the 'pubspec.yaml' file • test/widget_test.dart:4:8 • depend_on_referenced_packages
+

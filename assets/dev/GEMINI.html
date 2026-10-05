@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>GEMINI</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="../css/doc_style.css" />
+</head>
+<body>
+<h1
+id="gemini.md---developer-guide-for-spacetime-drawing-tool">GEMINI.md -
+Developer Guide for Spacetime Drawing Tool</h1>
+<p>Welcome! This guide is designed to help future LLM agents and human
+developers get up to speed quickly on the <strong>Spacetime</strong>
+Flutter application.</p>
+<p>Build Version v6.0.1+2</p>
+<hr />
+<h2 id="project-purpose-features">1. Project Purpose &amp; Features</h2>
+<p>The Spacetime Drawing Tool is an interactive, cross-platform (Web and
+Android) application used to teach and visualize special relativity in 1
+space dimension
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>)
+and 1 time dimension
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>).</p>
+<h3 id="key-features">Key Features</h3>
+<ul>
+<li><p><strong>Relativistic Transformations</strong>: Visualize
+spacetime coordinates under different physical assumptions:</p>
+<ul>
+<li><p><strong>Lorentz (Relativity)</strong>: Constant speed of light
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>c</mi><annotation encoding="application/x-tex">c</annotation></semantics></math>)
+in all reference frames.</p></li>
+<li><p><strong>Ether</strong>: Speed of light is relative to a preferred
+global frame.</p></li>
+<li><p><strong>Emitter Speed</strong>: Speed of light is relative to its
+source emitter.</p></li>
+</ul></li>
+<li><p><strong>Interactive Spacetime Diagram</strong>: View worldlines,
+events, light cones, and planes of simultaneity.</p></li>
+<li><p><strong>Observer View (Side View)</strong>: A split-screen panel
+showing what the observer sees at the current instant of time,
+illustrating length contraction, time dilation, and the relativity of
+simultaneity.</p></li>
+<li><p><strong>File Management</strong>: Save/load scenes as JSON
+locally (files/clipboard) or synced to Google Drive.</p></li>
+<li><p><strong>Backward Compatibility</strong>: Fully compatible with
+file saves from an older JavaScript version of the tool.</p></li>
+<li><p><strong>Undo/Redo &amp; Unsaved State Sync</strong>: History
+tracking of edits, object additions, colors, name changes, and movements
+synchronized with file save checkpoints and unsaved state
+warnings.</p></li>
+</ul>
+<hr />
+<h2 id="codebase-architecture">2. Codebase Architecture</h2>
+<pre class="mermaid"><code>graph TD
+    Main[&quot;main.dart&quot;] --&gt; MyApp[&quot;my_app.dart&quot;]
+    MyApp --&gt; GoRouter[&quot;GoRouter Navigation&quot;]
+    GoRouter --&gt; SplashWidget[&quot;widget.dart: SplashWidget&quot;]
+    SplashWidget --&gt; AppWidget[&quot;widget.dart: AppWidget&quot;]
+
+    AppWidget --&gt; SceneView[&quot;scene.dart: SceneView&quot;]
+    AppWidget --&gt; FileManager[&quot;file_manager.dart: FileManager&quot;]
+
+    SceneView --&gt; SceneData[&quot;scene.dart: SceneData&quot;]
+    SceneView --&gt; UndoManager[&quot;edit.dart: MyUndoManager&quot;]
+    SceneView --&gt; CoordTransform[&quot;transform.dart: CoordinateTransform&quot;]
+
+    SceneData --&gt; Drawables[&quot;drawable.dart: Drawable&quot;]
+    FileManager --&gt; FileHolder[&quot;file_holder.dart: FileHolder&quot;]
+    FileManager --&gt; DriveAccess[&quot;drive.dart: MyDriveAccess&quot;]</code></pre>
+<h3 id="core-components">Core Components</h3>
+<ul>
+<li><p><strong><code>lib/main.dart</code></strong>: Entrypoint.
+Initializes Flutter and runs <code>MyApp.fullApp()</code>.</p></li>
+<li><p><strong><code>lib/my_app.dart</code></strong>: Sets up global
+theme, JS interop, routes (via <code>GoRouter</code>), and serves
+top-level screens.</p></li>
+<li><p><strong><code>lib/widget.dart</code></strong>:</p>
+<ul>
+<li><p><a href="lib/widget.dart#L38">SplashWidget</a>: Wraps loading
+states (settings, sprites, file initialization).</p></li>
+<li><p><a href="lib/widget.dart#L218">AppWidget</a>: Primary editor
+interface. Contains App Bar, toolbar, and layout columns, wrapped in
+<code>PopScope</code> to intercept back gestures when unsaved edits
+exist.</p></li>
+<li><p>Splitscreen (<code>SplitterWidget</code>): Renders main canvas
+(<code>ScenePainter</code>) on top and observer view
+(<code>SideViewPainter</code>) on the bottom.</p></li>
+<li><p>Sliders (<code>MySlider.buildTable</code>): Handles interactive
+sliders for changing current observer time
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>)
+and velocity
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>v</mi><annotation encoding="application/x-tex">v</annotation></semantics></math>).</p></li>
+</ul></li>
+<li><p><strong><code>lib/scene.dart</code></strong>:</p>
+<ul>
+<li><p><a href="lib/scene.dart#L37">SceneData</a>: Serialized document
+state (list of drawables, time, velocity, viewport
+center/zoom).</p></li>
+<li><p><a href="lib/scene.dart#L201">SceneView</a>: High-level state
+manager for the active editor. Coordinates painting, selections, tool
+choices, and contains a <code>Worker</code> to dispatch asynchronous
+drawable calculations.</p></li>
+</ul></li>
+<li><p><strong><code>lib/transform.dart</code></strong>:</p>
+<ul>
+<li>Coordinate math. Models <code>Point</code>, <code>Vector</code>,
+<code>ReferenceFrame</code> (defining velocity
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>v</mi><annotation encoding="application/x-tex">v</annotation></semantics></math>
+and Lorentz gamma
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mo>=</mo><mn>1</mn><mi>/</mi><msqrt><mrow><mn>1</mn><mo>−</mo><msup><mi>v</mi><mn>2</mn></msup></mrow></msqrt></mrow><annotation encoding="application/x-tex">\gamma = 1 / \sqrt{1 - v^2}</annotation></semantics></math>),
+and <code>CoordinateTransform</code> which handles scaling, zooming,
+panning, and conversions between World, Observer, and Screen coordinate
+spaces.</li>
+</ul></li>
+<li><p><strong><code>lib/drawable.dart</code></strong>:</p>
+<ul>
+<li><p>Models entity types placed in spacetime (inheriting from
+<code>Drawable</code>):</p>
+<ul>
+<li><p><a href="lib/drawable.dart#L274">Event</a>: A single coordinate
+point. Fades out in side view over time.</p></li>
+<li><p><a href="lib/drawable.dart#L342">LightCone</a>: Expands outward
+along light paths.</p></li>
+<li><p><a href="lib/drawable.dart#L434">Instant</a>: Tilted plane of
+simultaneity.</p></li>
+<li><p><a href="lib/drawable.dart#L546">Location</a>: Moving entities
+(Person, Train, Barn, Flag, Clock) represented by worldlines. These
+render as length-contracted sprites in the side view.</p></li>
+</ul></li>
+</ul></li>
+<li><p><strong><code>lib/file_manager.dart</code></strong>:</p>
+<ul>
+<li>Manages active <code>FileHolder</code>, dirty/unsaved states, recent
+files list, and triggers <code>checkSave</code> dialogs for destructive
+file actions.</li>
+</ul></li>
+<li><p><strong><code>lib/file_holder.dart</code></strong>:</p>
+<ul>
+<li><p>Interface representing a storage driver. Concrete
+implementations:</p>
+<ul>
+<li><p><code>DriveHolder</code>: Google Drive file.</p></li>
+<li><p><code>JsonHolder</code>: Plain text JSON.</p></li>
+<li><p><code>ClipboardHolder</code>: Copy/paste integration (plain JSON
+or encoded URLs).</p></li>
+<li><p><code>LocalFileHolder</code>: Picked local files.</p></li>
+</ul></li>
+</ul></li>
+<li><p><strong><code>lib/drive.dart</code></strong>:</p>
+<ul>
+<li>Integration with Google Drive API v3. Uses
+<code>google_sign_in</code> and
+<code>extension_google_sign_in_as_googleapis_auth</code> to authenticate
+and list/load/save files.</li>
+</ul></li>
+<li><p><strong><code>lib/edit.dart</code></strong>:</p>
+<ul>
+<li>Core undo/redo infrastructure (<code>MyUndoManager</code>,
+<code>UndoCallback</code>, <code>Change</code>). Tracks saved checkpoint
+indices to automatically clear <code>unsaved</code> state when undoing
+back to a clean save point.</li>
+</ul></li>
+</ul>
+<hr />
+<h2 id="math-physics-conventions">3. Math &amp; Physics Conventions</h2>
+<p>Coordinate conversions are implemented in
+<code>lib/transform.dart</code>. Special relativity math is defined
+by:</p>
+<ul>
+<li><p>Speed of light
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mo>=</mo><mn>1.0</mn></mrow><annotation encoding="application/x-tex">c = 1.0</annotation></semantics></math>.</p></li>
+<li><p>Relative velocity
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>v</mi><annotation encoding="application/x-tex">v</annotation></semantics></math>
+ranges within
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">[</mo><mo>−</mo><mn>0.999</mn><mo>,</mo><mn>0.999</mn><mo stretchy="true" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[-0.999, 0.999]</annotation></semantics></math>.</p></li>
+<li><p>Lorentz factor
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mo>=</mo><mfrac><mn>1</mn><msqrt><mrow><mn>1</mn><mo>−</mo><msup><mi>v</mi><mn>2</mn></msup></mrow></msqrt></mfrac></mrow><annotation encoding="application/x-tex">\gamma = \frac{1}{\sqrt{1 - v^2}}</annotation></semantics></math>.</p></li>
+</ul>
+<h3
+id="lorentz-frame-transform-world-frame-leftrightarrow-reference-frame">Lorentz
+Frame Transform (World Frame
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>↔</mo><annotation encoding="application/x-tex">\leftrightarrow</annotation></semantics></math>
+Reference Frame)</h3>
+<p>Transform from observer frame to world frame:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mn>0</mn></msub><mo>=</mo><mi>γ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo>+</mo><mi>v</mi><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">x_0 = \gamma (x + v t)</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>t</mi><mn>0</mn></msub><mo>=</mo><mi>γ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>+</mo><mi>v</mi><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">t_0 = \gamma (t + v x)</annotation></semantics></math></p>
+<p>Transform from world frame to observer frame:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>=</mo><mi>γ</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>x</mi><mn>0</mn></msub><mo>−</mo><mi>v</mi><msub><mi>t</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">x = \gamma (x_0 - v t_0)</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>=</mo><mi>γ</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>t</mi><mn>0</mn></msub><mo>−</mo><mi>v</mi><msub><mi>x</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">t = \gamma (t_0 - v x_0)</annotation></semantics></math></p>
+<p>In code (see <a href="lib/transform.dart#L49">Point.toFrame</a>):</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode dart"><code class="sourceCode dart"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> x0 <span class="op">=</span> frame<span class="op">.</span>gamma <span class="op">*</span> (x <span class="op">-</span> frame<span class="op">.</span>velocity <span class="op">*</span> t);</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> t0 <span class="op">=</span> frame<span class="op">.</span>gamma <span class="op">*</span> (t <span class="op">-</span> frame<span class="op">.</span>velocity <span class="op">*</span> x);</span></code></pre></div>
+<h3 id="length-contraction">Length Contraction</h3>
+<p>For <code>Location</code> entities, visual width in the side view is
+length-contracted based on relative velocity to the observer (see <a
+href="lib/drawable.dart#L565">Location.update</a>):</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode dart"><code class="sourceCode dart"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> v <span class="op">=</span> frame<span class="op">.</span>velocity;</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> u <span class="op">=</span> transform<span class="op">.</span>frame<span class="op">.</span>velocity;</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> w <span class="op">=</span> (v <span class="op">-</span> u) <span class="op">/</span> (<span class="fl">1.0</span> <span class="op">-</span> u <span class="op">*</span> v); <span class="co">// Relative velocity addition formula</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> gammaInv <span class="op">=</span> math<span class="op">.</span>sqrt(<span class="fl">1.0</span> <span class="op">-</span> w <span class="op">*</span> w);</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>contracted_width <span class="op">=</span> width <span class="op">*</span> gammaInv;</span></code></pre></div>
+<hr />
+<h2 id="key-workflows">4. Key Workflows</h2>
+<h3 id="loading-a-scene">Loading a Scene</h3>
+<ol type="1">
+<li><p><code>FileManager.loadFile()</code> is called with a
+<code>FileHolder</code>.</p></li>
+<li><p>Navigation url is updated via <code>go_router</code>.</p></li>
+<li><p><code>FileManager.reload()</code> asynchronously loads raw JSON
+string via <code>FileHolder.loadData()</code>.</p></li>
+<li><p><code>SceneData.fromJsonString()</code> parses content, detecting
+modern or legacy schema.</p></li>
+<li><p>A new <code>SceneView</code> is created, and
+<code>SplashWidget</code> switches to rendering
+<code>AppWidget</code>.</p></li>
+</ol>
+<h3 id="modifying-and-repainting">Modifying and Repainting</h3>
+<ol type="1">
+<li><p>User adjusts a slider or clicks/drags.</p></li>
+<li><p>Changes to velocity trigger
+<code>SceneView.updateScene()</code>.</p></li>
+<li><p>The <code>Worker</code> executes asynchronously to update all
+drawables (computing their coordinates in the observer frame).</p></li>
+<li><p><code>SceneView.requestRepaintScene()</code> is called,
+incrementing <code>repaint_counter</code>.</p></li>
+<li><p>CustomPainters (<code>ScenePainter</code> and
+<code>SideViewPainter</code>) listen to <code>repaint_counter</code> and
+trigger canvas repaints.</p></li>
+</ol>
+<hr />
+<h2 id="development-checklist-gotchas">5. Development Checklist &amp;
+Gotchas</h2>
+<ul>
+<li><p><strong>Asynchronous Repaints</strong>: Repainting uses a
+<code>Worker</code> class (<code>lib/worker.dart</code>) to avoid
+blocking UI during frame updates. Do not call <code>setState()</code>
+directly for heavy calculations; use
+<code>updateScene()</code>.</p></li>
+<li><p><strong>State Syncing</strong>: <code>AppWidget</code> uses
+multiple <code>ValueNotifier</code> and <code>ListNotifier</code>
+instances. When adding new settings, remember to register them in
+<code>Settings</code> so they are saved to
+<code>SharedPreferences</code>.</p></li>
+<li><p><strong>Deep Links</strong>: When launching from deep links (e.g.
+<code>spacetime.gchouse.org/#/scene?json=...</code>),
+<code>FileManager</code> handles <code>checkNavigation</code> during
+<code>GoRouter</code> updates.</p></li>
+<li><p><strong>Test Isolation</strong>: Integration tests in
+<code>test/</code> mock file loading and settings using wrappers. Ensure
+you clean up listeners in <code>dispose()</code> methods to prevent test
+leakage.</p></li>
+<li><p><strong>Remote Logging</strong>: <code>RemoteLogger</code> (in
+<code>lib/printer.dart</code>) sends HTTP logs to a local logging server
+when running on web (controlled via <code>remote_logging</code>
+setting). Start logging server by running:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> log_server.py</span></code></pre></div>
+<p>This server runs on port 5001 and writes client logs to
+<code>client_logs.log</code> and standard output.</p></li>
+<li><p><strong>Drive Auth &amp; Token Invalidation</strong>:
+<code>MyDriveAccess</code> (<code>lib/drive.dart</code>) clears cached
+credentials on sign-in if Drive scopes are missing, and automatically
+clears tokens and demotes status to <code>LoggedIn</code> upon
+encountering 401, 403, or <code>invalid_token</code> API
+errors.</p></li>
+<li><p><strong>Drive File Search &amp; Query Parsing</strong>:
+<code>DriveState</code> (<code>lib/drive.dart</code>) has a search input
+(<code>ValueKey('drive-search-input')</code>) persisting across dialog
+opens in a session. <code>buildDriveQuery()</code> converts title terms
+into <code>name contains '...'</code> clauses, maps
+<code>owner:me</code> / <code>owner:email</code> into
+<code>'me' in owners</code>, and supports raw Google Drive API query
+expressions.</p></li>
+<li><p><strong>Title &amp; Metadata Sync</strong>:
+<code>SceneData.title</code> and <code>SceneData.description</code>
+remain synchronized with <code>FileHolder.title</code> and Google Drive
+file metadata (<code>request.name</code>,
+<code>request.description</code>, <code>request.mimeType</code>).
+Opening a <code>DriveHolder</code> overrides the title stored in JSON
+with the Drive file name.</p></li>
+<li><p><strong>Web Asset Cache-Busting &amp; Help Reloading</strong>:
+Web assets are requested with version tags
+(<code>?v=$versionTag</code>). <code>HelpScreen</code>
+(<code>lib/help.dart</code>) scans loaded help HTML for version headers
+(<code>v2.1.0+XX</code>). If a stale version string is detected, it
+issues a forced <code>no-cache</code> fetch to reload the
+asset.</p></li>
+<li><p><strong>Mouse Drag Viewport Jump Prevention</strong>:
+Single-pointer panning and object moving in <code>lib/mouse.dart</code>
+initialize focal points at gesture start without applying an initial
+frame-1 movement jump. Movement deltas are computed dynamically during
+<code>onScaleUpdate</code>.</p></li>
+<li><p><strong>Unsaved State &amp; Undo Checkpoint Sync</strong>:
+<code>MyUndoManager</code> tracks a <code>_saved_index</code>. When
+undoing back to the last save point, <code>unsaved.value</code> is
+automatically set to <code>false</code>. Navigating to auxiliary screens
+(<code>/help</code>, <code>/about</code>, <code>/settings</code>)
+preserves the active drawing in memory without prompting. Web
+<code>beforeunload</code> interop
+(<code>web/extra_js_interface.js</code>) prompts a browser leave-site
+warning when <code>unsaved</code> is true.</p></li>
+<li><p><strong>JSON Error Recovery &amp; Syntax Editor</strong>:
+<code>FileManager</code> retains <code>rawBlob</code> on parse failures
+and provides <code>loadFromRawJson(String rawJson)</code>.
+<code>SplashWidget</code> displays an “Edit JSON Syntax” button
+launching <code>JsonSyntaxEditorDialog</code> for live syntax correction
+and inline validation.</p></li>
+<li><p><strong>Theme Palette Synchronization</strong>:
+<code>SavableColorArray.updateTheme</code> duplicates color schemes with
+<code>List.from(...)</code> to prevent in-place mutation of static
+defaults. <code>AppWidgetState</code> listens to
+<code>widget.settings.statusStream()</code> to trigger canvas repaints
+and WebView theme class toggles
+(<code>light-theme</code>/<code>dark-theme</code>).</p></li>
+<li><p><strong>Settings Layout &amp; Responsive Reflow</strong>:
+<code>SettingsScreen</code> (<code>lib/settings.dart</code>) uses
+<code>Wrap</code> widgets with constrained input width controls
+(<code>SizedBox</code>) to prevent horizontal <code>RenderFlex</code>
+overflows on narrow mobile screens. <code>MyIterator</code> dynamically
+filters out empty widget sublists produced by hidden
+<code>debug_only</code> settings or <code>EndOfRow</code> breaks,
+preventing empty rows and phantom dividers.</p></li>
+<li><p><strong>Viewport Bounds &amp; Initial Scale</strong>:
+<code>CoordinateTransform</code> (<code>lib/transform.dart</code>)
+defaults to <code>zoom = 100.0</code> pixels per world unit with origin
+centered at <code>(width / 2, height / 2)</code>. Screen range bounds
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>)
+are derived dynamically from container size passed during
+<code>LayoutBuilder</code> <code>resize()</code> calls in
+<code>SceneView.build</code> (<code>lib/scene.dart</code>).</p></li>
+</ul>
+<hr />
+<h2 id="code-style">6. Code Style</h2>
+<h3 id="markdown-preferences">Markdown Preferences</h3>
+<p>To maintain clean and standardized documentation for both developers
+and automated builders (such as <code>pandoc</code>):</p>
+<ul>
+<li><p>Keep line lengths less than 80 characters.</p></li>
+<li><p>Always follow headers with a blank line.</p></li>
+<li><p>Surround all list items and code blocks with blank
+lines.</p></li>
+</ul>
+<h3 id="dart-preferences">Dart Preferences</h3>
+<p>To ensure clean and standard Dart syntax across the project:</p>
+<ul>
+<li><p>After editing or creating any Dart files, format the code by
+executing:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">dart</span> format .</span></code></pre></div></li>
+</ul>
+<h3 id="git-commit-preferences">Git Commit Preferences</h3>
+<p>To ensure clean and standard commit logs:</p>
+<ul>
+<li><p>Write commit messages using the following structure:</p>
+<pre class="text"><code>Version $version. &lt;major fixes&gt;
+
+&lt;description of minor and major fixes&gt;</code></pre></li>
+<li><p>Keep line lengths in commit messages under 70
+characters.</p></li>
+</ul>
+<hr />
+<h2 id="testing-guidelines">7. Testing Guidelines</h2>
+<p>To maintain fast feedback loops, run targeted tests depending on
+which files are modified. Only run the entire test suite
+(<code>flutter test</code>) before doing a git commit or staging a
+release.</p>
+<ul>
+<li><p><strong>Name Validation</strong> (<code>lib/name.dart</code>)</p>
+<p>Run: <code>flutter test test/name_test.dart</code></p></li>
+<li><p><strong>Routing &amp; Navigation</strong>
+(<code>lib/navigation.dart</code>, <code>lib/my_app.dart</code>)</p>
+<p>Run: <code>flutter test test/nav_test.dart</code></p></li>
+<li><p><strong>Upload &amp; Clipboard</strong>
+(<code>lib/upload.dart</code>)</p>
+<p>Run: <code>flutter test test/upload_test.dart</code></p></li>
+<li><p><strong>JSON &amp; Scene Serialization</strong>
+(<code>lib/scene.dart</code>)</p>
+<p>Run: <code>flutter test test/json_test.dart</code></p></li>
+<li><p><strong>Coordinate Math</strong>
+(<code>lib/transform.dart</code>)</p>
+<p>Run: <code>flutter test test/transform_test.dart</code></p></li>
+<li><p><strong>Relativity Physics Correctness</strong>
+(<code>lib/transform.dart</code>, <code>lib/drawable.dart</code>)</p>
+<p>Run: <code>flutter test test/relativity_test.dart</code></p></li>
+<li><p><strong>Spacetime Entities / Drawables</strong>
+(<code>lib/drawable.dart</code>)</p>
+<p>Run:
+<code>flutter test test/simple_test.dart test/scene_editor.dart</code></p></li>
+<li><p><strong>Undo/Redo History &amp; Unsaved Sync</strong>
+(<code>lib/edit.dart</code>)</p>
+<p>Run: <code>flutter test test/edit_test.dart</code></p></li>
+<li><p><strong>File IO &amp; Recent Files</strong>
+(<code>lib/file_manager.dart</code>, <code>lib/file_holder.dart</code>,
+<code>lib/local_file.dart</code>, <code>lib/recent_file.dart</code>)</p>
+<p>Run: <code>flutter test test/local_file_test.dart</code></p></li>
+<li><p><strong>Drive Authentication &amp; Token Caching</strong>
+(<code>lib/drive.dart</code>)</p>
+<p>Run: <code>flutter test test/drive_cache_test.dart</code></p></li>
+<li><p><strong>Mouse Clicks &amp; Drags</strong>
+(<code>lib/mouse.dart</code>)</p>
+<p>Run: <code>flutter test test/mouse_test.dart</code></p></li>
+<li><p><strong>Velocity &amp; Time Sliders</strong>
+(<code>lib/slider.dart</code>)</p>
+<p>Run: <code>flutter test test/slider_test.dart</code></p></li>
+<li><p><strong>Settings Management</strong>
+(<code>lib/settings.dart</code>)</p>
+<p>Run: <code>flutter test test/settings_test.dart</code></p></li>
+<li><p><strong>Background Worker</strong>
+(<code>lib/worker.dart</code>)</p>
+<p>Run: <code>flutter test test/worker_test.dart</code></p></li>
+<li><p><strong>Interactive Scripts / Lessons</strong>
+(<code>lib/script.dart</code>)</p>
+<p>Run: <code>flutter test test/script_test.dart</code></p></li>
+<li><p><strong>Async Animation Helpers</strong>
+(<code>lib/animate.dart</code>)</p>
+<p>Run: <code>flutter test test/async_test.dart</code></p></li>
+<li><p><strong>General UI / Layout</strong>
+(<code>lib/widget.dart</code>)</p>
+<p>Run:
+<code>flutter test test/widget_test.dart test/layout_test.dart</code></p></li>
+</ul>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({ startOnLoad: true, theme: 'default' });
+</script>
+</body>
+</html>
