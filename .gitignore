@@ -1,2 +1,87 @@
+# User custom ignores
 cached/
 spacetime.tgz
+.git_chain_data
+
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.project
+.settings/
+.vscode/
+.idea/
+
+# Environment-specific files
+.env
+.env.*
+
+# Flutter/Dart/Pub-related
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+/build/
+
+# Android-related
+android/local.properties
+android/key.properties
+android/app/src/main/res/values/strings.xml
+android/.gradle/
+android/app/build/
+android/app/debug/
+android/app/profile/
+android/app/release/
+android/build/
+
+# Symbol files
+*.aar
+*.ap_
+*.apk
+*.aab
+*.app
+*.bc
+*.bundle
+*.cab
+*.cpuprofile
+*.db
+*.der
+*.dll
+*.dmg
+*.exe
+*.fit
+*.g.dart
+*.gem
+*.hprof
+*.ipa
+*.iso
+*.jar
+*.lib
+*.local
+*.log
+*.msi
+*.p12
+*.pem
+*.pkpass
+*.prxs
+*.so
+*.suo
+*.sys
+*.tar
+*.tmp
+*.zip
+
+# Firebase cache
+.firebase/
+
+# Firebase secrets (regenerate them using "flutterfire configure")
+firebase_options.dart
+google-services.json
+
