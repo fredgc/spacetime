@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_math_fork/flutter_math.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spacetime/drawable.dart';
 import 'package:spacetime/file_holder.dart';
@@ -57,6 +58,86 @@ This has **bold text** and *italic text* and `code text`.
         expect(find.textContaining('Item 1'), findsOneWidget);
       },
     );
+
+    testWidgets(
+      'TutorialCard renders TeX math formulas without raw dollar signs',
+      (WidgetTester tester) async {
+        final markdown = '''
+# TeX Tutorial Test
+
+Description here.
+
+## 1. Math Step
+Space (\$x\$) is on the horizontal axis and time (\$t\$) is on the vertical axis.
+The Lorentz factor is \$\\gamma = 1.25\$.
+Display equation:
+\$\$\\text{P1} \\rightarrow \\text{P2}\$\$
+
+> ok
+''';
+        final tutorial = Tutorial.fromMarkdown(markdown);
+        final controller = TutorialController(scene, tutorial);
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: TutorialCard(controller: controller, onClose: () {}),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        // Verify that raw dollar signs are not displayed as literal text
+        expect(find.textContaining(r'$x$'), findsNothing);
+        expect(find.textContaining(r'($x$)'), findsNothing);
+        expect(find.textContaining(r'$t$'), findsNothing);
+        expect(find.textContaining(r'$\gamma = 1.25$'), findsNothing);
+        expect(find.textContaining(r'$$\text{P1}'), findsNothing);
+
+        // Verify that Math widgets are rendered
+        final mathFinder = find.byType(Math);
+        expect(mathFinder, findsAtLeastNWidgets(3));
+      },
+    );
+
+    testWidgets('TutorialCard renders all relativity math constructs cleanly', (
+      WidgetTester tester,
+    ) async {
+      final markdown = '''
+# Relativity Math Test
+
+## 1. Math Step
+* Variables: Space (\$x\$) and time (\$t\$)
+* Slope: \$\\pm 1\$
+* Lorentz factor: \$\\gamma = 1 / \\sqrt{1 - v^2}\$
+* Degree: \$45^\\circ\$
+* Rel velocity: (\$v_{\\text{rel}} \\approx -0.88\$)
+* Bracketed display:
+\\[ E = mc^2 \\]
+* Inline paren math: \\( c = 1 \\)
+
+> ok
+''';
+      final tutorial = Tutorial.fromMarkdown(markdown);
+      final controller = TutorialController(scene, tutorial);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: TutorialCard(controller: controller, onClose: () {}),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(find.textContaining(r'$x$'), findsNothing);
+      expect(find.textContaining(r'$t$'), findsNothing);
+      expect(find.textContaining(r'$\pm 1$'), findsNothing);
+      expect(find.textContaining(r'$$'), findsNothing);
+      expect(find.byType(Math), findsAtLeastNWidgets(6));
+      controller.dispose();
+    });
 
     testWidgets(
       'TutorialCard displays step title, body, and advances on Continue',
@@ -292,6 +373,7 @@ Done immediately.
 
     test(
       'All 6 built-in tutorials parse and complete every step via doItForMe',
+      timeout: const Timeout(Duration(minutes: 2)),
       () async {
         for (final holder in kBuiltInTutorials) {
           final md = await holder.loadData(fileManager);

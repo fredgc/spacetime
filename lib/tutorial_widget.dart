@@ -1,11 +1,103 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
+import 'package:flutter_markdown_plus_latex/flutter_markdown_plus_latex.dart';
+import 'package:flutter_math_fork/flutter_math.dart';
+import 'package:markdown/markdown.dart' as md;
 import 'package:url_launcher/url_launcher.dart';
 import 'drawable.dart';
 import 'scene.dart';
 import 'script.dart';
 import 'transform.dart';
+
+/// Parses LaTeX syntax in Markdown into 'latex' AST elements.
+///
+/// Supports inline math `$...$` and `\(...\)`, as well as display math
+/// `$$...$$` and `\[...\]`.
+class TutorialLatexInlineSyntax extends md.InlineSyntax {
+  TutorialLatexInlineSyntax()
+    : super(
+        r'(\$\$((?:\\.|[^\\$])+?)\$\$)|'
+        r'(\\\[((?:\\.|[^\\])+?)\\\])|'
+        r'(\\\(((?:\\.|[^\\])+?)\\\))|'
+        r'''(\$([^\s$](?:\\.|[^\\\n$])*?[^\s$]|\S)\$)(?=[\s)\],;:?!"'~.\-’”»›）］｝！？。，：；]|$)''',
+      );
+
+  @override
+  bool onMatch(md.InlineParser parser, Match match) {
+    final raw = match.group(0) ?? '';
+    final bool isDisplay = raw.startsWith(r'$$') || raw.startsWith(r'\[');
+    final int delimiterLength =
+        (raw.startsWith(r'$$') ||
+            raw.startsWith(r'\[') ||
+            raw.startsWith(r'\('))
+        ? 2
+        : 1;
+    final equation = raw.substring(
+      delimiterLength,
+      raw.length - delimiterLength,
+    );
+
+    final element = md.Element.text('latex', equation);
+    element.attributes['MathStyle'] = isDisplay ? 'display' : 'text';
+    parser.addNode(element);
+    return true;
+  }
+}
+
+/// Renders 'latex' AST elements using [Math.tex] from flutter_math_fork.
+class TutorialLatexElementBuilder extends MarkdownElementBuilder {
+  final TextStyle? textStyle;
+  final double? textScaleFactor;
+
+  TutorialLatexElementBuilder({this.textStyle, this.textScaleFactor});
+
+  @override
+  Widget visitElementAfterWithContext(
+    BuildContext context,
+    md.Element element,
+    TextStyle? preferredStyle,
+    TextStyle? parentStyle,
+  ) {
+    final String text = element.textContent;
+    if (text.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    final bool isDisplay = element.attributes['MathStyle'] == 'display';
+    final mathStyle = isDisplay ? MathStyle.display : MathStyle.text;
+    final effectiveStyle = textStyle ?? parentStyle ?? preferredStyle;
+
+    final Widget mathWidget = Math.tex(
+      text,
+      textStyle: effectiveStyle,
+      mathStyle: mathStyle,
+      textScaleFactor: textScaleFactor,
+      onErrorFallback: (err) => Text(text, style: effectiveStyle),
+    );
+
+    if (isDisplay) {
+      return Center(
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          clipBehavior: Clip.antiAlias,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4.0),
+            child: mathWidget,
+          ),
+        ),
+      );
+    }
+
+    return RichText(
+      text: TextSpan(
+        children: [
+          WidgetSpan(alignment: PlaceholderAlignment.middle, child: mathWidget),
+        ],
+      ),
+    );
+  }
+}
 
 /// Floating, draggable, and minimizable tutorial overlay card.
 class TutorialCard extends StatefulWidget {
@@ -156,7 +248,11 @@ class _TutorialCardState extends State<TutorialCard> {
               ),
             ),
             child: Container(
-              width: 360,
+              constraints: BoxConstraints(
+                maxWidth: 360,
+                maxHeight:
+                    (MediaQuery.maybeSizeOf(context)?.height ?? 600) - 32,
+              ),
               padding: const EdgeInsets.all(16),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -248,47 +344,65 @@ class _TutorialCardState extends State<TutorialCard> {
                   ),
                   const SizedBox(height: 12),
 
-                  // Step Title
-                  Text(
-                    step.title,
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
+                  // Step Title & Body (Scrollable if overflowing screen)
+                  Flexible(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            step.title,
+                            style: theme.textTheme.titleSmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          MarkdownBody(
+                            data: step.body,
+                            shrinkWrap: true,
+                            extensionSet: md.ExtensionSet.gitHubFlavored,
+                            blockSyntaxes: [LatexBlockSyntax()],
+                            inlineSyntaxes: [TutorialLatexInlineSyntax()],
+                            builders: {
+                              'latex': TutorialLatexElementBuilder(
+                                textStyle: theme.textTheme.bodyMedium?.copyWith(
+                                  color: colorScheme.onSurface,
+                                  height: 1.35,
+                                ),
+                              ),
+                            },
+                            styleSheet: MarkdownStyleSheet.fromTheme(theme)
+                                .copyWith(
+                                  p: theme.textTheme.bodyMedium?.copyWith(
+                                    color: colorScheme.onSurface,
+                                    height: 1.35,
+                                  ),
+                                  listBullet: theme.textTheme.bodyMedium
+                                      ?.copyWith(color: colorScheme.onSurface),
+                                  strong: theme.textTheme.bodyMedium?.copyWith(
+                                    color: colorScheme.onSurface,
+                                    fontWeight: FontWeight.bold,
+                                    height: 1.35,
+                                  ),
+                                  em: theme.textTheme.bodyMedium?.copyWith(
+                                    color: colorScheme.onSurface,
+                                    fontStyle: FontStyle.italic,
+                                    height: 1.35,
+                                  ),
+                                  code: theme.textTheme.bodySmall?.copyWith(
+                                    color: colorScheme.primary,
+                                    fontFamily: 'monospace',
+                                  ),
+                                ),
+                            onTapLink: (text, href, title) {
+                              if (href != null) {
+                                launchUrl(Uri.parse(href));
+                              }
+                            },
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 6),
-
-                  // Step Body Prose
-                  MarkdownBody(
-                    data: step.body,
-                    shrinkWrap: true,
-                    styleSheet: MarkdownStyleSheet.fromTheme(theme).copyWith(
-                      p: theme.textTheme.bodyMedium?.copyWith(
-                        color: colorScheme.onSurface,
-                        height: 1.35,
-                      ),
-                      listBullet: theme.textTheme.bodyMedium?.copyWith(
-                        color: colorScheme.onSurface,
-                      ),
-                      strong: theme.textTheme.bodyMedium?.copyWith(
-                        color: colorScheme.onSurface,
-                        fontWeight: FontWeight.bold,
-                        height: 1.35,
-                      ),
-                      em: theme.textTheme.bodyMedium?.copyWith(
-                        color: colorScheme.onSurface,
-                        fontStyle: FontStyle.italic,
-                        height: 1.35,
-                      ),
-                      code: theme.textTheme.bodySmall?.copyWith(
-                        color: colorScheme.primary,
-                        fontFamily: 'monospace',
-                      ),
-                    ),
-                    onTapLink: (text, href, title) {
-                      if (href != null) {
-                        launchUrl(Uri.parse(href));
-                      }
-                    },
                   ),
                   const SizedBox(height: 12),
 

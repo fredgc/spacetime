@@ -18,9 +18,21 @@ abstract class TutorialDirective {
 /// Combined velocity directive: highlights velocity slider and checks target.
 class VelocityDirective extends TutorialDirective {
   final double targetVelocity;
-  final double tolerance;
+  final double? explicitTolerance;
 
-  VelocityDirective({required this.targetVelocity, this.tolerance = 0.02});
+  VelocityDirective({required this.targetVelocity, double? tolerance})
+    : explicitTolerance = tolerance;
+
+  double get tolerance => explicitTolerance ?? 0.02;
+
+  double effectiveTolerance(SceneView scene) {
+    if (explicitTolerance != null) return explicitTolerance!;
+    final range = (scene.velocity.max - scene.velocity.min).abs();
+    if (range > 0) {
+      return (range * 0.01).clamp(0.01, 0.03);
+    }
+    return 0.02;
+  }
 
   @override
   String get highlightId => 'slider.velocity';
@@ -30,7 +42,8 @@ class VelocityDirective extends TutorialDirective {
 
   @override
   bool isSatisfied(SceneView scene) {
-    return (scene.velocity.value - targetVelocity).abs() <= tolerance;
+    return (scene.velocity.value - targetVelocity).abs() <=
+        effectiveTolerance(scene);
   }
 
   @override
@@ -48,9 +61,22 @@ class VelocityDirective extends TutorialDirective {
 /// Combined time directive: highlights time slider and checks target.
 class TimeDirective extends TutorialDirective {
   final double targetTime;
-  final double tolerance;
+  final double? explicitTolerance;
 
-  TimeDirective({required this.targetTime, this.tolerance = 0.1});
+  TimeDirective({required this.targetTime, double? tolerance})
+    : explicitTolerance = tolerance;
+
+  double get tolerance => explicitTolerance ?? 0.04;
+
+  double effectiveTolerance(SceneView scene) {
+    if (explicitTolerance != null) return explicitTolerance!;
+    final range = (scene.time.max - scene.time.min).abs();
+    // Default to ~1% of the slider range (e.g. 0.04 for standard range 4.0)
+    if (range > 0) {
+      return (range * 0.01).clamp(0.02, 0.05);
+    }
+    return 0.04;
+  }
 
   @override
   String get highlightId => 'slider.time';
@@ -60,12 +86,12 @@ class TimeDirective extends TutorialDirective {
 
   @override
   bool isSatisfied(SceneView scene) {
-    return (scene.time.value - targetTime).abs() <= tolerance;
+    return (scene.time.value - targetTime).abs() <= effectiveTolerance(scene);
   }
 
   @override
   String statusText(SceneView scene) {
-    return 'Target: t = ${targetTime.toStringAsFixed(1)}  (Current: ${scene.time.value.toStringAsFixed(1)})';
+    return 'Target: t = ${targetTime.toStringAsFixed(2)}  (Current: ${scene.time.value.toStringAsFixed(2)})';
   }
 
   @override

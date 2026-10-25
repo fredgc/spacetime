@@ -1,4 +1,4 @@
-# Spacetime Project Plan (v6.0.4+1)
+# Spacetime Project Plan (v6.1.1+0)
 
 This document outlines the roadmap for the **Spacetime** Flutter project.
 It is intended as a reminder for the human what we are working on, and
@@ -12,6 +12,8 @@ Here are some tips:
 
 
 ### Cleanup and Bug Fix
+
+- trying to open a file via drive gave oauth error. investigate.
 
 ### Android
 

@@ -223,6 +223,28 @@ Welcome!
     });
 
     test(
+      'time directive tolerance is ~1% of slider range and rejects 0.4 for target 0.5',
+      () {
+        final tDir = TimeDirective(targetTime: 0.5);
+        expect(scene.time.min, equals(-2.0));
+        expect(scene.time.max, equals(2.0));
+
+        scene.time.value = 0.50;
+        expect(tDir.isSatisfied(scene), isTrue);
+
+        scene.time.value = 0.52;
+        expect(tDir.isSatisfied(scene), isTrue);
+
+        // 0.40 is 0.10 away (2.5% of range); must NOT be satisfied
+        scene.time.value = 0.40;
+        expect(tDir.isSatisfied(scene), isFalse);
+
+        scene.time.value = 0.60;
+        expect(tDir.isSatisfied(scene), isFalse);
+      },
+    );
+
+    test(
       'interactive add, select, move, and color directives guide user and support doItForMe',
       () {
         final md = '''

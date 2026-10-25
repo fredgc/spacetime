@@ -356,7 +356,7 @@ class Tutorial {
             : null;
         if (target != null) {
           results.add(
-            VelocityDirective(targetVelocity: target, tolerance: tol ?? 0.02),
+            VelocityDirective(targetVelocity: target, tolerance: tol),
           );
         }
         pos += vMatch.end;
@@ -374,7 +374,7 @@ class Tutorial {
             ? double.tryParse(tMatch.group(2)!)
             : null;
         if (target != null) {
-          results.add(TimeDirective(targetTime: target, tolerance: tol ?? 0.1));
+          results.add(TimeDirective(targetTime: target, tolerance: tol));
         }
         pos += tMatch.end;
         continue;
