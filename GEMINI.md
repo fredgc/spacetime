@@ -3,7 +3,7 @@
 Welcome! This guide is designed to help future LLM agents and human developers
 get up to speed quickly on the **Spacetime** Flutter application.
 
-Build Version v6.1.1+0
+Build Version v6.1.2+0
 
 ---
 

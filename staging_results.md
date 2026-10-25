@@ -1,4 +1,4 @@
-# Staged version 6.1.0+0
+# Staged version 6.1.1+0
 
 Project Console: [https://console.firebase.google.com/project/fredgc-spacetime/overview](https://console.firebase.google.com/project/fredgc-spacetime/overview)
 

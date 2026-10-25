@@ -1,5 +1,5 @@
 ---
-title: About Spacetime (v6.1.1+0)
+title: About Spacetime (v6.1.2+0)
 ---
 
 The **Spacetime Drawing Tool** is an interactive application designed to teach
