@@ -3,7 +3,7 @@
 Welcome! This guide is designed to help future LLM agents and human developers
 get up to speed quickly on the **Spacetime** Flutter application.
 
-Build Version v6.0.1+2
+Build Version v6.0.4+1
 
 ---
 
@@ -32,6 +32,10 @@ application used to teach and visualize special relativity in 1 space dimension
   sees at the current instant of time, illustrating length contraction, time
   dilation, and the relativity of simultaneity.
 
+* **Interactive Tutorials & Step-by-Step Lessons**: Guided interactive
+  lessons with dynamic UI highlights, criterion verification, automated
+  actions ("Do it for me"), and progress tracking.
+
 * **File Management**: Save/load scenes as JSON locally (files/clipboard) or
   synced to Google Drive.
 
@@ -55,6 +59,7 @@ graph TD
 
     AppWidget --> SceneView["scene.dart: SceneView"]
     AppWidget --> FileManager["file_manager.dart: FileManager"]
+    AppWidget --> TutorialCard["tutorial_widget.dart: TutorialCard"]
 
     SceneView --> SceneData["scene.dart: SceneData"]
     SceneView --> UndoManager["edit.dart: MyUndoManager"]
@@ -63,6 +68,7 @@ graph TD
     SceneData --> Drawables["drawable.dart: Drawable"]
     FileManager --> FileHolder["file_holder.dart: FileHolder"]
     FileManager --> DriveAccess["drive.dart: MyDriveAccess"]
+    FileManager --> TutorialCtrl["script.dart: TutorialController"]
 ```
 
 ### Core Components
@@ -73,31 +79,40 @@ graph TD
 * **`lib/my_app.dart`**: Sets up global theme, JS interop, routes (via
   `GoRouter`), and serves top-level screens.
 
-* **`lib/widget.dart`**:
+* **`lib/widget.dart` & `lib/widgets/`**:
 
-  * [SplashWidget](lib/widget.dart#L38):
+  * [SplashWidget](lib/widgets/splash_widget.dart#L16):
     Wraps loading states (settings, sprites, file initialization).
 
-  * [AppWidget](lib/widget.dart#L218):
+  * [AppWidget](lib/widgets/app_widget.dart#L24):
     Primary editor interface. Contains App Bar, toolbar, and layout columns,
     wrapped in `PopScope` to intercept back gestures when unsaved edits exist.
 
-  * Splitscreen (`SplitterWidget`): Renders main canvas (`ScenePainter`) on top
-    and observer view (`SideViewPainter`) on the bottom.
+  * [TapToEditText](lib/widgets/tap_to_edit.dart#L7):
+    Inline editing textfield with escape-key and keyboard handling.
+
+  * [JsonSyntaxEditorDialog](lib/widgets/json_syntax_dialog.dart#L6):
+    Live JSON syntax correction dialog.
 
   * Sliders (`MySlider.buildTable`): Handles interactive sliders for changing
     current observer time ($t$) and velocity ($v$).
 
-* **`lib/scene.dart`**:
+  * Overlays: Mounts `TutorialHighlightLayer`, `TutorialCard`, and canvas
+    overlays when a tutorial is active.
 
-  * [SceneData](lib/scene.dart#L37):
+* **`lib/scene.dart` & `lib/scene/`**:
+
+  * [SceneData](lib/scene/scene_data.dart#L13):
     Serialized document state (list of drawables, time, velocity, viewport
     center/zoom).
 
-  * [SceneView](lib/scene.dart#L201):
+  * [SceneView](lib/scene/scene_view.dart#L23):
     High-level state manager for the active editor. Coordinates painting,
     selections, tool choices, and contains a `Worker` to dispatch asynchronous
     drawable calculations.
+
+  * [ScenePainter & SideViewPainter](lib/scene/scene_painters.dart#L5):
+    Custom painters connecting Flutter canvas repaints to `SceneView`.
 
 * **`lib/transform.dart`**:
 
@@ -106,51 +121,92 @@ graph TD
     `CoordinateTransform` which handles scaling, zooming, panning, and
     conversions between World, Observer, and Screen coordinate spaces.
 
-* **`lib/drawable.dart`**:
+* **`lib/drawable.dart` & `lib/drawables/`**:
 
   * Models entity types placed in spacetime (inheriting from `Drawable`):
 
-    * [Event](lib/drawable.dart#L274):
+    * [Event](lib/drawables/event.dart#L22):
       A single coordinate point. Fades out in side view over time.
 
-    * [LightCone](lib/drawable.dart#L342):
+    * [LightCone](lib/drawables/light_cone.dart#L22):
       Expands outward along light paths.
 
-    * [Instant](lib/drawable.dart#L434):
+    * [Instant](lib/drawables/instant.dart#L22):
       Tilted plane of simultaneity.
 
-    * [Location](lib/drawable.dart#L546):
+    * [Location](lib/drawables/location.dart#L23):
       Moving entities (Person, Train, Barn, Flag, Clock) represented by
       worldlines. These render as length-contracted sprites in the side view.
 
+* **`lib/script.dart` & `lib/script/` & `lib/tutorial_widget.dart`**:
+
+  * Interactive tutorial engine. Parses markdown tutorials and directives
+    (`TutorialDirective`), evaluates conditions against `SceneView`, and
+    renders floating `TutorialCard`, canvas overlays, and UI highlights:
+
+    * [TutorialParser](lib/script/tutorial_parser.dart#L27): Markdown parser.
+
+    * [TutorialStep](lib/script/tutorial_step.dart#L446): Step evaluation and
+      `TutorialDirective` classes.
+
+    * [TutorialController](lib/script/tutorial_controller.dart#L9): Reactive
+      controller tracking progress and driving step criteria.
+
+* **`lib/drive.dart` & `lib/drive/`**:
+
+  * Google Drive v3 REST API integration, OAuth authentication, query
+    parsing (`buildDriveQuery`), and file picker dialogs:
+
+    * [MyDriveAccess](lib/drive/drive_auth.dart#L18): Authentication manager,
+      OAuth token storage, sign in/out, and status stream.
+
+    * [DriveHolder](lib/drive/drive_service.dart#L44): FileHolder storage
+      driver for Google Drive files and metadata.
+
+    * [DriveDialog](lib/drive/drive_dialog.dart#L11): Drive file picker and
+      search dialog UI.
+
+* **`lib/splitter.dart`**:
+
+  * Splitscreen widget (`SplitterWidget`) rendering main spacetime canvas
+    on top and observer side view on the bottom with a draggable divider.
+
+* **`lib/axis.dart`**:
+
+  * `PlotAxis` handles coordinate grid calculation, rounding bounds, and
+    drawing axis ticks and labels on canvas.
+
+* **`lib/sprites.dart`**:
+
+  * Sprites and vector silhouettes for observer entities (Person, Train, Barn,
+    Flag, Clock).
+
+* **`lib/color.dart`**:
+
+  * Color management (`SavableColor`, `SavableColorArray`, and `SavableTheme`).
+
+* **`lib/animate.dart`**:
+
+  * `MyAnimator` timing loop powering continuous time advancement.
+
 * **`lib/file_manager.dart`**:
 
-  * Manages active `FileHolder`, dirty/unsaved states, recent files list, and
-    triggers `checkSave` dialogs for destructive file actions.
+  * Manages active `FileHolder`, dirty/unsaved states, recent files list,
+    active tutorials, and triggers `checkSave` dialogs for destructive actions.
 
 * **`lib/file_holder.dart`**:
 
-  * Interface representing a storage driver. Concrete implementations:
-
-    * `DriveHolder`: Google Drive file.
-
-    * `JsonHolder`: Plain text JSON.
-
-    * `ClipboardHolder`: Copy/paste integration (plain JSON or encoded URLs).
-
-    * `LocalFileHolder`: Picked local files.
+  * Storage driver interface (`DriveHolder`, `JsonHolder`, `ClipboardHolder`,
+    `LocalFileHolder`).
 
 * **`lib/drive.dart`**:
 
-  * Integration with Google Drive API v3. Uses `google_sign_in` and
-    `extension_google_sign_in_as_googleapis_auth` to authenticate and
-    list/load/save files.
+  * Google Drive v3 REST API integration, OAuth authentication, query
+    parsing (`buildDriveQuery`), and file picker dialogs.
 
 * **`lib/edit.dart`**:
 
   * Core undo/redo infrastructure (`MyUndoManager`, `UndoCallback`, `Change`).
-    Tracks saved checkpoint indices to automatically clear `unsaved` state
-    when undoing back to a clean save point.
 
 ---
 
@@ -202,7 +258,84 @@ contracted_width = width * gammaInv;
 
 ---
 
-## 4. Key Workflows
+## 4. Interactive Tutorial System
+
+The application includes an interactive tutorial engine (`lib/script.dart` and
+`lib/tutorial_widget.dart`) that presents step-by-step physics lessons with
+live verification against user actions.
+
+### Tutorial Markdown Schema
+
+Tutorials are written in markdown and parsed by `Tutorial.fromMarkdown()`:
+
+* **Title**: Single top-level `# Tutorial Title`.
+
+* **Description**: Introductory paragraphs preceding the first step.
+
+* **Steps**: Numbered headings `## 1. Step Title`.
+
+* **Body**: Explanatory text and instructions shown on the `TutorialCard`.
+
+* **Directives**: Blockquote lines (`> ...`) defining interactive criteria:
+
+  * `> v = 0.5 [tol 0.02]`: Checks velocity slider target.
+
+  * `> t = 2.0 [tol 0.1]`: Checks time slider target.
+
+  * `> mode = lorentz|ether|emitter`: Checks light speed frame mode.
+
+  * `> tool = select|add`: Checks active toolbar tool.
+
+  * `> type = person|train|barn|flag|clock|event|cone|instant`: Checks type.
+
+  * `> name = TargetName`: Checks object name in toolbar or selection.
+
+  * `> color = 0..9`: Checks selected color index.
+
+  * `> add = type [x, t]`: Guides user to place an object near coordinates.
+
+  * `> select = name|type`: Requires selecting an object.
+
+  * `> load = filename`: Loads a preset scene for the step.
+
+  * `> setup ...`: Background setup actions applied on step start.
+
+  * `> ok`: Informational step requiring manual confirmation.
+
+### Controller & Evaluation Lifecycle
+
+1. `FileManager.activeTutorial` holds the active `TutorialController`.
+
+2. The controller tracks `currentStepIndex` and listens to `SceneView` state.
+
+3. On slider changes or canvas edits, `TutorialStep.isSatisfied(scene)`
+   evaluates all step directives.
+
+4. If all directives are satisfied, the step status turns green and enables
+   advancing.
+
+5. Directives supporting automated actions (`canDoItForMe == true`) allow users
+   to tap "Do it for me", executing `applyDoItForMe(scene)` to automatically
+   adjust sliders or tools to the required target.
+
+6. The user can navigate backward ("Back"), advance ("Continue"), or close
+   ("Exit") at any time.
+
+### UI Architecture & Highlights
+
+* **`TutorialCard`**: Draggable, floating overlay card displaying step
+  instructions, target status, and navigation buttons.
+
+* **`TutorialHighlight`**: Wraps target UI controls (sliders, tool buttons,
+  menus) and renders animated pulsing highlight frames when their `highlightId`
+  matches the active step's target.
+
+* **`TutorialCanvasOverlay`**: Renders placement targets or pointer hints
+  directly on the spacetime canvas during object placement steps.
+
+---
+
+## 5. Key Workflows
 
 ### Loading a Scene
 
@@ -228,14 +361,14 @@ contracted_width = width * gammaInv;
 3. The `Worker` executes asynchronously to update all drawables (computing
    their coordinates in the observer frame).
 
-4. `SceneView.requestRepaintScene()` is called, incrementing `repaint_counter`.
+4. `SceneView.requestRepaintScene()` is called, incrementing `repaintCounter`.
 
 5. CustomPainters (`ScenePainter` and `SideViewPainter`) listen to
-   `repaint_counter` and trigger canvas repaints.
+   `repaintCounter` and trigger canvas repaints.
 
 ---
 
-## 5. Development Checklist & Gotchas
+## 6. Development Checklist & Gotchas
 
 * **Asynchronous Repaints**: Repainting uses a `Worker` class
   (`lib/worker.dart`) to avoid blocking UI during frame updates. Do not call
@@ -291,7 +424,7 @@ contracted_width = width * gammaInv;
   dynamically during `onScaleUpdate`.
 
 * **Unsaved State & Undo Checkpoint Sync**: `MyUndoManager` tracks a
-  `_saved_index`. When undoing back to the last save point, `unsaved.value` is
+  `_savedIndex`. When undoing back to the last save point, `unsaved.value` is
   automatically set to `false`. Navigating to auxiliary screens (`/help`,
   `/about`, `/settings`) preserves the active drawing in memory without
   prompting. Web `beforeunload` interop (`web/extra_js_interface.js`) prompts a
@@ -317,13 +450,17 @@ contracted_width = width * gammaInv;
 
 * **Viewport Bounds & Initial Scale**: `CoordinateTransform`
   (`lib/transform.dart`) defaults to `zoom = 100.0` pixels per world unit with
-  origin centered at `(width / 2, height / 2)`. Screen range bounds ($x$ and
-  $t$) are derived dynamically from container size passed during `LayoutBuilder`
-  `resize()` calls in `SceneView.build` (`lib/scene.dart`).
+  origin centered at `(width / 2, height / 2)`. Screen range bounds ($x$
+  and $t$) are derived dynamically from container size passed during
+  `LayoutBuilder` `resize()` calls in `SceneView.build` (`lib/scene.dart`).
+
+* **Window Size in Tests**: In widget test harnesses, avoid deprecated
+  `tester.binding.window` APIs; use `tester.view.physicalSize` and
+  `tester.view.devicePixelRatio`.
 
 ---
 
-## 6. Code Style
+## 7. Code Style
 
 ### Markdown Preferences
 
@@ -362,7 +499,7 @@ To ensure clean and standard commit logs:
 
 ---
 
-## 7. Testing Guidelines
+## 8. Testing Guidelines
 
 To maintain fast feedback loops, run targeted tests depending on which files
 are modified. Only run the entire test suite (`flutter test`) before doing a
@@ -397,6 +534,22 @@ git commit or staging a release.
 
     Run: `flutter test test/simple_test.dart test/scene_editor.dart`
 
+*   **Axes & Grid Lines** (`lib/axis.dart`)
+
+    Run: `flutter test test/axis_test.dart`
+
+*   **Sprites & Silhouettes** (`lib/sprites.dart`)
+
+    Run: `flutter test test/sprites_test.dart`
+
+*   **Split Screen Layout** (`lib/splitter.dart`)
+
+    Run: `flutter test test/splitter_test.dart`
+
+*   **Colors & Themes** (`lib/color.dart`)
+
+    Run: `flutter test test/color_test.dart`
+
 *   **Undo/Redo History & Unsaved Sync** (`lib/edit.dart`)
 
     Run: `flutter test test/edit_test.dart`
@@ -427,13 +580,18 @@ git commit or staging a release.
 
     Run: `flutter test test/worker_test.dart`
 
-*   **Interactive Scripts / Lessons** (`lib/script.dart`)
+*   **Interactive Scripts & Tutorials**
+    (`lib/script.dart`, `lib/tutorial_widget.dart`)
 
-    Run: `flutter test test/script_test.dart`
+    Run: `flutter test test/script_test.dart test/tutorial_test.dart`
 
-*   **Async Animation Helpers** (`lib/animate.dart`)
+*   **Animation Timing & Helpers** (`lib/animate.dart`)
 
-    Run: `flutter test test/async_test.dart`
+    Run: `flutter test test/async_test.dart test/animator_test.dart`
+
+*   **Printer & Logging Utilities** (`lib/printer.dart`)
+
+    Run: `flutter test test/printer_test.dart`
 
 *   **General UI / Layout** (`lib/widget.dart`)
 

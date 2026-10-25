@@ -1,250 +1,364 @@
-# Spacetime Tutorials
+# Spacetime Tutorials Plan
 
-A tutorial will be used to help the user learn to use the program. It can also
-be used to teach the core concepts of special relativity.
-The user will be able to select one of several tutorials and then run it.
+Interactive tutorials help users learn to use the Spacetime Drawing Tool and
+explore the core concepts of special relativity through hands-on guidance.
 
-Tutorials will be stored as text files. Prebuilt tutorials can be served by the
-server that also serves the app or built into the app.
-Optionally, we can allow users to write their own tutorials and share them with
-others.
+The user will be able to select from built-in tutorials or load custom
+tutorials from local storage, Google Drive, or the clipboard.
 
-## Tutorial Steps
+______________________________________________________________________
 
-A tutorial is going to be a list of steps. Each step might contain several sub
-steps. Each step will have a one-line title and some optional extra text that can be a
-longer. Each step will have an "exit criterion", such as "the user clicks a
-button" or "the user adjusts a slider to a target value".  A step will also
-have a way to highlight what the user should do. For example: if the exit
-criteria is to click a button, then that button will gently flash.
-When running the tutorial, the app will start at the first step and
-display the step's title and extra text. The user can go back or view previous
-steps or view next steps -- but if the user just does the exit criteria then
-the step finishes and the app goes to the next step.
+## 1. High-Level Vision & Architecture
 
-A step might also have some output that the tutorial can use as input for
-future steps. For example step 1 might be to create an train. Step 2 might be
-to edit the train's color.
+Tutorials are stored as readable Markdown files. Each tutorial consists of
+sequential steps that provide explanatory text alongside interactive prompts.
 
-
-## Tutorial Syntax or File Format
-
-One option is to have a tutorial be saved as a json file. That might not be
-very easy to edit by a human. Another is to make it a markdown file that is
-easier to read, but controls might be hard for the app to parse.
-
-We might want to have a simple programming language for the tutorials. We can
-either build the parser into the app, or have a separate app that helps edit
-and verify a tutorial, and then compiles it into a json file. The json file can
-be loaded and run but not edited by the app.
-
-
-
-## Sample Tutorial
-
-Here is a rough draft of a tutorial scrpt. When writing a tutorial, I think most
-of it will be the text, with a simple description of the exit criteria.
-
-
-
+```mermaid
+graph TD
+    Source["Tutorial Source (.md)<br>Asset / Local / Drive"]
+    Holder["FileHolder<br>(Asset/Local/Drive)"]
+    Source --> Holder
+    Holder --> FM["FileManager"]
+    FM --> Engine["TutorialEngine (lib/script.dart)"]
+    Engine --> Overlay["TutorialCard UI Overlay"]
+    Engine --> Highlights["UI Highlight System"]
+    Engine --> SceneView["SceneView & Sliders"]
 ```
-Einstein came up with special relativity by thinking what it meant for the speed of light to be constant. In this tool, we’ll use a speed of 1 to make the drawings easier to understand.
-> Start a new drawing
-At the bottom of the application are two sliders, one for the current time and one for the observer’s velocity relative to an imaginary reference frame.
-Set the velocity to -0.25
-> v = 0.25
-Add a person
-> multi step to add a person.
-Set the velocity to 0.25
+
+### Core Architecture Components
+
+- **`FileHolder` & `FileManager` Integration**: Generalize `FileHolder` to
+  support both scenes (JSON) and tutorials (Markdown). Provide `AssetHolder`
+  for offline built-in tutorials.
+
+- **`TutorialEngine` (`lib/script.dart`)**: Parses Markdown tutorial files into
+  structured step models, listens to scene/slider changes, checks exit
+  criteria, and manages step transitions.
+
+- **`TutorialCard` UI Overlay**: A floating, non-intrusive card that renders
+  the current step's Markdown instructions, progress indicator, and action
+  controls.
+
+- **Target Highlighting System**: Visually accents the specific UI control or
+  slider the user needs to interact with for the active step.
+
+______________________________________________________________________
+
+## 2. Syntax & Directives: Combined Highlight & Exit
+
+To make authoring concise and human-friendly, directives in tutorial Markdown
+use blockquotes (`>`).
+
+**Combined Directives**: Specifying a target state automatically sets both the
+**highlight target** and the **exit criterion**.
+
+```markdown
 > velocity = 0.25
-Add a train
-> multistep to add a train. Make it blue
-Slide the time back and forth and notice that the person moves but the train stays still. That’s because the observer velocity is still 0.5, which is the train’s velocity. Change the velocity back to -0.25
-> v = 0.25
-Now slide the time back and forth and see that the train is moving.
-Before the theory of relativity was invented, there were two standard theories for the speed of light: it could be like a particle whose speed was relative to its emitter, or it could be like a wave whose speed was relative to its medium. Historically, the medium for light was called the ether.
-> ok
-Let’s add a beam of light emitted from the middle of the train.
-Let’s look at the emitter theory.
-> set menu to emitter.
-Set the volicy to 0.25
-> v = 0.25
-Add a light cone to the middle of the train.
-> add yellow light in middle of the train.
-(maybe select the light and move it to the middle).
-Notice that in the main view, the two rays have the same speed: 1.
-> ok
-Slide the time back and forth. Notice that from the train’s point of view the two rays of light hit each end of the train at the same time.
-Notice that the rays move at the same speed.
-> ok
-Now let’s look at it from the person’s view.
-> v = -0.25
-Slide the time back and forth.
-Notice that the ray moving in the same direction of the train is faster than the ray moving backwards.
-In the person’s frame of reference, the two rays of light hit the ends of the train at the same tim.
-> ok
-Now let’s assume that light moves through an ether.
-> ether
-Notice that the rays don’t have the same speed.
-Change to the train’s reference.
-> v = 0.25
-Notice that the rays still don’t have the same speed.
-Change to the ether’s reference frame.
-> v = 0
-Now, the rays have the same speed of 1.
-Look at when the rays hit the edge of the train. Ray moving backward hits first. If you change reference frames, this is always true.
-> ok
-But experiments on the speed of light always showed it had the same speed – no matter what the relative speeds of the emitter and observer were.
-There is a way to change coordinates that keeps the speed of light the same. It’s the Lorentz transformation.
-> lorentz
-Look at the train’s frame of reference.
-> v = .25
-Notice that the rays have the same speed, and that they hit the ends of the train at the same time.
-Now look at the person’s frame
-> v = 0.25
-Notice that the rays still have the same speed. What changed? When the rays hit
-the end of the train is no longer at the same time.
-
 ```
 
-## Architecture & Design Review
+This single line instructs the engine to:
 
-### Step Model & Exit Criteria
-* **Interactive Guidance**: Using exit criteria (such as button clicks, slider thresholds, or canvas additions) provides clear hands-on learning.
-* **UI Highlighting**: Visual cues (e.g., pulsing/glowing target UI controls) help direct user focus.
-* **Flexibility**: Manual navigation (Previous/Next) alongside automatic exit-criterion progression gives the user full control over the pace.
-* **Variable Reference**: Steps that produce output (e.g., creating an entity) should generate or reference clear target IDs for subsequent steps.
+1. **Highlight** the observer velocity slider.
+1. **Wait for exit**: trigger step completion when the observer velocity
+   reaches `0.25` within default tolerance.
 
-### Format & Parsing Options
-* **Human-Readable Source Format**: Markdown with embedded structured directives (YAML frontmatter per step or block directives) allows clear human editing and simple machine parsing.
-* **Compilation & Validation**: Compiling human-authored tutorials into JSON artifacts (or parsing them with runtime schema validation) ensures data integrity across versions.
+### Built-in Directives & Default Tolerances
 
-### Key Implementation Considerations
-* **UI Target Registration**: Interactive controls (sliders, toolbar buttons, canvas elements) should register key identifiers so the tutorial engine can position highlights accurately.
-* **Directive Types**:
-  * **User Directives (Exit Criteria)**: Wait for state updates matching specific conditions.
-  * **Script Directives (Auto-setup)**: Programmatically apply UI/scene states (e.g., setting frame velocity or switching light models).
-* **Baseline State Reset**: Allow tutorials to snapshot or reset baseline scene configurations at each step boundary.
+- `> v = 0.25` or `> velocity = 0.25`: Highlights velocity slider; exits when
+  observer velocity reaches target (default tolerance $\pm 0.02$).
 
-### Substeps & Composite Action Macros
-* **Composite Steps**: Complex actions (e.g., `Add a blue train named T1 with velocity 0.5`) can be written by tutorial authors as single macro commands.
-* **Automatic Substep Expansion**: The engine automatically expands macro steps into explicit sequential substeps for the user:
-  1. Select the "Add Location" tool.
-  2. Click on the canvas to place a Train.
-  3. Rename the object to "T1".
-  4. Change object color to blue.
-  5. Set velocity to 0.5.
-* **Hierarchical UI & Expandability**: The tutorial UI can present the overall step title (e.g., "Create Train T1"), while providing a collapsible checklist of substeps. Experienced users can complete the combined task in one go, while beginners can expand and follow each individual highlighted UI step.
+- `> t = 2.0` or `> time = 2.0`: Highlights time slider; exits when observer
+  time reaches target (default tolerance $\pm 0.1$).
 
-### Dynamic & Relational Exit Criteria
-* **Relational Expressions**: Exit criteria should support boolean expressions evaluating runtime entity states in specific reference frames (e.g., `abs(p1.x_obs - p2.x_obs) < 0.05` or `p1.x_world == p2.x_world`).
-* **Frame Awareness**: Differentiate between observer-frame coordinates (`x_obs`, `t_obs`) and world-frame coordinates (`x_world`, `t_world`).
-* **Tolerance Handling**: Provide built-in floating-point tolerance/delta checks (`abs(a - b) < delta`) so user slider adjustments easily satisfy collision/coincidence steps without requiring exact floating-point equality.
+- `> mode = ether` or `> ether`: Highlights light speed menu; exits when Ether
+  mode is selected.
 
-## Script Syntax Options
+- `> lorentz`: Highlights light speed menu; exits when Lorentz mode is
+  selected.
 
-Here are 4 clear options for separating user-facing text from step control directives (`setup`, `exit`, `highlight`, `macro`):
+- `> ok` or `> next`: Highlights "Continue" button on the card; exits on click.
 
-### Option 1: Markdown + Blockquote Directives (Selected Preference)
-Uses simple Markdown blockquotes (`>`) with prefix key-value commands.
+- `> setup: <actions>`: Programmatically sets scene state (e.g.,
+  `v=0, t=0, mode=lorentz`). Exits immediately without user interaction.
+
+- `> reset`: Clears the canvas to a clean baseline state. Exits immediately
+  without user interaction.
+
+### Custom Tolerance Override
+
+Authors can optionally override default tolerances directly on numeric
+directives when finer or coarser precision is needed:
 
 ```markdown
-## Step 1: Initialize Observer
-Adjust the observer's velocity slider to -0.25.
-
-> setup: mode=lorentz
-> exit: v == -0.25
-> highlight: slider.v
+> v = 0.25 tol=0.005
+> t = 5.0 tol=0.5
 ```
-* **Pros**: Simple to type and read; standard Markdown rendering ignores or styles blockquotes cleanly.
-* **Cons**: Parsing complex expressions or multi-line directives can be clunky.
 
+### Setup Directives
 
----
-
-### Option 2: Fenced Code Blocks (````tutorial`)
-Uses custom Markdown fenced code blocks to group step directives clearly.
+When a step requires preparing the drawing without requiring the student to
+manually build it, a `setup:` directive configures the scene state at the start
+of that step:
 
 ```markdown
-## Step 1: Initialize Observer
-Adjust the observer's velocity slider to -0.25.
-
-```tutorial
-setup: mode=lorentz
-exit: v == -0.25
-highlight: slider.v
-macro: create_location type=train name="T1"
+> setup: v=0, t=0, mode=lorentz
+> setup: load="assets/scenes/train_and_light.json"
 ```
-```
-* **Pros**: Very clean visual separation between prose and code; straightforward regex/line parsing inside fenced blocks.
-* **Cons**: Takes up a few extra lines in source files.
 
----
+______________________________________________________________________
 
-### Option 3: YAML Block / Frontmatter per Step
-Uses standard YAML key-value pairs per step.
+## 3. Sample Tutorial Script
+
+Here is an example tutorial using the combined syntax:
 
 ```markdown
----
-step: 1
-title: "Initialize Observer"
-setup:
-  mode: lorentz
-exit: "v == -0.25"
-highlight: slider.v
----
+# Speed of Light in Moving Frames
 
-Adjust the observer's velocity slider to -0.25.
+Learn how light behaves under different physical assumptions.
+
+## Step 1: Start Fresh
+Welcome! Let's start with a clean diagram and look at our sliders.
+
+> reset
+> setup: v=0.0, t=0.0, mode=lorentz
+> ok
+
+## Step 2: Set Observer Velocity
+At the bottom of the screen is the velocity slider. Set the velocity
+to 0.25 to see the reference frame tilt.
+
+> v = 0.25
+
+## Step 3: Add Light Ray
+Let's observe how light travels. Notice the yellow light cone in the
+diagram. Even though the observer moves at v = 0.25, the light ray's
+speed remains exactly 1.0!
+
+> setup: load="assets/scenes/light_pulse.json"
+> ok
+
+## Step 4: Examine the Ether Hypothesis
+Before relativity, physicists thought light traveled through a medium
+called the ether. Switch the light speed model to Ether.
+
+> mode = ether
+
+## Step 5: Test Relative Light Speed
+Adjust the velocity back to 0 to return to the ether's rest frame.
+Notice that the rays only travel at speed 1 when at rest relative to the
+ether!
+
+> v = 0.0
 ```
-* **Pros**: Highly structured; can be parsed directly by standard YAML parsers.
-* **Cons**: Text prose is separated from step metadata by boundary lines (`---`).
 
----
+______________________________________________________________________
 
-### Option 4: HTML Comment Directives
-Embeds directives inside HTML comment tags `<!-- tutorial ... -->`.
+## 4. Storage, Bundling & File Management Integration
 
-```markdown
-## Step 1: Initialize Observer
-Adjust the observer's velocity slider to -0.25.
+Tutorials need to be easily accessible without requiring login, while also
+allowing users and educators to create, share, and open custom tutorials.
 
-<!-- tutorial
-setup: mode=lorentz
-exit: v == -0.25
-highlight: slider.v
--->
+### Bundled Built-in Tutorials (No Login Required)
+
+- Built-in tutorials are stored in the app asset bundle:
+  `assets/tutorials/*.md`.
+
+- The asset directory is declared in `pubspec.yaml` and bundled into both the
+  Web and Android builds.
+
+- An asset manifest or registry lists available built-in tutorials:
+
+  - `01_speed_of_light.md`: Light speed constancy across frames.
+  - `02_time_dilation.md`: Moving clocks run slow.
+  - `03_length_contraction.md`: Moving rulers contract.
+  - `04_barn_pole_paradox.md`: Simultaneity and the barn-pole paradox.
+
+- Users can open any built-in tutorial directly from the dedicated "Tutorials"
+  section in the drawer or top menu bar without logging in.
+
+### Tweaking `FileHolder` & `FileManager`
+
+We can generalize [`FileHolder`](lib/file_holder.dart) and
+[`FileManager`](lib/file_manager.dart) to seamlessly support both scene JSON
+and tutorial Markdown documents:
+
+```mermaid
+classDiagram
+    class FileHolder {
+        +String id
+        +String title
+        +FileKind kind
+        +loadData(FileManager) Future~String~
+        +saveData(String, FileManager) Future~bool~
+    }
+    class AssetHolder {
+        +String assetPath
+        +loadData(FileManager) Future~String~
+    }
+    class DriveHolder {
+        +String fileId
+    }
+    class LocalFileHolder {
+        +String id
+    }
+    class JsonHolder {
+        +String data
+    }
+    FileHolder <|-- AssetHolder
+    FileHolder <|-- DriveHolder
+    FileHolder <|-- LocalFileHolder
+    FileHolder <|-- JsonHolder
 ```
-* **Pros**: In standard Markdown viewers, control directives are hidden, leaving only human readable lesson text.
-* **Cons**: Can make directives harder to spot while editing without a syntax-highlighting editor.
 
+1. **`FileKind` Enumeration**: Add an explicit kind to `FileHolder`:
 
----
+   - `FileKind.scene` (standard spacetime drawings, `.sp` / `.json`).
+   - `FileKind.tutorial` (interactive tutorial lessons, `.md` / `.sptut`).
 
-## Tutorial UI & Interaction Design
+1. **`AssetHolder` Implementation**: A concrete `FileHolder` that loads text
+   assets via `rootBundle.loadString(assetPath)`. Read-only, requires no
+   network or auth.
 
-### Tutorial Overlay Panel
-* **Positioning**: Docked card overlay (top right or bottom panel) over the Spacetime workspace.
-* **Header Controls**: Title, step index (`Step 2 of 8`), Progress bar, and navigation (`< Prev`, `Next >`, `Close`).
-* **Body Content**: Step instructions rendered via Markdown text.
-* **Collapsible Substeps**: For macro steps, a toggleable breakdown checklist showing granular substep requirements and completion checkmarks.
+1. **Drive & Local File Compatibility**:
 
-### Visual Highlighting System
-* **Pulse/Glow Overlay**: Target UI controls (toolbar buttons, sliders, inspector fields) render a animated highlight border when referenced in the active step's `highlight:` directive.
-* **Canvas Focus**: Canvas entities referenced in steps display an animated target reticle in the drawing area.
+   - [`DriveHolder`](lib/drive.dart) and
+     [`LocalFileHolder`](lib/local_file.dart) already load and save arbitrary
+     text strings.
+   - By associating `FileKind`, `FileManager` can filter file pickers to either
+     drawings or tutorials.
 
----
+1. **Scene Stashing & Session Safety**:
 
-## Storage & File Management
+   - When launching a tutorial, `FileManager` checks if the current scene has
+     unsaved changes.
+   - If clean (or after user saves), the active scene is stashed in memory.
+   - While the tutorial is active, the scene view operates in a tutorial
+     sandbox.
+   - When the user exits or finishes the tutorial, the stashed user scene is
+     restored cleanly.
 
-### Custom File Extension & MIME Type
-* **File Extension**: `.sptut` (Spacetime Tutorial) or `.md`
-* **JSON Schema MIME**: `application/x-spacetime-tutorial+json` or plain `text/markdown`
-* **Google Drive Integration**:
-  * Save and load `.sptut` files alongside standard `.sp` / `.json` drawing files in Google Drive.
-  * Custom Google Drive MIME type (`application/x-spacetime-tutorial`) to allow filtering tutorials in file pickers.
+______________________________________________________________________
 
-### Tutorial Editor & Authoring Workflow
-* **Built-in Script Editor**: An inline syntax editor (similar to `JsonSyntaxEditorDialog`) with live parsing, error checking, and step preview.
-* **Local & Remote Storage**:
-  * **Prebuilt Tutorials**: Bundled as app web/assets (`assets/tutorials/*.sptut`).
-  * **User Tutorials**: Saved locally, copied to clipboard, or synced to Google Drive via `FileHolder` implementations.
+## 5. Tutorial UI & Interaction Design
+
+The tutorial interface must be clear, responsive, and avoid blocking the
+interactive canvas or the sliders.
+
+### Tutorial Overlay Card (`TutorialCard`)
+
+```
++-------------------------------------------------------------+
+| [TUTORIAL] Speed of Light in Moving Frames     [Reset] [X]  |
+| Step 2 of 5: Set Observer Velocity                          |
+| [========================---------------------------------] |
++-------------------------------------------------------------+
+| Move the observer velocity slider at the bottom to 0.25.    |
+| Notice how the coordinate grid tilts under the Lorentz      |
+| transformation.                                             |
++-------------------------------------------------------------+
+| [Target: v = 0.25  | Current: v = 0.12]                     |
+| [< Back]                                       [Continue >] |
++-------------------------------------------------------------+
+```
+
+### Component Details
+
+- **Card Positioning**:
+
+  - **Desktop / Wide Layout**: Docked in the upper right corner of the main
+    workspace, floating over the canvas with subtle shadow. Can be dragged or
+    collapsed by the user if it covers an area of interest.
+  - **Mobile / Narrow Layout**: Compact panel pinned between the main canvas
+    and the sliders, with an expandable drawer for longer explanations.
+
+- **Header**:
+
+  - Tutorial title and step badge (`Step 2 of 5`).
+  - Linear progress bar indicating completion percentage.
+  - **Reset Step Button**: Reapplies the step's initial baseline setup if the
+    user gets confused or makes unintentional scene changes.
+  - **Close Button ($X$)**: Prompts confirmation to exit tutorial mode and
+    returns to normal drawing.
+
+- **Body Content**:
+
+  - Formatted Markdown text (rendered with Flutter `markdown` widget).
+  - Supports bullet points, emphasis, and math symbols.
+
+- **Live Feedback Status**:
+
+  - Shows target vs current state in real time: e.g.,
+    `Target: v = 0.25 | Current: 0.10`.
+  - When criteria are met, the badge flashes green: `✓ Target reached!`.
+  - A brief delay (400–600ms) gives the user satisfying visual feedback before
+    advancing to the next step.
+
+- **Navigation**:
+
+  - `< Back`: Returns to the previous step and restores its baseline setup.
+  - `Continue >`: Active for informational steps (`> ok`), or allows manual
+    advance if the user wants to skip.
+
+### UI Highlighting System
+
+- **Highlight Target Registry**: Interactive controls register their target
+  IDs:
+
+  - `slider.velocity` $\rightarrow$ Velocity slider row.
+  - `slider.time` $\rightarrow$ Time slider row.
+  - `menu.light_speed` $\rightarrow$ Light speed model menu / dropdown.
+  - `tutorial.continue` $\rightarrow$ "Continue" button on the tutorial card.
+
+- **Visual Effect**:
+
+  - When highlighted, the target widget displays an animated pulsing border or
+    glowing accent outline (using the theme's secondary or accent color).
+  - When criteria are satisfied, the pulse transitions to a steady green check
+    glow before advancing.
+
+______________________________________________________________________
+
+## 6. Proof of Concept (PoC) Plan
+
+The goal of the Proof of Concept is to validate the core loop: loading a
+bundled tutorial Markdown asset, parsing combined directives, highlighting a
+slider, detecting exit criteria, and progressing through steps.
+
+### PoC Scope Boundaries
+
+1. **Parser (`lib/script.dart`)**:
+
+   - Parse Markdown into a `Tutorial` model containing a list of `TutorialStep`
+     objects.
+   - Parse combined directives:
+     - `> v = <number>` / `> velocity = <number>` (default $\pm 0.02$ tol).
+     - `> t = <number>` / `> time = <number>` (default $\pm 0.1$ tol).
+     - `> ok` / `> next` (advances on button tap).
+     - `> reset` (clears drawing).
+
+1. **File Loading (`AssetHolder`)**:
+
+   - Add `AssetHolder` to `lib/file_holder.dart`.
+   - Bundle a 4-step tutorial at `assets/tutorials/speed_of_light.md`.
+
+1. **Overlay & Highlight UI**:
+
+   - Create `TutorialCard` in `lib/widget.dart` (or
+     `lib/tutorial_widget.dart`).
+   - Add highlight wrapper around the velocity and time sliders.
+
+1. **Test Suite**:
+
+   - Unit tests for directive parsing and tolerance math in
+     `test/script_test.dart`.
+   - Widget test verifying tutorial step advancement in
+     `test/tutorial_test.dart`.
+
+______________________________________________________________________
+
+## 7. Future Enhancements (Post-PoC)
+
+- Relational entity criteria (e.g. checking position of objects in canvas).
+- Canvas reticle overlays pointing to specific drawing entities.
+- Google Drive file picker filtering for `.md` / `.sptut` tutorial files.
+- Authoring mode / in-app tutorial editor.

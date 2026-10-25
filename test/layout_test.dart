@@ -10,16 +10,9 @@ import 'app_tester.dart';
 // not seem to show us the elided text. Still, the test below is still
 // valuable because a layout overflow would be triggered if we didn't
 // elide or wrap the text.
-void checkOverflow(tester, String overflowWord) {
+void checkOverflow(WidgetTester tester, String overflowWord) {
   var overflows = find.textContaining(overflowWord);
-  var result = overflows.evaluate();
-  for (var element in result) {
-    var textWidget = element.widget as Text;
-    // tester.widget<Text>(find.byType(Text, element));
-    // XXX -------- why does this not work? It shows all of the text, not
-    // just the text that is rendered.
-    // XXX expect(textWidget.data!.endsWith('…'), isTrue);
-  }
+  expect(overflows, findsWidgets);
 }
 
 void main() {

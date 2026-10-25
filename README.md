@@ -1,4 +1,4 @@
-# Spacetime Drawing Tool (v6.0.1+2)
+# Spacetime Drawing Tool (v6.0.4+1)
 
 An interactive, educational drawing and animation tool for visualizing special
 relativity in 1 time $t$ and 2 space $(x,z)* dimensions. It helps students,

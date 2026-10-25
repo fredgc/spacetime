@@ -68,7 +68,7 @@ enum Sprite {
   String toString() => label;
 
   // If we want to load something from the assets, do it here.
-  static bool init_running = false;
+  static bool _initRunning = false;
   static bool initialized = false;
   static Future<void> initialize(
     BuildContext context,
@@ -76,13 +76,13 @@ enum Sprite {
   ) async {
     if (initialized) {
       Log.init.log("GREEN: sprite already initialized.");
-    } else if (init_running) {
+    } else if (_initRunning) {
       Log.init.log("XXX Sprite init second time.");
     } else {
-      init_running = true;
+      _initRunning = true;
       await dsleep("sprites", 5);
       initialized = true;
-      init_running = false;
+      _initRunning = false;
       // XXX -- do this with files, too?
       settings.notify(); // Tell settings to notify everybody to rebuild.
     }

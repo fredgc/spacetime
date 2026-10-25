@@ -3,13 +3,14 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:spacetime/slider.dart';
 
+// ignore: must_be_immutable
 class SliderHolder extends StatelessWidget {
   final MySlider slider;
   final String title;
 
   AnimationController controller;
   int ticks = 0;
-  double previous_clock = 0.0;
+  double previousClock = 0.0;
   AnimationStatus status = AnimationStatus.dismissed;
 
   SliderHolder({
@@ -27,7 +28,7 @@ class SliderHolder extends StatelessWidget {
       this.status = status;
       // print("Animation status: $status, value = ${zzz(controller.value)}");
       // if (status == AnimationStatus.completed) {
-      //   // Warn the scene_viewer that the animation is going to reset.
+      //   // Warn the sceneViewer that the animation is going to reset.
       //   onComplete();
       // }
     });
@@ -45,16 +46,16 @@ class SliderHolder extends StatelessWidget {
   }
 
   void start() {
-    previous_clock = 0.0;
+    previousClock = 0.0;
     controller.reset();
     controller.forward();
   }
 
   void hearTick() {
     ticks++;
-    double dt = controller.value - previous_clock;
-    bool changed = slider.updateTime(dt);
-    previous_clock = controller.value;
+    double dt = controller.value - previousClock;
+    slider.updateTime(dt);
+    previousClock = controller.value;
     //     print("Tick $ticks: $dt, time=${zzz(controller.value)}, slider=${zzz(slider.value)}");
   }
 }
@@ -92,14 +93,14 @@ void main() {
     // print("PURPLE: d value = ${slider.value}, speed=${slider.speed}");
 
     expect(slider.value, closeTo(0.0, epsilon));
-    await tester.pumpFrames(holder, Duration(seconds: 5));
+    await tester.pumpFrames(holder, const Duration(seconds: 5));
     // print("PURPLE: e value = ${slider.value}, speed=${slider.speed}");
     expect(slider.value, closeTo(0.5, epsilon));
     expect(holder.status, AnimationStatus.forward);
-    await tester.pumpFrames(holder, Duration(seconds: 5));
+    await tester.pumpFrames(holder, const Duration(seconds: 5));
     // print("PURPLE: f value = ${slider.value}, speed=${slider.speed}");
     expect(slider.value, closeTo(1.0, epsilon));
-    await tester.pumpFrames(holder, Duration(seconds: 5));
+    await tester.pumpFrames(holder, const Duration(seconds: 5));
     // print("PURPLE: g value = ${slider.value}, speed=${slider.speed}");
     expect(slider.value, closeTo(1.0, epsilon));
     expect(holder.status, AnimationStatus.completed);

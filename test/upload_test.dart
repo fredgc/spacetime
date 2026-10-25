@@ -1,6 +1,13 @@
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:spacetime/file_holder.dart';
+import 'package:spacetime/file_manager.dart';
+import 'package:spacetime/local_file.dart';
 import 'package:spacetime/scene.dart';
+import 'package:spacetime/settings.dart';
 
 import 'app_tester.dart';
 import 'test_data.dart';
@@ -86,11 +93,102 @@ void main() {
       await app.teardown();
     });
   });
-  /*
-   Test saveas with user doesn't choose anything.
-  test save error (write permission?)
-  verify recent files.
-  test load recent download/upload file. Make sure path makes sense.
-  test reload a downloaded file.
-  */
+
+  group('Clipboard URL save and load', () {
+    String? clipboardText;
+
+    setUp(() {
+      clipboardText = null;
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(SystemChannels.platform, (call) async {
+            if (call.method == 'Clipboard.setData') {
+              clipboardText = (call.arguments as Map)['text'] as String?;
+              return null;
+            }
+            if (call.method == 'Clipboard.getData') {
+              return <String, dynamic>{'text': clipboardText};
+            }
+            return null;
+          });
+    });
+
+    tearDown(() {
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(SystemChannels.platform, null);
+    });
+
+    test('ClipboardHolder saves JSON as URL and loads it back cleanly', () async {
+      final settings = Settings();
+      final manager = FileManager(settings);
+      final saveHolder = ClipboardHolder(true);
+      final sampleJson = jsonEncode(TestData.person.data);
+
+      final saved = await saveHolder.saveData(sampleJson, manager);
+      expect(saved, isTrue);
+      expect(clipboardText, isNotNull);
+      expect(clipboardText!, contains('/scene?json='));
+
+      // Also verify loading a full http:// URL with query parameters works
+      clipboardText =
+          'https://spacetime.gchouse.org/scene?json=${Uri.encodeQueryComponent(sampleJson)}';
+      final loadHolder = ClipboardHolder(false);
+      final loadedJson = await loadHolder.loadData(manager);
+      final loadedScene = SceneData.fromJsonString(loadedJson);
+      expect(loadedScene.title, equals(TestData.person.data.title));
+      expect(
+        loadedScene.drawables.length,
+        equals(TestData.person.data.drawables.length),
+      );
+    });
+
+    test('ClipboardHolder loads hash-routed URL (#/scene?json=...)', () async {
+      final settings = Settings();
+      final manager = FileManager(settings);
+      final sampleJson = jsonEncode(TestData.train.data);
+
+      clipboardText =
+          'https://spacetime.gchouse.org/#/scene?json=${Uri.encodeQueryComponent(sampleJson)}';
+      final loadHolder = ClipboardHolder(false);
+      final loadedJson = await loadHolder.loadData(manager);
+      final loadedScene = SceneData.fromJsonString(loadedJson);
+      expect(loadedScene.title, equals(TestData.train.data.title));
+    });
+  });
+
+  group('Save-As counter increment', () {
+    testWidgets(
+      'Save As New Local File increments title counter when title already exists and lets user edit it',
+      (tester) async {
+        final app = AppTester(tester);
+        await app.setup();
+        await app.initialize();
+        await app.loadAndFindScene("initial", SceneData());
+        await app.openLocal("3", TestData.train.data);
+
+        // LocalFileHolder.titles already has "Train Local File" (from seed or open).
+        LocalFileHolder.titles["3"] = TestData.train.data.title;
+
+        // Enable real Save-As confirmation dialog
+        app.manager.isTesting = false;
+
+        // Open Save As -> Local Data -> New Local File
+        await app.tapMenus("Save As", "Local Data");
+        await tester.tap(find.byKey(const ValueKey('new-local')));
+        await tester.pumpAndSettle();
+
+        // Confirm Properties dialog should appear with incremented title ("... 2")
+        expect(find.text("Confirm Properties Before Saving"), findsOneWidget);
+        expect(
+          find.widgetWithText(TextField, "${TestData.train.data.title} 2"),
+          findsOneWidget,
+        );
+
+        // Cancel out and restore testing flag
+        await tester.tap(find.text("Cancel"));
+        await tester.pumpAndSettle();
+        app.manager.isTesting = true;
+        await app.teardown();
+      },
+    );
+  });
 }

@@ -38,7 +38,7 @@ class PromptMockDriveAccess extends MyDriveAccess {
 
   @override
   Future<bool> checkAuthorization() async {
-    return status == DriveAccessStatus.Authorized;
+    return status == DriveAccessStatus.authorized;
   }
 }
 
@@ -156,7 +156,7 @@ void main() {
           InMemorySharedPreferencesAsync.empty();
       final settings = Settings();
       final manager = FileManager(settings);
-      manager.drive_access.isTesting = true;
+      manager.driveAccess.isTesting = true;
 
       final expiry = DateTime.now().toUtc().add(const Duration(hours: 1));
       final credentials = auth.AccessCredentials(
@@ -166,12 +166,12 @@ void main() {
         idToken: 'test_id',
       );
       await TokenStorage.saveCredentials(credentials);
-      manager.drive_access.cachedUserInfo = {
+      manager.driveAccess.cachedUserInfo = {
         'id': 'user1',
         'email': 'user@example.com',
         'displayName': 'Test User',
       };
-      manager.drive_access.setAuthorized(true);
+      manager.driveAccess.setAuthorized(true);
 
       final recent = RecentFiles();
       await tester.pumpWidget(
@@ -204,7 +204,7 @@ void main() {
           ..name = 'My Spacetime Diagram';
         final mockAccess = MockDriveAccess([testFile]);
         mockAccess.isTesting = true;
-        manager.drive_access = mockAccess;
+        manager.driveAccess = mockAccess;
 
         final expiry = DateTime.now().toUtc().add(const Duration(hours: 1));
         final credentials = auth.AccessCredentials(
@@ -304,7 +304,7 @@ void main() {
 
       final mockAccess = MockDriveAccess([myFile, sharedFile]);
       mockAccess.isTesting = true;
-      manager.drive_access = mockAccess;
+      manager.driveAccess = mockAccess;
 
       final expiry = DateTime.now().toUtc().add(const Duration(hours: 1));
       final credentials = auth.AccessCredentials(
@@ -372,7 +372,7 @@ void main() {
 
       final mockAccess = MockDriveAccess([fileWithDate, fileWithoutDate]);
       mockAccess.isTesting = true;
-      manager.drive_access = mockAccess;
+      manager.driveAccess = mockAccess;
 
       final expiry = DateTime.now().toUtc().add(const Duration(hours: 1));
       final credentials = auth.AccessCredentials(
@@ -501,8 +501,8 @@ void main() {
       () async {
         final settings = Settings();
         final manager = FileManager(settings);
-        manager.drive_access.isTesting = true;
-        manager.drive_access.setAuthorized(false);
+        manager.driveAccess.isTesting = true;
+        manager.driveAccess.setAuthorized(false);
 
         final holder = DriveHolder('test-file-id');
         expect(
@@ -529,11 +529,11 @@ void main() {
         mockAccess.isTesting = true;
         mockAccess.setAuthorized(false);
         mockAccess.authorizationResult = false;
-        manager.drive_access = mockAccess;
+        manager.driveAccess = mockAccess;
 
         final initialHolder = FileHolder('');
         manager.current.holder = initialHolder;
-        manager.status = LoadingStatus.Loaded;
+        manager.status = LoadingStatus.loaded;
 
         await tester.pumpWidget(
           MaterialApp(
@@ -555,7 +555,7 @@ void main() {
         expect(mockAccess.getAuthorizationCalled, isTrue);
         // Because user cancelled authorization, manager should not have changed to drive holder
         expect(manager.current.holder, equals(initialHolder));
-        expect(manager.status, equals(LoadingStatus.Loaded));
+        expect(manager.status, equals(LoadingStatus.loaded));
       },
     );
 
@@ -563,15 +563,15 @@ void main() {
       'SplashWidget shows Sign In to Google Drive button when DriveHolder fails with auth error',
       (tester) async {
         final settings = Settings();
-        settings.status = SettingsStatus.Initialized;
+        settings.status = SettingsStatus.initialized;
         Sprite.initialized = true;
         final manager = FileManager(settings);
         manager.isTesting = true;
-        manager.drive_access.isTesting = true;
-        manager.drive_access.setAuthorized(false);
+        manager.driveAccess.isTesting = true;
+        manager.driveAccess.setAuthorized(false);
 
         manager.current.holder = DriveHolder('test-drive-id');
-        manager.status = LoadingStatus.Error;
+        manager.status = LoadingStatus.error;
         manager.exception = Exception(
           'Not logged in or permissions not granted for Google Drive.',
         );

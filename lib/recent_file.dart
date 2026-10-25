@@ -12,40 +12,33 @@ import 'upload.dart';
 
 class RecentFiles with ChangeNotifier {
   List<FileHolder> recent = [];
-  static final String recent_list_label = "recent_files";
-  static final int max_recent_count = 5;
+  static final String recentListLabel = "recent_files";
+  static final int maxRecentCount = 5;
 
   // Can call     notifyListeners();
 
   Future<void> initialize() async {
     recent = await fetchRecent();
-    for (var r in recent) {
-      //BLUE: debug only.
-      // XXX Log.files.log("  Recent $r");
-    }
   }
 
   Future<void> save(List<FileHolder> files) async {
-    var encoder = JsonEncoder.withIndent("  "); // indent for debugging.
+    var encoder = const JsonEncoder.withIndent("  "); // indent for debugging.
     List<String> json = files.map((r) => encoder.convert(r)).toList();
     final prefs = SharedPreferencesAsync();
-    await prefs.setStringList(recent_list_label, json);
+    await prefs.setStringList(recentListLabel, json);
   }
 
   // Or maybe load?
   Future<List<FileHolder>> fetchRecent() async {
     final prefs = SharedPreferencesAsync();
-    List<String>? json = await prefs.getStringList(recent_list_label);
+    List<String>? json = await prefs.getStringList(recentListLabel);
     if (json == null) {
       // Log.files.log("No recent files in preferences.");
       return [];
     }
-    for (var r in json) {
-      // XXX Log.files.log("BLUE: Recent json = $r");
-    }
     return json
         .map((text) => extractRecent(text))
-        .where((x) => !x.skip_recent)
+        .where((x) => !x.skipRecent)
         .toList();
   }
 
@@ -57,15 +50,15 @@ class RecentFiles with ChangeNotifier {
       String title = json['title'];
       FileHolder file;
       // XXX skip some of these. They cannot be saved as recent.
-      if (type == ClipboardHolder.type_name) {
+      if (type == ClipboardHolder.typeName) {
         file = ClipboardHolder(true);
-      } else if (type == JsonHolder.type_name) {
+      } else if (type == JsonHolder.typeName) {
         file = JsonHolder(id);
-      } else if (type == DriveHolder.type_name) {
+      } else if (type == DriveHolder.typeName) {
         file = DriveHolder(id);
-      } else if (type == UploadHolder.type_name) {
+      } else if (type == UploadHolder.typeName) {
         file = UploadHolder(id);
-      } else if (type == LocalFileHolder.type_name) {
+      } else if (type == LocalFileHolder.typeName) {
         file = LocalFileHolder(id);
       } else {
         file = FileHolder(id);
@@ -81,25 +74,20 @@ class RecentFiles with ChangeNotifier {
 
   Future<void> add(FileHolder holder) async {
     // Log.files.log("Add recent: $holder");
-    if (holder.skip_recent) return;
+    if (holder.skipRecent) return;
     // If holder was already in the list, remove it from that position so we can
     // add it toe front.
     recent.remove(holder);
     recent.insert(0, holder);
-    recent.length = math.min(recent.length, max_recent_count);
+    recent.length = math.min(recent.length, maxRecentCount);
     await save(recent);
     // Log.files.log("Recent added $holder");
     notifyListeners();
-    //for (int i = 0; i < recent.length; i++) {
-    //  FileHolder r = recent[i];
-    //  String text = json[i];
-    //  Log.files.log("Recent $i $r");
-    //}
   }
 
   Future<void> remove(FileHolder holder) async {
     recent.remove(holder);
-    recent.length = math.min(recent.length, max_recent_count);
+    recent.length = math.min(recent.length, maxRecentCount);
     await save(recent);
     // Log.files.log("Recent removed $holder");
     notifyListeners();

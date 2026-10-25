@@ -16,14 +16,14 @@ import 'edit.dart';
 // on scale end. deal with it.
 
 class MouseListener {
-  final SceneView scene_viewer;
+  final SceneView sceneViewer;
   final bool side;
   MyScaleListener? scaler;
-  Offset start = Offset(0, 0);
+  Offset start = const Offset(0, 0);
   bool repeat = false; // This is true when a user taps at the same spot.
 
-  MouseListener(this.scene_viewer, this.side) {
-    Log.mouse_scale.log("XXX -- created new mouse listener.");
+  MouseListener(this.sceneViewer, this.side) {
+    Log.mouseScale.log("XXX -- created new mouse listener.");
   }
 
   Widget build(BuildContext context, Widget child) {
@@ -39,7 +39,6 @@ class MouseListener {
           // we assume it is a second tap -- which means we should not
           // reselect the current object.
           final oldStart = start;
-          final dis = (info.localPosition - start).distance; //XXX
           repeat = ((info.localPosition - start).distance < 5.0);
           // Save the starting point for scaling.
           start = info.localPosition;
@@ -50,36 +49,36 @@ class MouseListener {
         },
         onScaleStart: (info) {
           Point? pt =
-              scene_viewer.nearSelected(start, side) ??
-              scene_viewer.nearSelected(info.localFocalPoint, side);
-          Log.mouse_scale.log(
+              sceneViewer.nearSelected(start, side) ??
+              sceneViewer.nearSelected(info.localFocalPoint, side);
+          Log.mouseScale.log(
             "BLUE: onScaleStart. start pt=${zzz(pt)}, side=$side, count=${info.pointerCount}",
           );
-          Log.mouse_scale.log("start = ${zzz(start)}");
-          Log.mouse_scale.log("focal = ${zzz(info.localFocalPoint)}");
-          Log.mouse_scale.log("pt = ${zzz(pt)}");
+          Log.mouseScale.log("start = ${zzz(start)}");
+          Log.mouseScale.log("focal = ${zzz(info.localFocalPoint)}");
+          Log.mouseScale.log("pt = ${zzz(pt)}");
           if (info.pointerCount == 1 && pt != null) {
             var mover = MyObjectMover(
-              scene_viewer,
+              sceneViewer,
               side,
               pt,
-              scene_viewer.selected!,
+              sceneViewer.selected!,
               info.localFocalPoint,
             );
             scaler = mover;
           } else {
-            scaler = MyScaleTransform(scene_viewer, side, info.localFocalPoint);
+            scaler = MyScaleTransform(sceneViewer, side, info.localFocalPoint);
           }
         },
         onScaleUpdate: (info) => scaler?.update(info),
         onScaleEnd: (info) {
-          Log.mouse_scale.log(
+          Log.mouseScale.log(
             "BLUE: onScaleEnd. velocity= ${zzz(info.velocity)}",
           );
           scaler?.end(info);
           scaler = null;
         },
-        onTapUp: (info) => scene_viewer.onTap(info.localPosition, side, repeat),
+        onTapUp: (info) => sceneViewer.onTap(info.localPosition, side, repeat),
         child: child,
       ),
     );
@@ -87,7 +86,7 @@ class MouseListener {
 
   void onScrollWheel(PointerScrollEvent event, {bool side = false}) {
     MyScaleTransform s = MyScaleTransform(
-      scene_viewer,
+      sceneViewer,
       side,
       event.localPosition,
     );
@@ -99,19 +98,19 @@ class MouseListener {
 
 abstract class MyScaleListener {
   bool side;
-  SceneView scene_viewer;
+  SceneView sceneViewer;
 
-  MyScaleListener(this.scene_viewer, this.side);
+  MyScaleListener(this.sceneViewer, this.side);
   void update(ScaleUpdateDetails info);
   void end(ScaleEndDetails info);
 }
 
 class MyScaleTransform extends MyScaleListener {
   Offset focus;
-  double previous_scale = 1.0;
+  double _previousScale = 1.0;
 
-  MyScaleTransform(super.scene_viewer, super.side, this.focus) {
-    Log.mouse_scale.log("Scale start. side=$side, focus = ${zzz(focus)}");
+  MyScaleTransform(super.sceneViewer, super.side, this.focus) {
+    Log.mouseScale.log("Scale start. side=$side, focus = ${zzz(focus)}");
   }
 
   @override
@@ -120,19 +119,19 @@ class MyScaleTransform extends MyScaleListener {
   }
 
   void doScale(Offset focus2, double scale) {
-    double zoom = scale / previous_scale;
-    Log.mouse_scale.log(
-      "Zoom ${zzz(zoom)} = ${zzz(scale)} / ${zzz(previous_scale)}, "
+    double zoom = scale / _previousScale;
+    Log.mouseScale.log(
+      "Zoom ${zzz(zoom)} = ${zzz(scale)} / ${zzz(_previousScale)}, "
       "p1 = ${zzz(focus)}, p2 = ${zzz(focus2)}",
     );
-    scene_viewer.doScale(focus, focus2, zoom, side);
+    sceneViewer.doScale(focus, focus2, zoom, side);
     focus = focus2;
-    previous_scale = scale;
+    _previousScale = scale;
   }
 
   @override
   void end(ScaleEndDetails info) {
-    Log.mouse_scale.log("BLUE: Scale end. ");
+    Log.mouseScale.log("BLUE: Scale end. ");
   }
 }
 
@@ -145,7 +144,7 @@ class MyObjectMover extends MyScaleListener {
   Offset lastFocalPoint;
 
   MyObjectMover(
-    super.scene_viewer,
+    super.sceneViewer,
     super.side,
     this.pointer1,
     this.object,
@@ -160,32 +159,32 @@ class MyObjectMover extends MyScaleListener {
   }
 
   void moveBy(Offset delta) {
-    Log.mouse_scale.log("ObjectMover delta = ${zzz(delta)}");
-    Vector obs = scene_viewer.data.transform.fromDelta(delta, side);
+    Log.mouseScale.log("ObjectMover delta = ${zzz(delta)}");
+    Vector obs = sceneViewer.data.transform.fromDelta(delta, side);
     Vector world = obs.fromFrame(
-      scene_viewer.data.transform.frame,
-      scene_viewer.light_speed.value,
+      sceneViewer.data.transform.frame,
+      sceneViewer.lightSpeed.value,
     );
-    Log.mouse_scale.log("ObjMover. delta=${zzz(delta)}, obs=${zzz(obs)}");
-    Log.mouse_scale.log("         world=${zzz(world)}");
+    Log.mouseScale.log("ObjMover. delta=${zzz(delta)}, obs=${zzz(obs)}");
+    Log.mouseScale.log("         world=${zzz(world)}");
     object.moveBy(world);
-    scene_viewer.updateScene();
+    sceneViewer.updateScene();
   }
 
   @override
   void end(ScaleEndDetails info) {
     final Point p1 = objStart;
     final Point p2 = Point.from(object.pt);
-    Log.mouse_scale.log(
-      "ObjMover end. pt_obs=${object.pt_obs}, p1=${zzz(p1)}, p2 = ${zzz(p2)}",
+    Log.mouseScale.log(
+      "ObjMover end. ptObs=${object.ptObs}, p1=${zzz(p1)}, p2 = ${zzz(p2)}",
     );
     final drawable = object;
-    scene_viewer.undo_manager.add(
+    sceneViewer.undoManager.add(
       Change<Point>("Point", p1, p2, (v) {
-        Log.mouse_scale.log("do/undo move $drawable to $v.");
+        Log.mouseScale.log("do/undo move $drawable to $v.");
         drawable.moveTo(v);
-        scene_viewer.updateScene();
-        scene_viewer.file_manager.change();
+        sceneViewer.updateScene();
+        sceneViewer.fileManager.change();
       }),
     );
   }

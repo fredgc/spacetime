@@ -1,5 +1,6 @@
 import 'dart:async';
 
+// ignore_for_file: avoid_print
 import 'package:spacetime/printer.dart';
 
 // This mock creates a future that will delay until the finish method is

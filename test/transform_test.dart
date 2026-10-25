@@ -72,7 +72,6 @@ void main() {
       }
     });
     test('vector', () {
-      final double epsilon = 1e-4;
       math.Random random = math.Random();
       final int lightSpeedCount = LightSpeed.values.length;
       for (int i = 0; i < 100; i++) {
@@ -164,7 +163,7 @@ void main() {
     });
     test('side-view coordinate transformation', () {
       CoordinateTransform transform = CoordinateTransform();
-      transform.resize(Size(400, 400));
+      transform.resize(const Size(400, 400));
       transform.sideHeight = 200.0;
       double time = 0.5;
       Point ptCenter = transform.fromSide(const Offset(200.0, 190.0), time);
@@ -194,7 +193,7 @@ void main() {
         math.Random random = math.Random();
         for (int i = 0; i < 100; i++) {
           CoordinateTransform transform = makeTransform(random);
-          transform.resize(Size(200, 300));
+          transform.resize(const Size(200, 300));
           String ts = zzz(transform);
           Point p1 = makePoint(random);
           Point p2 = makePoint(random);
@@ -241,7 +240,7 @@ void main() {
       math.Random random = math.Random();
       for (int i = 0; i < 100; i++) {
         CoordinateTransform transform = makeTransform(random);
-        transform.resize(Size(200, 300));
+        transform.resize(const Size(200, 300));
         transform.frame.velocity = 0.0;
         final original = CoordinateTransform.from(transform);
         expect(original, CoordinateTransformMatcher(transform));

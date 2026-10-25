@@ -1,3 +1,4 @@
+// ignore_for_file: avoid_print
 import 'dart:convert';
 import 'dart:io';
 
@@ -14,7 +15,7 @@ import 'package:spacetime/transform.dart';
 import 'app_tester.dart';
 import 'test_data.dart';
 
-bool dump_json = false;
+bool dumpJson = false;
 
 bool near(Point a, Point b) {
   final epsilon = 1e-3;
@@ -24,14 +25,14 @@ bool near(Point a, Point b) {
 }
 
 T roundTrip<T>(T first, Function(Map<String, dynamic>) decode) {
-  var encoder = JsonEncoder.withIndent("  ");
+  var encoder = const JsonEncoder.withIndent("  ");
   String json = encoder.convert(first);
-  if (dump_json) print("First: ${first.runtimeType} ${zzz(first)}");
-  if (dump_json) print("  json-> '$json'");
+  if (dumpJson) print("First: ${first.runtimeType} ${zzz(first)}");
+  if (dumpJson) print("  json-> '$json'");
   var jsonMap = jsonDecode(json);
-  if (dump_json) print("  map-> type=${jsonMap.runtimeType}, $jsonMap");
+  if (dumpJson) print("  map-> type=${jsonMap.runtimeType}, $jsonMap");
   T second = decode(jsonMap);
-  if (dump_json) print("  second-> ${zzz(second)}");
+  if (dumpJson) print("  second-> ${zzz(second)}");
   expect(first, second);
   return second;
 }
@@ -39,11 +40,11 @@ T roundTrip<T>(T first, Function(Map<String, dynamic>) decode) {
 // Sometimes jsonDecode gives us a list.
 T listRoundTrip<T>(T first, Function(List) decode) {
   String json = jsonEncode(first);
-  if (dump_json) print("First: ${first.runtimeType} ${zzz(first)}");
-  if (dump_json) print("     json-> '$json'");
+  if (dumpJson) print("First: ${first.runtimeType} ${zzz(first)}");
+  if (dumpJson) print("     json-> '$json'");
   var jsonMap = jsonDecode(json);
   T second = decode(jsonMap);
-  if (dump_json) print("     second-> ${zzz(second)}");
+  if (dumpJson) print("     second-> ${zzz(second)}");
   expect(first, second);
   return second;
 }
@@ -268,7 +269,7 @@ void main() {
           13,
           1,
           5,
-        ].map((c) => c % SceneView.color_list.value.length).toList(),
+        ].map((c) => c % SceneView.colorList.value.length).toList(),
       );
     });
   });
@@ -285,13 +286,13 @@ void main() {
     test('loadFromRawJson recovers file manager from error', () {
       final settings = Settings();
       final manager = FileManager(settings);
-      manager.status = LoadingStatus.Error;
-      manager.exception = FormatException("Invalid JSON");
+      manager.status = LoadingStatus.error;
+      manager.exception = const FormatException("Invalid JSON");
 
       const String validJson = '{"title": "Recovered Drawing", "time": 0.5}';
       manager.loadFromRawJson(validJson);
 
-      expect(manager.status, LoadingStatus.Loaded);
+      expect(manager.status, LoadingStatus.loaded);
       expect(manager.current.scene?.data.title, "Recovered Drawing");
     });
 
@@ -304,7 +305,7 @@ void main() {
       await app.findError("initial");
 
       // Verify splash widget caught the JSON error
-      expect(app.manager.status, LoadingStatus.Error);
+      expect(app.manager.status, LoadingStatus.error);
       expect(
         find.byKey(const ValueKey("edit_json_syntax_button")),
         findsOneWidget,
@@ -333,7 +334,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Dialog closes and scene is loaded
-      expect(app.manager.status, LoadingStatus.Loaded);
+      expect(app.manager.status, LoadingStatus.loaded);
       expect(app.manager.current.scene?.data.title, "Fixed Drawing");
 
       await app.teardown();

@@ -13,23 +13,24 @@ void main() {
   testWidgets('settings', (tester) async {
     final app = AppTester(tester, url: "/settings");
 
-    SettingsStatus heardStatus = SettingsStatus.NotInitialized;
+    SettingsStatus heardStatus = SettingsStatus.notInitialized;
     StreamSubscription listener = app.settings.statusStream().listen((status) {
       heardStatus = status;
     });
     await app.setup();
     expect(find.text("Initiaizing Settings..."), findsOneWidget);
-    expect(heardStatus, SettingsStatus.NotInitialized);
+    expect(heardStatus, SettingsStatus.notInitialized);
     await tester.pumpAndSettle();
-    expect(heardStatus, SettingsStatus.NotInitialized);
+    expect(heardStatus, SettingsStatus.notInitialized);
     await app.finish("settings");
     await tester.pumpAndSettle();
-    expect(heardStatus, SettingsStatus.Initialized);
+    expect(heardStatus, SettingsStatus.initialized);
     expect(find.text("Initiaizing Settings..."), findsNothing);
     expect(find.textContaining("Theme Brightness:"), findsOneWidget);
     expect(find.textContaining("Sticky delay:"), findsOneWidget);
     expect(find.textContaining("Sticky radius:"), findsOneWidget);
     expect(find.textContaining("Dot Size:"), findsOneWidget);
+    listener.cancel();
     await app.teardown();
   });
 
@@ -40,22 +41,22 @@ void main() {
     await tester.pumpAndSettle();
 
     // Verify initial light theme background uses dark object colors for contrast.
-    expect(SceneView.color_list.value.first, Colors.black);
+    expect(SceneView.colorList.value.first, Colors.black);
 
     // Switch theme to dark.
-    app.settings.theme.theme_mode = ThemeMode.dark;
+    app.settings.theme.themeMode = ThemeMode.dark;
     app.settings.theme.updateAndCallback();
     await tester.pumpAndSettle();
 
     // Dark theme background swaps palette to light object colors.
-    expect(SceneView.color_list.value.first, Colors.white);
+    expect(SceneView.colorList.value.first, Colors.white);
 
     // Switch theme back to light.
-    app.settings.theme.theme_mode = ThemeMode.light;
+    app.settings.theme.themeMode = ThemeMode.light;
     app.settings.theme.updateAndCallback();
     await tester.pumpAndSettle();
 
-    expect(SceneView.color_list.value.first, Colors.black);
+    expect(SceneView.colorList.value.first, Colors.black);
 
     await app.teardown();
   });
@@ -72,14 +73,14 @@ void main() {
     SavableInt savableInt = SavableInt("test_int", "Test Int", 42);
     expect(savableInt.value, 42);
 
-    expect(SceneView.show_gridlines.value, false);
-    expect(SceneView.line_width.value, 1.5);
+    expect(SceneView.showGridlines.value, false);
+    expect(SceneView.lineWidth.value, 1.5);
 
-    SceneView.show_gridlines.value = true;
-    SceneView.line_width.value = 2.5;
+    SceneView.showGridlines.value = true;
+    SceneView.lineWidth.value = 2.5;
 
-    expect(SceneView.show_gridlines.value, true);
-    expect(SceneView.line_width.value, 2.5);
+    expect(SceneView.showGridlines.value, true);
+    expect(SceneView.lineWidth.value, 2.5);
 
     await app.teardown();
   });
@@ -92,13 +93,13 @@ void main() {
       await app.finish("settings");
       await tester.pumpAndSettle();
 
-      // Initially enable_debug is false so debug_only options (like Log settings and Turn All On) are hidden
-      expect(Settings.enable_debug.value, false);
+      // Initially enableDebug is false so debugOnly options (like Log settings and Turn All On) are hidden
+      expect(Settings.enableDebug.value, false);
       expect(find.textContaining("Log errors"), findsNothing);
       expect(find.text("Turn All On"), findsNothing);
 
-      // Turn on enable_debug in Settings
-      Settings.enable_debug.value = true;
+      // Turn on enableDebug in Settings
+      Settings.enableDebug.value = true;
       // Trigger rebuild of settings screen
       app.settings.notify();
       await tester.pumpAndSettle();
@@ -112,7 +113,7 @@ void main() {
       await tester.tap(find.text("Turn All On"));
       await tester.pumpAndSettle();
 
-      for (var savable in Log.group_active) {
+      for (var savable in Log.groupActive) {
         expect(savable.value, true);
       }
 
@@ -120,12 +121,12 @@ void main() {
       await tester.tap(find.text("Turn All Off"));
       await tester.pumpAndSettle();
 
-      for (var savable in Log.group_active) {
+      for (var savable in Log.groupActive) {
         expect(savable.value, false);
       }
 
-      // Reset enable_debug
-      Settings.enable_debug.value = false;
+      // Reset enableDebug
+      Settings.enableDebug.value = false;
 
       await app.teardown();
     },

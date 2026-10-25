@@ -26,7 +26,7 @@ void fixAddressBar(BuildContext context, String path) {
   // dumpNavigator(context, "fix address bar");
   if (ModalRoute.of(context)?.isCurrent ?? false) {
     // Log.navigation.log("PURPLE: fixAddressBar wait and then ${trunc(path)}.");
-    Future.delayed(Duration(milliseconds: 100), () {
+    Future.delayed(const Duration(milliseconds: 100), () {
       // Log.navigation.log("PURPLE: change the url in the address bar to ${trunc(path)}.");
       // dumpNavigator(context, "before fix address ${trunc(path)}");
       SystemNavigator.routeInformationUpdated(uri: Uri.parse(path));

@@ -274,22 +274,22 @@ class SavableColorArray extends Savable<List<Color>> {
 class SavableTheme extends Savable<int> {
   late VoidCallback _callback;
 
-  Brightness _sys_brightness = Brightness.light;
-  SavableColor theme_color = SavableColor(
+  Brightness _sysBrightness = Brightness.light;
+  SavableColor themeColor = SavableColor(
     "theme_color",
     "Theme Color",
     Colors.purple,
     (scheme) => Colors.red,
   );
-  SavableColor background_color = SavableColor(
+  SavableColor backgroundColor = SavableColor(
     "backgroud_color",
     "Background Color",
     Colors.black,
     (scheme) => Colors.red,
   );
-  ColorScheme _scheme = ColorScheme.light();
-  ThemeMode theme_mode = ThemeMode.system;
-  ThemeData theme_data = ThemeData.light();
+  ColorScheme _scheme = const ColorScheme.light();
+  ThemeMode themeMode = ThemeMode.system;
+  ThemeData themeData = ThemeData.light();
 
   ColorScheme get scheme => _scheme;
 
@@ -299,9 +299,9 @@ class SavableTheme extends Savable<int> {
   // figure out what the system default for brightness is.
   void initialize(VoidCallback callback, BuildContext context) {
     _callback = callback;
-    _sys_brightness = MediaQuery.of(context).platformBrightness;
+    _sysBrightness = MediaQuery.of(context).platformBrightness;
     // TODO: this calls update a few times when the color changes.
-    theme_color.callback = updateAndCallback;
+    themeColor.callback = updateAndCallback;
     // Call update to generate some default colors first, before we can load.
     update();
     Log.settings.log("Finished with theme initialize.......................");
@@ -310,23 +310,23 @@ class SavableTheme extends Savable<int> {
   @override
   void load(SharedPreferencesWithCache prefs) {
     try {
-      theme_mode =
-          ThemeMode.values[prefs.getInt("theme_mode") ?? theme_mode.index];
-      Log.settings.log("Theme mode = $theme_mode");
+      themeMode =
+          ThemeMode.values[prefs.getInt("theme_mode") ?? themeMode.index];
+      Log.settings.log("Theme mode = $themeMode");
     } catch (e) {
       Log.settings.log("Bad theme value? ${prefs.getInt("theme_mode")}");
     }
-    theme_color.load(prefs);
-    background_color.load(prefs);
+    themeColor.load(prefs);
+    backgroundColor.load(prefs);
     update();
   }
 
   @override
   void save(SharedPreferencesWithCache prefs) {
-    Log.settings.log("Setting theme_mode as ${theme_mode.index}");
-    prefs.setInt("theme_mode", theme_mode.index);
-    theme_color.save(prefs);
-    background_color.save(prefs);
+    Log.settings.log("Setting theme_mode as ${themeMode.index}");
+    prefs.setInt("theme_mode", themeMode.index);
+    themeColor.save(prefs);
+    backgroundColor.save(prefs);
   }
 
   // Called by settings to update all of the savables.
@@ -338,22 +338,22 @@ class SavableTheme extends Savable<int> {
 
   // Update the colors based on the theme color.
   void update() {
-    Brightness brightness = _sys_brightness;
-    if (theme_mode == ThemeMode.light) brightness = Brightness.light;
-    if (theme_mode == ThemeMode.dark) brightness = Brightness.dark;
+    Brightness brightness = _sysBrightness;
+    if (themeMode == ThemeMode.light) brightness = Brightness.light;
+    if (themeMode == ThemeMode.dark) brightness = Brightness.dark;
     Log.settings.log(
-      "update theme from color ${theme_color.value}, brightness=$brightness.",
+      "update theme from color ${themeColor.value}, brightness=$brightness.",
     );
     _scheme = ColorScheme.fromSeed(
-      seedColor: theme_color.value,
+      seedColor: themeColor.value,
       brightness: brightness,
     );
-    theme_data = ThemeData(
+    themeData = ThemeData(
       colorScheme: _scheme,
       canvasColor: _scheme.surface,
       cardColor: _scheme.surface,
     );
-    background_color.value = _scheme.surface;
+    backgroundColor.value = _scheme.surface;
     Log.settings.log("--- scheme.brightness = ${scheme.brightness}");
     Log.settings.log("--- surface = ${scheme.surface}.");
     Log.settings.log("--- onSurface = ${scheme.onSurface}.");
@@ -373,26 +373,26 @@ class SavableTheme extends Savable<int> {
     // Make a flattened list of all the switches in the theme colors.
     return [
       switcher(context, rebuild),
-      for (var w in theme_color.build(context, rebuild)) w,
-      for (var w in background_color.build(context, rebuild)) w,
+      for (var w in themeColor.build(context, rebuild)) w,
+      for (var w in backgroundColor.build(context, rebuild)) w,
       null,
     ];
   }
 
   Widget switcher(BuildContext context, VoidCallback callback) {
     List<bool> isSelected = List<bool>.filled(ThemeMode.values.length, false);
-    isSelected[theme_mode.index] = true;
+    isSelected[themeMode.index] = true;
     return Row(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text('Theme Brightness: '),
-        SizedBox(width: 10),
+        const Text('Theme Brightness: '),
+        const SizedBox(width: 10),
         ToggleButtons(
           isSelected: isSelected,
           onPressed: (int index) {
             // Log.settings.log("Setting theme_mode to $index");
-            theme_mode = ThemeMode.values[index];
+            themeMode = ThemeMode.values[index];
             // TODO: this actually calls update several times.
             Log.settings.log("switcher changed.");
             updateAndCallback();

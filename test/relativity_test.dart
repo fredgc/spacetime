@@ -95,7 +95,7 @@ void main() {
         double expectedContractedWidth = loc.width / gammaRel;
 
         expect(
-          loc.contracted_width,
+          loc.contractedWidth,
           closeTo(expectedContractedWidth, 1e-4),
           reason: 'Contracted width must equal rest width / gamma_rel',
         );

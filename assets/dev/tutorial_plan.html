@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>tutorial_plan</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="../css/doc_style.css" />
+</head>
+<body>
+<h1 id="spacetime-tutorials-plan">Spacetime Tutorials Plan</h1>
+<p>Interactive tutorials help users learn to use the Spacetime Drawing
+Tool and explore the core concepts of special relativity through
+hands-on guidance.</p>
+<p>The user will be able to select from built-in tutorials or load
+custom tutorials from local storage, Google Drive, or the clipboard.</p>
+<hr />
+<h2 id="high-level-vision-architecture">1. High-Level Vision &amp;
+Architecture</h2>
+<p>Tutorials are stored as readable Markdown files. Each tutorial
+consists of sequential steps that provide explanatory text alongside
+interactive prompts.</p>
+<pre class="mermaid"><code>graph TD
+    Source[&quot;Tutorial Source (.md)&lt;br&gt;Asset / Local / Drive&quot;]
+    Holder[&quot;FileHolder&lt;br&gt;(Asset/Local/Drive)&quot;]
+    Source --&gt; Holder
+    Holder --&gt; FM[&quot;FileManager&quot;]
+    FM --&gt; Engine[&quot;TutorialEngine (lib/script.dart)&quot;]
+    Engine --&gt; Overlay[&quot;TutorialCard UI Overlay&quot;]
+    Engine --&gt; Highlights[&quot;UI Highlight System&quot;]
+    Engine --&gt; SceneView[&quot;SceneView &amp; Sliders&quot;]</code></pre>
+<h3 id="core-architecture-components">Core Architecture Components</h3>
+<ul>
+<li><p><strong><code>FileHolder</code> &amp; <code>FileManager</code>
+Integration</strong>: Generalize <code>FileHolder</code> to support both
+scenes (JSON) and tutorials (Markdown). Provide <code>AssetHolder</code>
+for offline built-in tutorials.</p></li>
+<li><p><strong><code>TutorialEngine</code>
+(<code>lib/script.dart</code>)</strong>: Parses Markdown tutorial files
+into structured step models, listens to scene/slider changes, checks
+exit criteria, and manages step transitions.</p></li>
+<li><p><strong><code>TutorialCard</code> UI Overlay</strong>: A
+floating, non-intrusive card that renders the current step’s Markdown
+instructions, progress indicator, and action controls.</p></li>
+<li><p><strong>Target Highlighting System</strong>: Visually accents the
+specific UI control or slider the user needs to interact with for the
+active step.</p></li>
+</ul>
+<hr />
+<h2 id="syntax-directives-combined-highlight-exit">2. Syntax &amp;
+Directives: Combined Highlight &amp; Exit</h2>
+<p>To make authoring concise and human-friendly, directives in tutorial
+Markdown use blockquotes (<code>&gt;</code>).</p>
+<p><strong>Combined Directives</strong>: Specifying a target state
+automatically sets both the <strong>highlight target</strong> and the
+<strong>exit criterion</strong>.</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; velocity = 0.25</span></span></code></pre></div>
+<p>This single line instructs the engine to:</p>
+<ol type="1">
+<li><strong>Highlight</strong> the observer velocity slider.</li>
+<li><strong>Wait for exit</strong>: trigger step completion when the
+observer velocity reaches <code>0.25</code> within default
+tolerance.</li>
+</ol>
+<h3 id="built-in-directives-default-tolerances">Built-in Directives
+&amp; Default Tolerances</h3>
+<ul>
+<li><p><code>&gt; v = 0.25</code> or <code>&gt; velocity = 0.25</code>:
+Highlights velocity slider; exits when observer velocity reaches target
+(default tolerance
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>±</mi><mn>0.02</mn></mrow><annotation encoding="application/x-tex">\pm 0.02</annotation></semantics></math>).</p></li>
+<li><p><code>&gt; t = 2.0</code> or <code>&gt; time = 2.0</code>:
+Highlights time slider; exits when observer time reaches target (default
+tolerance
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>±</mi><mn>0.1</mn></mrow><annotation encoding="application/x-tex">\pm 0.1</annotation></semantics></math>).</p></li>
+<li><p><code>&gt; mode = ether</code> or <code>&gt; ether</code>:
+Highlights light speed menu; exits when Ether mode is selected.</p></li>
+<li><p><code>&gt; lorentz</code>: Highlights light speed menu; exits
+when Lorentz mode is selected.</p></li>
+<li><p><code>&gt; ok</code> or <code>&gt; next</code>: Highlights
+“Continue” button on the card; exits on click.</p></li>
+<li><p><code>&gt; setup: &lt;actions&gt;</code>: Programmatically sets
+scene state (e.g., <code>v=0, t=0, mode=lorentz</code>). Exits
+immediately without user interaction.</p></li>
+<li><p><code>&gt; reset</code>: Clears the canvas to a clean baseline
+state. Exits immediately without user interaction.</p></li>
+</ul>
+<h3 id="custom-tolerance-override">Custom Tolerance Override</h3>
+<p>Authors can optionally override default tolerances directly on
+numeric directives when finer or coarser precision is needed:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; v = 0.25 tol=0.005</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; t = 5.0 tol=0.5</span></span></code></pre></div>
+<h3 id="setup-directives">Setup Directives</h3>
+<p>When a step requires preparing the drawing without requiring the
+student to manually build it, a <code>setup:</code> directive configures
+the scene state at the start of that step:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; setup: v=0, t=0, mode=lorentz</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; setup: load=&quot;assets/scenes/train_and_light.json&quot;</span></span></code></pre></div>
+<hr />
+<h2 id="sample-tutorial-script">3. Sample Tutorial Script</h2>
+<p>Here is an example tutorial using the combined syntax:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Speed of Light in Moving Frames</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>Learn how light behaves under different physical assumptions.</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Step 1: Start Fresh</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>Welcome! Let&#39;s start with a clean diagram and look at our sliders.</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; reset</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; setup: v=0.0, t=0.0, mode=lorentz</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; ok</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="fu">## Step 2: Set Observer Velocity</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>At the bottom of the screen is the velocity slider. Set the velocity</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>to 0.25 to see the reference frame tilt.</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; v = 0.25</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="fu">## Step 3: Add Light Ray</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>Let&#39;s observe how light travels. Notice the yellow light cone in the</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>diagram. Even though the observer moves at v = 0.25, the light ray&#39;s</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>speed remains exactly 1.0!</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; setup: load=&quot;assets/scenes/light_pulse.json&quot;</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; ok</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="fu">## Step 4: Examine the Ether Hypothesis</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>Before relativity, physicists thought light traveled through a medium</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>called the ether. Switch the light speed model to Ether.</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; mode = ether</span></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a><span class="fu">## Step 5: Test Relative Light Speed</span></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>Adjust the velocity back to 0 to return to the ether&#39;s rest frame.</span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>Notice that the rays only travel at speed 1 when at rest relative to the</span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>ether!</span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; v = 0.0</span></span></code></pre></div>
+<hr />
+<h2 id="storage-bundling-file-management-integration">4. Storage,
+Bundling &amp; File Management Integration</h2>
+<p>Tutorials need to be easily accessible without requiring login, while
+also allowing users and educators to create, share, and open custom
+tutorials.</p>
+<h3 id="bundled-built-in-tutorials-no-login-required">Bundled Built-in
+Tutorials (No Login Required)</h3>
+<ul>
+<li><p>Built-in tutorials are stored in the app asset bundle:
+<code>assets/tutorials/*.md</code>.</p></li>
+<li><p>The asset directory is declared in <code>pubspec.yaml</code> and
+bundled into both the Web and Android builds.</p></li>
+<li><p>An asset manifest or registry lists available built-in
+tutorials:</p>
+<ul>
+<li><code>01_speed_of_light.md</code>: Light speed constancy across
+frames.</li>
+<li><code>02_time_dilation.md</code>: Moving clocks run slow.</li>
+<li><code>03_length_contraction.md</code>: Moving rulers contract.</li>
+<li><code>04_barn_pole_paradox.md</code>: Simultaneity and the barn-pole
+paradox.</li>
+</ul></li>
+<li><p>Users can open any built-in tutorial directly from the dedicated
+“Tutorials” section in the drawer or top menu bar without logging
+in.</p></li>
+</ul>
+<h3 id="tweaking-fileholder-filemanager">Tweaking
+<code>FileHolder</code> &amp; <code>FileManager</code></h3>
+<p>We can generalize <a
+href="lib/file_holder.dart"><code>FileHolder</code></a> and <a
+href="lib/file_manager.dart"><code>FileManager</code></a> to seamlessly
+support both scene JSON and tutorial Markdown documents:</p>
+<pre class="mermaid"><code>classDiagram
+    class FileHolder {
+        +String id
+        +String title
+        +FileKind kind
+        +loadData(FileManager) Future~String~
+        +saveData(String, FileManager) Future~bool~
+    }
+    class AssetHolder {
+        +String assetPath
+        +loadData(FileManager) Future~String~
+    }
+    class DriveHolder {
+        +String fileId
+    }
+    class LocalFileHolder {
+        +String id
+    }
+    class JsonHolder {
+        +String data
+    }
+    FileHolder &lt;|-- AssetHolder
+    FileHolder &lt;|-- DriveHolder
+    FileHolder &lt;|-- LocalFileHolder
+    FileHolder &lt;|-- JsonHolder</code></pre>
+<ol type="1">
+<li><p><strong><code>FileKind</code> Enumeration</strong>: Add an
+explicit kind to <code>FileHolder</code>:</p>
+<ul>
+<li><code>FileKind.scene</code> (standard spacetime drawings,
+<code>.sp</code> / <code>.json</code>).</li>
+<li><code>FileKind.tutorial</code> (interactive tutorial lessons,
+<code>.md</code> / <code>.sptut</code>).</li>
+</ul></li>
+<li><p><strong><code>AssetHolder</code> Implementation</strong>: A
+concrete <code>FileHolder</code> that loads text assets via
+<code>rootBundle.loadString(assetPath)</code>. Read-only, requires no
+network or auth.</p></li>
+<li><p><strong>Drive &amp; Local File Compatibility</strong>:</p>
+<ul>
+<li><a href="lib/drive.dart"><code>DriveHolder</code></a> and <a
+href="lib/local_file.dart"><code>LocalFileHolder</code></a> already load
+and save arbitrary text strings.</li>
+<li>By associating <code>FileKind</code>, <code>FileManager</code> can
+filter file pickers to either drawings or tutorials.</li>
+</ul></li>
+<li><p><strong>Scene Stashing &amp; Session Safety</strong>:</p>
+<ul>
+<li>When launching a tutorial, <code>FileManager</code> checks if the
+current scene has unsaved changes.</li>
+<li>If clean (or after user saves), the active scene is stashed in
+memory.</li>
+<li>While the tutorial is active, the scene view operates in a tutorial
+sandbox.</li>
+<li>When the user exits or finishes the tutorial, the stashed user scene
+is restored cleanly.</li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="tutorial-ui-interaction-design">5. Tutorial UI &amp; Interaction
+Design</h2>
+<p>The tutorial interface must be clear, responsive, and avoid blocking
+the interactive canvas or the sliders.</p>
+<h3 id="tutorial-overlay-card-tutorialcard">Tutorial Overlay Card
+(<code>TutorialCard</code>)</h3>
+<pre><code>+-------------------------------------------------------------+
+| [TUTORIAL] Speed of Light in Moving Frames     [Reset] [X]  |
+| Step 2 of 5: Set Observer Velocity                          |
+| [========================---------------------------------] |
++-------------------------------------------------------------+
+| Move the observer velocity slider at the bottom to 0.25.    |
+| Notice how the coordinate grid tilts under the Lorentz      |
+| transformation.                                             |
++-------------------------------------------------------------+
+| [Target: v = 0.25  | Current: v = 0.12]                     |
+| [&lt; Back]                                       [Continue &gt;] |
++-------------------------------------------------------------+</code></pre>
+<h3 id="component-details">Component Details</h3>
+<ul>
+<li><p><strong>Card Positioning</strong>:</p>
+<ul>
+<li><strong>Desktop / Wide Layout</strong>: Docked in the upper right
+corner of the main workspace, floating over the canvas with subtle
+shadow. Can be dragged or collapsed by the user if it covers an area of
+interest.</li>
+<li><strong>Mobile / Narrow Layout</strong>: Compact panel pinned
+between the main canvas and the sliders, with an expandable drawer for
+longer explanations.</li>
+</ul></li>
+<li><p><strong>Header</strong>:</p>
+<ul>
+<li>Tutorial title and step badge (<code>Step 2 of 5</code>).</li>
+<li>Linear progress bar indicating completion percentage.</li>
+<li><strong>Reset Step Button</strong>: Reapplies the step’s initial
+baseline setup if the user gets confused or makes unintentional scene
+changes.</li>
+<li><strong>Close Button
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math>)</strong>:
+Prompts confirmation to exit tutorial mode and returns to normal
+drawing.</li>
+</ul></li>
+<li><p><strong>Body Content</strong>:</p>
+<ul>
+<li>Formatted Markdown text (rendered with Flutter <code>markdown</code>
+widget).</li>
+<li>Supports bullet points, emphasis, and math symbols.</li>
+</ul></li>
+<li><p><strong>Live Feedback Status</strong>:</p>
+<ul>
+<li>Shows target vs current state in real time: e.g.,
+<code>Target: v = 0.25 | Current: 0.10</code>.</li>
+<li>When criteria are met, the badge flashes green:
+<code>✓ Target reached!</code>.</li>
+<li>A brief delay (400–600ms) gives the user satisfying visual feedback
+before advancing to the next step.</li>
+</ul></li>
+<li><p><strong>Navigation</strong>:</p>
+<ul>
+<li><code>&lt; Back</code>: Returns to the previous step and restores
+its baseline setup.</li>
+<li><code>Continue &gt;</code>: Active for informational steps
+(<code>&gt; ok</code>), or allows manual advance if the user wants to
+skip.</li>
+</ul></li>
+</ul>
+<h3 id="ui-highlighting-system">UI Highlighting System</h3>
+<ul>
+<li><p><strong>Highlight Target Registry</strong>: Interactive controls
+register their target IDs:</p>
+<ul>
+<li><code>slider.velocity</code>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math>
+Velocity slider row.</li>
+<li><code>slider.time</code>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math>
+Time slider row.</li>
+<li><code>menu.light_speed</code>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math>
+Light speed model menu / dropdown.</li>
+<li><code>tutorial.continue</code>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math>
+“Continue” button on the tutorial card.</li>
+</ul></li>
+<li><p><strong>Visual Effect</strong>:</p>
+<ul>
+<li>When highlighted, the target widget displays an animated pulsing
+border or glowing accent outline (using the theme’s secondary or accent
+color).</li>
+<li>When criteria are satisfied, the pulse transitions to a steady green
+check glow before advancing.</li>
+</ul></li>
+</ul>
+<hr />
+<h2 id="proof-of-concept-poc-plan">6. Proof of Concept (PoC) Plan</h2>
+<p>The goal of the Proof of Concept is to validate the core loop:
+loading a bundled tutorial Markdown asset, parsing combined directives,
+highlighting a slider, detecting exit criteria, and progressing through
+steps.</p>
+<h3 id="poc-scope-boundaries">PoC Scope Boundaries</h3>
+<ol type="1">
+<li><p><strong>Parser (<code>lib/script.dart</code>)</strong>:</p>
+<ul>
+<li>Parse Markdown into a <code>Tutorial</code> model containing a list
+of <code>TutorialStep</code> objects.</li>
+<li>Parse combined directives:
+<ul>
+<li><code>&gt; v = &lt;number&gt;</code> /
+<code>&gt; velocity = &lt;number&gt;</code> (default
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>±</mi><mn>0.02</mn></mrow><annotation encoding="application/x-tex">\pm 0.02</annotation></semantics></math>
+tol).</li>
+<li><code>&gt; t = &lt;number&gt;</code> /
+<code>&gt; time = &lt;number&gt;</code> (default
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>±</mi><mn>0.1</mn></mrow><annotation encoding="application/x-tex">\pm 0.1</annotation></semantics></math>
+tol).</li>
+<li><code>&gt; ok</code> / <code>&gt; next</code> (advances on button
+tap).</li>
+<li><code>&gt; reset</code> (clears drawing).</li>
+</ul></li>
+</ul></li>
+<li><p><strong>File Loading (<code>AssetHolder</code>)</strong>:</p>
+<ul>
+<li>Add <code>AssetHolder</code> to
+<code>lib/file_holder.dart</code>.</li>
+<li>Bundle a 4-step tutorial at
+<code>assets/tutorials/speed_of_light.md</code>.</li>
+</ul></li>
+<li><p><strong>Overlay &amp; Highlight UI</strong>:</p>
+<ul>
+<li>Create <code>TutorialCard</code> in <code>lib/widget.dart</code> (or
+<code>lib/tutorial_widget.dart</code>).</li>
+<li>Add highlight wrapper around the velocity and time sliders.</li>
+</ul></li>
+<li><p><strong>Test Suite</strong>:</p>
+<ul>
+<li>Unit tests for directive parsing and tolerance math in
+<code>test/script_test.dart</code>.</li>
+<li>Widget test verifying tutorial step advancement in
+<code>test/tutorial_test.dart</code>.</li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="future-enhancements-post-poc">7. Future Enhancements
+(Post-PoC)</h2>
+<ul>
+<li>Relational entity criteria (e.g. checking position of objects in
+canvas).</li>
+<li>Canvas reticle overlays pointing to specific drawing entities.</li>
+<li>Google Drive file picker filtering for <code>.md</code> /
+<code>.sptut</code> tutorial files.</li>
+<li>Authoring mode / in-app tutorial editor.</li>
+</ul>
+</body>
+</html>

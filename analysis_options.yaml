@@ -29,6 +29,7 @@ linter:
     non_constant_identifier_names: true
     prefer_final_fields: true
     dangling_library_doc_comments: true
+    prefer_const_constructors: true
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options
