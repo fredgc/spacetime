@@ -23,7 +23,7 @@ class LocalFileMock {
       HolderMock(TestData.sample.json, "5", "Sample Unsaved Title"),
     ];
     List<String> titles = files.map((file) => file.title).toList();
-    String prefix = LocalFileHolder.local_file_label;
+    String prefix = LocalFileHolder.localFileLabel;
     final prefs = SharedPreferencesAsync();
     await prefs.setStringList(prefix, titles);
     for (var file in files) {
@@ -39,8 +39,8 @@ class LocalFileMock {
     List<String> expectedTitles = expectedLocal
         .map((holder) => holder.title)
         .toList();
-    String prefix = LocalFileHolder.local_file_label;
-    String idLabel = LocalFileHolder.id_label;
+    String prefix = LocalFileHolder.localFileLabel;
+    String idLabel = LocalFileHolder.idLabel;
     final prefs = SharedPreferencesAsync();
     List<String>? savedIds = await prefs.getStringList(idLabel);
     List<String>? savedTitles = await prefs.getStringList(prefix);

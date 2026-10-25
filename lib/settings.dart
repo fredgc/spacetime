@@ -28,8 +28,8 @@ import 'printer.dart';
 import 'js_stub.dart' if (dart.library.html) 'js_interface.dart';
 
 enum SettingsStatus {
-  NotInitialized, // Before Settings intiialized.
-  Initialized,
+  notInitialized, // Before Settings initialized.
+  initialized,
 }
 
 abstract class Savable<T> {
@@ -39,15 +39,15 @@ abstract class Savable<T> {
   T value;
 
   bool visible = true; // If true, include this on the settings page.
-  bool debug_only =
-      false; // If true, only visible when Settings.enable_debug.value is true.
+  bool debugOnly =
+      false; // If true, only visible when Settings.enableDebug.value is true.
 
   Savable(
     this.name,
     this.description,
     this.value, {
     this.tip = "",
-    this.debug_only = false,
+    this.debugOnly = false,
   });
 
   void load(SharedPreferencesWithCache prefs);
@@ -72,7 +72,7 @@ class SavableBool extends Savable<bool> {
     super.description,
     super.value, {
     super.tip = "",
-    super.debug_only,
+    super.debugOnly,
   });
   @override
   void load(SharedPreferencesWithCache prefs) {
@@ -280,7 +280,7 @@ class SavableBoolGroup extends Savable<int> {
 }
 
 class Settings {
-  static SavableBool enable_debug = SavableBool(
+  static SavableBool enableDebug = SavableBool(
     "enable_debug",
     "Enable Debug Mode",
     false,
@@ -293,36 +293,47 @@ class Settings {
       foundation.kDebugMode ||
       bool.fromEnvironment('DEBUG_ENABLED', defaultValue: false);
 
-  static bool get debugEnabled => kDebugEnabled && enable_debug.value;
+  static bool get debugEnabled => kDebugEnabled && enableDebug.value;
 
-  SettingsStatus _status = SettingsStatus.NotInitialized;
+  SettingsStatus _status = SettingsStatus.notInitialized;
   final StreamController<SettingsStatus> _statusStream =
       StreamController<SettingsStatus>.broadcast();
 
-  String app_name = "uninitialized";
+  String appName = "uninitialized";
   String version = "uninitialized";
-  String build_number = "-";
-  bool no_keyboard = false;
-  Future<void>? _loading_future;
+  String buildNumber = "-";
+  bool noKeyboard = false;
+  Future<void>? _loadingFuture;
+
+  String get fullVersion {
+    if (version == "uninitialized") return "6.0.4+1";
+    if (buildNumber.isNotEmpty && buildNumber != "-") {
+      return "$version+$buildNumber";
+    }
+    return version;
+  }
 
   List<Savable> savables = []; //All settings.
-  Map<String, Savable> savables_map = {};
+  Map<String, Savable> savablesMap = {};
 
   SavableTheme theme = SavableTheme();
-  Color get background_color => theme.background_color.value;
+  Color get backgroundColor => theme.backgroundColor.value;
 
   Settings();
 
   void initDebug() {
     if (kDebugEnabled) {
       add(EndOfGroup());
-      add(enable_debug);
+      add(enableDebug);
     }
   }
 
-  // This might be called several times, but load() uses a singleton to prevent
-  // simultaneous calls.
+  Future<void>? _initializeFuture;
   Future<void> initialize(BuildContext context) {
+    return _initializeFuture ??= _doInitialize(context);
+  }
+
+  Future<void> _doInitialize(BuildContext context) {
     _checkKeyboard();
     theme.initialize(resetColorsAndNotify, context);
     resetColors();
@@ -336,10 +347,10 @@ class Settings {
       // Log.settings.log('Not running on the web!');
     }
     // Maybe assume there is no keyboard if
-    no_keyboard =
+    noKeyboard =
         (foundation.defaultTargetPlatform == TargetPlatform.iOS ||
         foundation.defaultTargetPlatform == TargetPlatform.android);
-    // Log.settings.log("noKeboard = $no_keyboard");
+    // Log.settings.log("noKeboard = $noKeyboard");
   }
 
   SettingsStatus get status {
@@ -364,35 +375,30 @@ class Settings {
   }
 
   void add(Savable savable) {
-    if (savables_map.containsKey(savable.name)) {
-      throw (StateError(
-        "Setting name collision: $savable with ${savables_map[savable.name]}",
-      ));
-    }
     savables.add(savable);
   }
 
   Future<void> load() {
-    _loading_future ??= _load_future();
-    return _loading_future!;
+    _loadingFuture ??= _loadFuture();
+    return _loadingFuture!;
   }
 
   Future<SharedPreferencesWithCache> getPrefs() {
     // XXX This does not work because SavableTheme don't use name.
-    // XXX Set<String> name_list = savables_map.keys.toSet();
+    // XXX Set<String> name_list = savablesMap.keys.toSet();
     // XXX var options = SharedPreferencesWithCacheOptions(allowList: name_list);
-    var options = SharedPreferencesWithCacheOptions();
+    var options = const SharedPreferencesWithCacheOptions();
     return SharedPreferencesWithCache.create(cacheOptions: options);
   }
 
-  Future<void> _load_future() async {
-    Log.settings.log("In _load_future.");
+  Future<void> _loadFuture() async {
+    Log.settings.log("In _loadFuture.");
     await dsleep("settings", 3);
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    app_name = packageInfo.appName;
+    appName = packageInfo.appName;
     version = packageInfo.version;
-    build_number = packageInfo.buildNumber;
-    Log.settings.log("Package info: $app_name, $build_number, $version");
+    buildNumber = packageInfo.buildNumber;
+    Log.settings.log("Package info: $appName, $buildNumber, $version");
     var prefs = await getPrefs();
     Log.settings.log("prefs = $prefs");
     // theme.load(prefs);
@@ -400,8 +406,8 @@ class Settings {
       s.load(prefs);
     }
     Log.settings.log("Settings done initialized.");
-    status = SettingsStatus.Initialized;
-    _loading_future = null;
+    status = SettingsStatus.initialized;
+    _loadingFuture = null;
     Log.settings.log("Finished loading settings.");
 
     if (foundation.kIsWeb) {
@@ -424,7 +430,7 @@ class Settings {
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = jsonDecode(response.body);
         final String? serverVersion = data['version'];
-        final String clientVersion = "$version+$build_number";
+        final String clientVersion = "$version+$buildNumber";
         Log.settings.log(
           "Server version check: client=$clientVersion, server=$serverVersion",
         );
@@ -480,7 +486,7 @@ class SettingsScreen extends StatefulWidget {
   static const routeName = "/settings";
   const SettingsScreen(this.settings, {super.key});
   @override
-  _SettingsScreenState createState() => _SettingsScreenState();
+  State<SettingsScreen> createState() => _SettingsScreenState();
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
@@ -510,11 +516,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.settings.status == SettingsStatus.NotInitialized) {
+    if (widget.settings.status == SettingsStatus.notInitialized) {
       widget.settings.initialize(context).then((_) {
         setState(() {});
       });
-      return Text("Initiaizing Settings...");
+      return const Text("Initiaizing Settings...");
     }
     // Log.settings.log("Building SettingsScreen.");
     List<Widget?> children = _pickChildren(context);
@@ -534,14 +540,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
     return MaterialApp(
       // XXX debugShowCheckedModeBanner: false,
-      theme: widget.settings.theme.theme_data,
+      theme: widget.settings.theme.themeData,
       home: Scaffold(appBar: appBar(context), body: list),
     );
   }
 
   AppBar appBar(BuildContext context) {
     return AppBar(
-      title: Text("Settings"),
+      title: const Text("Settings"),
       actions: <Widget>[
         ElevatedButton(
           child: const Icon(Icons.close),
@@ -564,14 +570,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
   // Get the list of widgets from all the savable objects.
   // Then flatten this list of lists so we get one big list.
   List<Widget?> _pickChildren(BuildContext context) {
-    if (widget.settings.status == SettingsStatus.NotInitialized) {
-      return [Text("Initializing App...")];
+    if (widget.settings.status == SettingsStatus.notInitialized) {
+      return [const Text("Initializing App...")];
     }
     List<List<Widget?>> list1 = [
       [
         SelectableText(
-          "Application ${widget.settings.app_name} "
-          "version ${widget.settings.version}.${widget.settings.build_number}",
+          "Application ${widget.settings.appName} "
+          "version ${widget.settings.version}.${widget.settings.buildNumber}",
         ),
         if (foundation.kIsWeb) ...[
           const SizedBox(width: 10),
@@ -584,14 +590,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
         null,
       ],
       for (var s in widget.settings.savables)
-        if (s.visible && (!s.debug_only || Settings.debugEnabled))
+        if (s.visible && (!s.debugOnly || Settings.debugEnabled))
           (s.build(context, () {
             setState(() {});
           })),
       [
         null,
-        ElevatedButton(onPressed: () => done(context), child: Text("Done")),
-        ElevatedButton(onPressed: () => quit(context), child: Text("Cancel")),
+        ElevatedButton(
+          onPressed: () => done(context),
+          child: const Text("Done"),
+        ),
+        ElevatedButton(
+          onPressed: () => quit(context),
+          child: const Text("Cancel"),
+        ),
       ],
     ];
     // Flatten the list.
@@ -605,6 +617,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     Log.settings.log("CYAN: Done with settings.");
     await widget.settings.save();
     widget.settings.notify();
+    if (!context.mounted) return;
     popOrHome(context);
   }
 
@@ -612,6 +625,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     Log.settings.log("CYAN: Done with settings. Don't save.");
     await widget.settings.load();
     widget.settings.notify();
+    if (!context.mounted) return;
     popOrHome(context);
   }
 }

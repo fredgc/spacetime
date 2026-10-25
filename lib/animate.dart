@@ -41,10 +41,10 @@ class MyAnimator {
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) =>
       "Animator-$_debugId";
 
-  /// Constructs [MyAnimator] attached to [tick_provider] and [sceneViewer].
-  MyAnimator(SingleTickerProviderStateMixin tick_provider, this.sceneViewer)
+  /// Constructs [MyAnimator] attached to [tickProvider] and [sceneViewer].
+  MyAnimator(SingleTickerProviderStateMixin tickProvider, this.sceneViewer)
     : controller = AnimationController(
-        vsync: tick_provider,
+        vsync: tickProvider,
         duration: Duration(seconds: clockTime),
         upperBound: clockTime.toDouble(),
       ) {
@@ -52,11 +52,11 @@ class MyAnimator {
     controller.addStatusListener((status) {
       // Log.animate.log("Animation status: $status, value = ${zzz(controller.value)}");
       if (status == AnimationStatus.completed) {
-        // Warn the scene_viewer that the animation is going to reset.
+        // Warn the sceneViewer that the animation is going to reset.
         onComplete();
       }
     });
-    // Log.animate.log("ORANGE: Created $this for $tick_provider and $scene_viewer");
+    // Log.animate.log("ORANGE: Created $this for $tickProvider and $sceneViewer");
   }
 
   /// Returns debug representation of current animation status.

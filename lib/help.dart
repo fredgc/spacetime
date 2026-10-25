@@ -41,7 +41,7 @@ class _HelpScreenState extends State<HelpScreen> {
     webViewController = WebViewController();
     try {
       webViewController.setBackgroundColor(
-        widget.settings.theme.theme_data.colorScheme.surface,
+        widget.settings.theme.themeData.colorScheme.surface,
       );
     } catch (e) {
       // Ignored if unsupported on the platform/test environment
@@ -122,9 +122,11 @@ class _HelpScreenState extends State<HelpScreen> {
     if (_lastLoadedBrightness != currentBrightness) {
       try {
         webViewController.setBackgroundColor(
-          widget.settings.theme.theme_data.colorScheme.surface,
+          widget.settings.theme.themeData.colorScheme.surface,
         );
-      } catch (e) {}
+      } catch (e) {
+        // Ignored on platforms not supporting setBackgroundColor.
+      }
       loadHelpFile(_currentFilename);
       _applyTheme();
     }
@@ -146,7 +148,7 @@ class _HelpScreenState extends State<HelpScreen> {
       String cssContent;
       if (kIsWeb) {
         final versionTag =
-            '${widget.settings.version}+${widget.settings.build_number}';
+            '${widget.settings.version}+${widget.settings.buildNumber}';
         final htmlUri = Uri.parse('assets/assets/$filename?v=$versionTag');
         final cssUri = Uri.parse(
           'assets/assets/css/doc_style.css?v=$versionTag',
@@ -194,6 +196,15 @@ class _HelpScreenState extends State<HelpScreen> {
         htmlContent = await rootBundle.loadString('assets/$filename');
         cssContent = await rootBundle.loadString('assets/css/doc_style.css');
       }
+
+      // Ensure external links and /version5/ links open in the top browser tab/window
+      // rather than inside the srcdoc iframe or triggering Flutter's SPA router.
+      final anchorTargetRegExp = RegExp(
+        r'<a\s+href="(https?://[^"]+|/version5/[^"]*)"(?![^>]*\btarget=)',
+      );
+      htmlContent = htmlContent.replaceAllMapped(anchorTargetRegExp, (match) {
+        return '<a href="${match.group(1)}" target="_blank" rel="noopener"';
+      });
 
       // Clean up any <pre class="mermaid"><code> blocks to prevent Mermaid syntax error.
       final mermaidRegExp = RegExp(
@@ -323,10 +334,10 @@ class _HelpScreenState extends State<HelpScreen> {
       ] else ...[
         DrawerHeader(
           decoration: BoxDecoration(color: Theme.of(context).primaryColor),
-          child: Column(
+          child: const Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.end,
-            children: const [
+            children: [
               Text(
                 "Spacetime Help",
                 style: TextStyle(
@@ -425,6 +436,13 @@ class _HelpScreenState extends State<HelpScreen> {
           Icons.assignment_outlined,
           isSidebar: isSidebar,
         ),
+        buildDrawerItem(
+          context,
+          "Tutorial Plan",
+          "dev/tutorial_plan.html",
+          Icons.assignment_outlined,
+          isSidebar: isSidebar,
+        ),
       ]);
     }
     return ListView(padding: EdgeInsets.zero, children: items);
@@ -472,7 +490,7 @@ class _HelpScreenState extends State<HelpScreen> {
   @override
   Widget build(BuildContext context) {
     return Theme(
-      data: widget.settings.theme.theme_data,
+      data: widget.settings.theme.themeData,
       child: Builder(
         builder: (BuildContext context) {
           final double screenWidth = MediaQuery.of(context).size.width;

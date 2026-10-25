@@ -13,7 +13,9 @@ import 'package:flutter/material.dart';
 
 import 'file_holder.dart';
 import 'file_manager.dart';
+import 'name.dart';
 import "printer.dart";
+import 'recent_file.dart';
 
 /*
 This is very different on web and android.
@@ -87,16 +89,16 @@ class DownloadManager {
 class UploadHolder extends FileHolder {
   UploadHolder(super.id) : filename = id;
 
-  static final String type_name = "download";
+  static final String typeName = "download";
   @override
-  String get type => type_name;
+  String get type => typeName;
   @override
-  bool get skip_recent => false;
+  bool get skipRecent => false;
   String filename;
   String data = "";
 
   // XXX make instance varaible in DownloadManager class.
-  static DownloadManager download_manager = DownloadManager();
+  static DownloadManager downloadManager = DownloadManager();
 
   @override
   void extraJson(Map<String, dynamic> json) {}
@@ -118,11 +120,7 @@ class UploadHolder extends FileHolder {
     // Log.local.log("Download file to $filename.");
     // Log.local.log("data = $data");
     try {
-      String result = await download_manager.saveFile(
-        name: filename,
-        data: data,
-      );
-      // Log.local.log("Save data for $filename returns $result");
+      await downloadManager.saveFile(name: filename, data: data);
       return true;
     } catch (e) {
       Log.local.log("Download file error: $e");
@@ -137,7 +135,7 @@ class UploadHolder extends FileHolder {
     String result;
     if (data.isEmpty) {
       // This happens on a reload. Try to load a new file.
-      var (name, contents) = await download_manager.loadFile();
+      var (name, contents) = await downloadManager.loadFile();
       filename = name;
       result = contents;
     } else {
@@ -152,22 +150,33 @@ class UploadHolder extends FileHolder {
 class UploadRow extends StatefulWidget {
   final bool load;
   final FileHolder current;
-  const UploadRow(this.load, this.current, {super.key});
+  final RecentFiles? recent;
+  const UploadRow(this.load, this.current, {this.recent, super.key});
 
   @override
-  State<UploadRow> createState() {
-    String filename = "spacetime_drawing.st.json";
-    if (current is UploadHolder) {
-      filename = (current as UploadHolder).filename;
-    }
-    return UploadRowState(filename);
-  }
+  State<UploadRow> createState() => UploadRowState();
 }
 
 class UploadRowState extends State<UploadRow> {
   final TextEditingController _controller = TextEditingController();
 
-  UploadRowState(String filename) {
+  @override
+  void initState() {
+    super.initState();
+    String filename = "spacetime_drawing.st.json";
+    if (widget.current is UploadHolder) {
+      filename = (widget.current as UploadHolder).filename;
+    }
+    if (!widget.load) {
+      final existingFilenames = <String>{
+        if (widget.current is UploadHolder)
+          (widget.current as UploadHolder).filename,
+        if (widget.recent != null)
+          for (final r in widget.recent!.toList())
+            if (r is UploadHolder) r.filename,
+      };
+      filename = NameGuess.nextAvailableFilename(filename, existingFilenames);
+    }
     _controller.text = filename;
   }
 
@@ -183,10 +192,10 @@ class UploadRowState extends State<UploadRow> {
       return Row(
         children: [
           ElevatedButton(
-            key: ValueKey('upload-button'),
-            child: Text("Upload from file"),
+            key: const ValueKey('upload-button'),
+            child: const Text("Upload from file"),
             onPressed: () async {
-              var (name, data) = await UploadHolder.download_manager.loadFile();
+              var (name, data) = await UploadHolder.downloadManager.loadFile();
               if (name.isEmpty) {
                 // Log.local.log("CYAN: download holder pop empty");
                 Navigator.of(context).pop(null);
@@ -208,12 +217,12 @@ class UploadRowState extends State<UploadRow> {
           Expanded(
             child: TextField(
               controller: _controller,
-              key: ValueKey('download-filename'),
+              key: const ValueKey('download-filename'),
             ),
           ),
           ElevatedButton(
-            key: ValueKey('download-button'),
-            child: Text("Download to file"),
+            key: const ValueKey('download-button'),
+            child: const Text("Download to file"),
             onPressed: () async {
               // Log.local.log("CYAN: upload holder pop");
               Navigator.of(context).pop(UploadHolder(_controller.text));

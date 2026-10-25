@@ -21,8 +21,9 @@
       vertical-align: middle;
     }
     /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
     pre > code.sourceCode { white-space: pre; position: relative; }
-    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
     pre > code.sourceCode > span:empty { height: 1.2em; }
     .sourceCode { overflow: visible; }
     code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -94,7 +95,7 @@ Developer Guide for Spacetime Drawing Tool</h1>
 <p>Welcome! This guide is designed to help future LLM agents and human
 developers get up to speed quickly on the <strong>Spacetime</strong>
 Flutter application.</p>
-<p>Build Version v6.0.1+2</p>
+<p>Build Version v6.1.1+0</p>
 <hr />
 <h2 id="project-purpose-features">1. Project Purpose &amp; Features</h2>
 <p>The Spacetime Drawing Tool is an interactive, cross-platform (Web and
@@ -122,6 +123,10 @@ events, light cones, and planes of simultaneity.</p></li>
 showing what the observer sees at the current instant of time,
 illustrating length contraction, time dilation, and the relativity of
 simultaneity.</p></li>
+<li><p><strong>Interactive Tutorials &amp; Step-by-Step
+Lessons</strong>: Guided interactive lessons with dynamic UI highlights,
+criterion verification, automated actions (“Do it for me”), and progress
+tracking.</p></li>
 <li><p><strong>File Management</strong>: Save/load scenes as JSON
 locally (files/clipboard) or synced to Google Drive.</p></li>
 <li><p><strong>Backward Compatibility</strong>: Fully compatible with
@@ -141,6 +146,7 @@ warnings.</p></li>
 
     AppWidget --&gt; SceneView[&quot;scene.dart: SceneView&quot;]
     AppWidget --&gt; FileManager[&quot;file_manager.dart: FileManager&quot;]
+    AppWidget --&gt; TutorialCard[&quot;tutorial_widget.dart: TutorialCard&quot;]
 
     SceneView --&gt; SceneData[&quot;scene.dart: SceneData&quot;]
     SceneView --&gt; UndoManager[&quot;edit.dart: MyUndoManager&quot;]
@@ -148,7 +154,8 @@ warnings.</p></li>
 
     SceneData --&gt; Drawables[&quot;drawable.dart: Drawable&quot;]
     FileManager --&gt; FileHolder[&quot;file_holder.dart: FileHolder&quot;]
-    FileManager --&gt; DriveAccess[&quot;drive.dart: MyDriveAccess&quot;]</code></pre>
+    FileManager --&gt; DriveAccess[&quot;drive.dart: MyDriveAccess&quot;]
+    FileManager --&gt; TutorialCtrl[&quot;script.dart: TutorialController&quot;]</code></pre>
 <h3 id="core-components">Core Components</h3>
 <ul>
 <li><p><strong><code>lib/main.dart</code></strong>: Entrypoint.
@@ -156,32 +163,42 @@ Initializes Flutter and runs <code>MyApp.fullApp()</code>.</p></li>
 <li><p><strong><code>lib/my_app.dart</code></strong>: Sets up global
 theme, JS interop, routes (via <code>GoRouter</code>), and serves
 top-level screens.</p></li>
-<li><p><strong><code>lib/widget.dart</code></strong>:</p>
+<li><p><strong><code>lib/widget.dart</code> &amp;
+<code>lib/widgets/</code></strong>:</p>
 <ul>
-<li><p><a href="lib/widget.dart#L38">SplashWidget</a>: Wraps loading
-states (settings, sprites, file initialization).</p></li>
-<li><p><a href="lib/widget.dart#L218">AppWidget</a>: Primary editor
-interface. Contains App Bar, toolbar, and layout columns, wrapped in
-<code>PopScope</code> to intercept back gestures when unsaved edits
+<li><p><a href="lib/widgets/splash_widget.dart#L16">SplashWidget</a>:
+Wraps loading states (settings, sprites, file initialization).</p></li>
+<li><p><a href="lib/widgets/app_widget.dart#L24">AppWidget</a>: Primary
+editor interface. Contains App Bar, toolbar, and layout columns, wrapped
+in <code>PopScope</code> to intercept back gestures when unsaved edits
 exist.</p></li>
-<li><p>Splitscreen (<code>SplitterWidget</code>): Renders main canvas
-(<code>ScenePainter</code>) on top and observer view
-(<code>SideViewPainter</code>) on the bottom.</p></li>
+<li><p><a href="lib/widgets/tap_to_edit.dart#L7">TapToEditText</a>:
+Inline editing textfield with escape-key and keyboard handling.</p></li>
+<li><p><a
+href="lib/widgets/json_syntax_dialog.dart#L6">JsonSyntaxEditorDialog</a>:
+Live JSON syntax correction dialog.</p></li>
 <li><p>Sliders (<code>MySlider.buildTable</code>): Handles interactive
 sliders for changing current observer time
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>)
 and velocity
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>v</mi><annotation encoding="application/x-tex">v</annotation></semantics></math>).</p></li>
+<li><p>Overlays: Mounts <code>TutorialHighlightLayer</code>,
+<code>TutorialCard</code>, and canvas overlays when a tutorial is
+active.</p></li>
 </ul></li>
-<li><p><strong><code>lib/scene.dart</code></strong>:</p>
+<li><p><strong><code>lib/scene.dart</code> &amp;
+<code>lib/scene/</code></strong>:</p>
 <ul>
-<li><p><a href="lib/scene.dart#L37">SceneData</a>: Serialized document
-state (list of drawables, time, velocity, viewport
+<li><p><a href="lib/scene/scene_data.dart#L13">SceneData</a>: Serialized
+document state (list of drawables, time, velocity, viewport
 center/zoom).</p></li>
-<li><p><a href="lib/scene.dart#L201">SceneView</a>: High-level state
-manager for the active editor. Coordinates painting, selections, tool
-choices, and contains a <code>Worker</code> to dispatch asynchronous
-drawable calculations.</p></li>
+<li><p><a href="lib/scene/scene_view.dart#L23">SceneView</a>: High-level
+state manager for the active editor. Coordinates painting, selections,
+tool choices, and contains a <code>Worker</code> to dispatch
+asynchronous drawable calculations.</p></li>
+<li><p><a href="lib/scene/scene_painters.dart#L5">ScenePainter &amp;
+SideViewPainter</a>: Custom painters connecting Flutter canvas repaints
+to <code>SceneView</code>.</p></li>
 </ul></li>
 <li><p><strong><code>lib/transform.dart</code></strong>:</p>
 <ul>
@@ -194,53 +211,104 @@ and <code>CoordinateTransform</code> which handles scaling, zooming,
 panning, and conversions between World, Observer, and Screen coordinate
 spaces.</li>
 </ul></li>
-<li><p><strong><code>lib/drawable.dart</code></strong>:</p>
+<li><p><strong><code>lib/drawable.dart</code> &amp;
+<code>lib/drawables/</code></strong>:</p>
 <ul>
 <li><p>Models entity types placed in spacetime (inheriting from
 <code>Drawable</code>):</p>
 <ul>
-<li><p><a href="lib/drawable.dart#L274">Event</a>: A single coordinate
-point. Fades out in side view over time.</p></li>
-<li><p><a href="lib/drawable.dart#L342">LightCone</a>: Expands outward
-along light paths.</p></li>
-<li><p><a href="lib/drawable.dart#L434">Instant</a>: Tilted plane of
-simultaneity.</p></li>
-<li><p><a href="lib/drawable.dart#L546">Location</a>: Moving entities
-(Person, Train, Barn, Flag, Clock) represented by worldlines. These
-render as length-contracted sprites in the side view.</p></li>
+<li><p><a href="lib/drawables/event.dart#L22">Event</a>: A single
+coordinate point. Fades out in side view over time.</p></li>
+<li><p><a href="lib/drawables/light_cone.dart#L22">LightCone</a>:
+Expands outward along light paths.</p></li>
+<li><p><a href="lib/drawables/instant.dart#L22">Instant</a>: Tilted
+plane of simultaneity.</p></li>
+<li><p><a href="lib/drawables/location.dart#L23">Location</a>: Moving
+entities (Person, Train, Barn, Flag, Clock) represented by worldlines.
+These render as length-contracted sprites in the side view.</p></li>
 </ul></li>
+</ul></li>
+<li><p><strong><code>lib/script.dart</code> &amp;
+<code>lib/script/</code> &amp;
+<code>lib/tutorial_widget.dart</code></strong>:</p>
+<ul>
+<li><p>Interactive tutorial engine. Parses markdown tutorials and
+directives (<code>TutorialDirective</code>), evaluates conditions
+against <code>SceneView</code>, and renders floating
+<code>TutorialCard</code>, canvas overlays, and UI highlights:</p>
+<ul>
+<li><p><a href="lib/script/tutorial_parser.dart#L27">TutorialParser</a>:
+Markdown parser.</p></li>
+<li><p><a href="lib/script/tutorial_step.dart#L446">TutorialStep</a>:
+Step evaluation and <code>TutorialDirective</code> classes.</p></li>
+<li><p><a
+href="lib/script/tutorial_controller.dart#L9">TutorialController</a>:
+Reactive controller tracking progress and driving step
+criteria.</p></li>
+</ul></li>
+</ul></li>
+<li><p><strong><code>lib/drive.dart</code> &amp;
+<code>lib/drive/</code></strong>:</p>
+<ul>
+<li><p>Google Drive v3 REST API integration, OAuth authentication, query
+parsing (<code>buildDriveQuery</code>), and file picker dialogs:</p>
+<ul>
+<li><p><a href="lib/drive/drive_auth.dart#L18">MyDriveAccess</a>:
+Authentication manager, OAuth token storage, sign in/out, and status
+stream.</p></li>
+<li><p><a href="lib/drive/drive_service.dart#L44">DriveHolder</a>:
+FileHolder storage driver for Google Drive files and metadata.</p></li>
+<li><p><a href="lib/drive/drive_dialog.dart#L11">DriveDialog</a>: Drive
+file picker and search dialog UI.</p></li>
+</ul></li>
+</ul></li>
+<li><p><strong><code>lib/splitter.dart</code></strong>:</p>
+<ul>
+<li>Splitscreen widget (<code>SplitterWidget</code>) rendering main
+spacetime canvas on top and observer side view on the bottom with a
+draggable divider.</li>
+</ul></li>
+<li><p><strong><code>lib/axis.dart</code></strong>:</p>
+<ul>
+<li><code>PlotAxis</code> handles coordinate grid calculation, rounding
+bounds, and drawing axis ticks and labels on canvas.</li>
+</ul></li>
+<li><p><strong><code>lib/sprites.dart</code></strong>:</p>
+<ul>
+<li>Sprites and vector silhouettes for observer entities (Person, Train,
+Barn, Flag, Clock).</li>
+</ul></li>
+<li><p><strong><code>lib/color.dart</code></strong>:</p>
+<ul>
+<li>Color management (<code>SavableColor</code>,
+<code>SavableColorArray</code>, and <code>SavableTheme</code>).</li>
+</ul></li>
+<li><p><strong><code>lib/animate.dart</code></strong>:</p>
+<ul>
+<li><code>MyAnimator</code> timing loop powering continuous time
+advancement.</li>
 </ul></li>
 <li><p><strong><code>lib/file_manager.dart</code></strong>:</p>
 <ul>
 <li>Manages active <code>FileHolder</code>, dirty/unsaved states, recent
-files list, and triggers <code>checkSave</code> dialogs for destructive
-file actions.</li>
+files list, active tutorials, and triggers <code>checkSave</code>
+dialogs for destructive actions.</li>
 </ul></li>
 <li><p><strong><code>lib/file_holder.dart</code></strong>:</p>
 <ul>
-<li><p>Interface representing a storage driver. Concrete
-implementations:</p>
-<ul>
-<li><p><code>DriveHolder</code>: Google Drive file.</p></li>
-<li><p><code>JsonHolder</code>: Plain text JSON.</p></li>
-<li><p><code>ClipboardHolder</code>: Copy/paste integration (plain JSON
-or encoded URLs).</p></li>
-<li><p><code>LocalFileHolder</code>: Picked local files.</p></li>
-</ul></li>
+<li>Storage driver interface (<code>DriveHolder</code>,
+<code>JsonHolder</code>, <code>ClipboardHolder</code>,
+<code>LocalFileHolder</code>).</li>
 </ul></li>
 <li><p><strong><code>lib/drive.dart</code></strong>:</p>
 <ul>
-<li>Integration with Google Drive API v3. Uses
-<code>google_sign_in</code> and
-<code>extension_google_sign_in_as_googleapis_auth</code> to authenticate
-and list/load/save files.</li>
+<li>Google Drive v3 REST API integration, OAuth authentication, query
+parsing (<code>buildDriveQuery</code>), and file picker dialogs.</li>
 </ul></li>
 <li><p><strong><code>lib/edit.dart</code></strong>:</p>
 <ul>
 <li>Core undo/redo infrastructure (<code>MyUndoManager</code>,
-<code>UndoCallback</code>, <code>Change</code>). Tracks saved checkpoint
-indices to automatically clear <code>unsaved</code> state when undoing
-back to a clean save point.</li>
+<code>UndoCallback</code>, <code>Change</code>).</li>
 </ul></li>
 </ul>
 <hr />
@@ -254,7 +322,7 @@ by:</p>
 <li><p>Relative velocity
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>v</mi><annotation encoding="application/x-tex">v</annotation></semantics></math>
 ranges within
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">[</mo><mo>−</mo><mn>0.999</mn><mo>,</mo><mn>0.999</mn><mo stretchy="true" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[-0.999, 0.999]</annotation></semantics></math>.</p></li>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">[</mo><mi>−</mi><mn>0.999</mn><mo>,</mo><mn>0.999</mn><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[-0.999, 0.999]</annotation></semantics></math>.</p></li>
 <li><p>Lorentz factor
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mo>=</mo><mfrac><mn>1</mn><msqrt><mrow><mn>1</mn><mo>−</mo><msup><mi>v</mi><mn>2</mn></msup></mrow></msqrt></mfrac></mrow><annotation encoding="application/x-tex">\gamma = \frac{1}{\sqrt{1 - v^2}}</annotation></semantics></math>.</p></li>
 </ul>
@@ -264,11 +332,11 @@ Frame Transform (World Frame
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>↔</mo><annotation encoding="application/x-tex">\leftrightarrow</annotation></semantics></math>
 Reference Frame)</h3>
 <p>Transform from observer frame to world frame:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mn>0</mn></msub><mo>=</mo><mi>γ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo>+</mo><mi>v</mi><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">x_0 = \gamma (x + v t)</annotation></semantics></math></p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>t</mi><mn>0</mn></msub><mo>=</mo><mi>γ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>+</mo><mi>v</mi><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">t_0 = \gamma (t + v x)</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mn>0</mn></msub><mo>=</mo><mi>γ</mi><mo stretchy="false" form="prefix">(</mo><mi>x</mi><mo>+</mo><mi>v</mi><mi>t</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">x_0 = \gamma (x + v t)</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>t</mi><mn>0</mn></msub><mo>=</mo><mi>γ</mi><mo stretchy="false" form="prefix">(</mo><mi>t</mi><mo>+</mo><mi>v</mi><mi>x</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">t_0 = \gamma (t + v x)</annotation></semantics></math></p>
 <p>Transform from world frame to observer frame:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>=</mo><mi>γ</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>x</mi><mn>0</mn></msub><mo>−</mo><mi>v</mi><msub><mi>t</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">x = \gamma (x_0 - v t_0)</annotation></semantics></math></p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>=</mo><mi>γ</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>t</mi><mn>0</mn></msub><mo>−</mo><mi>v</mi><msub><mi>x</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">t = \gamma (t_0 - v x_0)</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>=</mo><mi>γ</mi><mo stretchy="false" form="prefix">(</mo><msub><mi>x</mi><mn>0</mn></msub><mo>−</mo><mi>v</mi><msub><mi>t</mi><mn>0</mn></msub><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">x = \gamma (x_0 - v t_0)</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>=</mo><mi>γ</mi><mo stretchy="false" form="prefix">(</mo><msub><mi>t</mi><mn>0</mn></msub><mo>−</mo><mi>v</mi><msub><mi>x</mi><mn>0</mn></msub><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">t = \gamma (t_0 - v x_0)</annotation></semantics></math></p>
 <p>In code (see <a href="lib/transform.dart#L49">Point.toFrame</a>):</p>
 <div class="sourceCode" id="cb2"><pre
 class="sourceCode dart"><code class="sourceCode dart"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> x0 <span class="op">=</span> frame<span class="op">.</span>gamma <span class="op">*</span> (x <span class="op">-</span> frame<span class="op">.</span>velocity <span class="op">*</span> t);</span>
@@ -284,7 +352,87 @@ class="sourceCode dart"><code class="sourceCode dart"><span id="cb3-1"><a href="
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> gammaInv <span class="op">=</span> math<span class="op">.</span>sqrt(<span class="fl">1.0</span> <span class="op">-</span> w <span class="op">*</span> w);</span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>contracted_width <span class="op">=</span> width <span class="op">*</span> gammaInv;</span></code></pre></div>
 <hr />
-<h2 id="key-workflows">4. Key Workflows</h2>
+<h2 id="interactive-tutorial-system">4. Interactive Tutorial System</h2>
+<p>The application includes an interactive tutorial engine
+(<code>lib/script.dart</code> and <code>lib/tutorial_widget.dart</code>)
+that presents step-by-step physics lessons with live verification
+against user actions.</p>
+<h3 id="tutorial-markdown-schema">Tutorial Markdown Schema</h3>
+<p>Tutorials are written in markdown and parsed by
+<code>Tutorial.fromMarkdown()</code>:</p>
+<ul>
+<li><p><strong>Title</strong>: Single top-level
+<code># Tutorial Title</code>.</p></li>
+<li><p><strong>Description</strong>: Introductory paragraphs preceding
+the first step.</p></li>
+<li><p><strong>Steps</strong>: Numbered headings
+<code>## 1. Step Title</code>.</p></li>
+<li><p><strong>Body</strong>: Explanatory text and instructions shown on
+the <code>TutorialCard</code>.</p></li>
+<li><p><strong>Directives</strong>: Blockquote lines
+(<code>&gt; ...</code>) defining interactive criteria:</p>
+<ul>
+<li><p><code>&gt; v = 0.5 [tol 0.02]</code>: Checks velocity slider
+target.</p></li>
+<li><p><code>&gt; t = 2.0 [tol 0.1]</code>: Checks time slider
+target.</p></li>
+<li><p><code>&gt; mode = lorentz|ether|emitter</code>: Checks light
+speed frame mode.</p></li>
+<li><p><code>&gt; tool = select|add</code>: Checks active toolbar
+tool.</p></li>
+<li><p><code>&gt; type = person|train|barn|flag|clock|event|cone|instant</code>:
+Checks type.</p></li>
+<li><p><code>&gt; name = TargetName</code>: Checks object name in
+toolbar or selection.</p></li>
+<li><p><code>&gt; color = 0..9</code>: Checks selected color
+index.</p></li>
+<li><p><code>&gt; add = type [x, t]</code>: Guides user to place an
+object near coordinates.</p></li>
+<li><p><code>&gt; select = name|type</code>: Requires selecting an
+object.</p></li>
+<li><p><code>&gt; load = filename</code>: Loads a preset scene for the
+step.</p></li>
+<li><p><code>&gt; setup ...</code>: Background setup actions applied on
+step start.</p></li>
+<li><p><code>&gt; ok</code>: Informational step requiring manual
+confirmation.</p></li>
+</ul></li>
+</ul>
+<h3 id="controller-evaluation-lifecycle">Controller &amp; Evaluation
+Lifecycle</h3>
+<ol type="1">
+<li><p><code>FileManager.activeTutorial</code> holds the active
+<code>TutorialController</code>.</p></li>
+<li><p>The controller tracks <code>currentStepIndex</code> and listens
+to <code>SceneView</code> state.</p></li>
+<li><p>On slider changes or canvas edits,
+<code>TutorialStep.isSatisfied(scene)</code> evaluates all step
+directives.</p></li>
+<li><p>If all directives are satisfied, the step status turns green and
+enables advancing.</p></li>
+<li><p>Directives supporting automated actions
+(<code>canDoItForMe == true</code>) allow users to tap “Do it for me”,
+executing <code>applyDoItForMe(scene)</code> to automatically adjust
+sliders or tools to the required target.</p></li>
+<li><p>The user can navigate backward (“Back”), advance (“Continue”), or
+close (“Exit”) at any time.</p></li>
+</ol>
+<h3 id="ui-architecture-highlights">UI Architecture &amp;
+Highlights</h3>
+<ul>
+<li><p><strong><code>TutorialCard</code></strong>: Draggable, floating
+overlay card displaying step instructions, target status, and navigation
+buttons.</p></li>
+<li><p><strong><code>TutorialHighlight</code></strong>: Wraps target UI
+controls (sliders, tool buttons, menus) and renders animated pulsing
+highlight frames when their <code>highlightId</code> matches the active
+step’s target.</p></li>
+<li><p><strong><code>TutorialCanvasOverlay</code></strong>: Renders
+placement targets or pointer hints directly on the spacetime canvas
+during object placement steps.</p></li>
+</ul>
+<hr />
+<h2 id="key-workflows">5. Key Workflows</h2>
 <h3 id="loading-a-scene">Loading a Scene</h3>
 <ol type="1">
 <li><p><code>FileManager.loadFile()</code> is called with a
@@ -306,13 +454,13 @@ modern or legacy schema.</p></li>
 <li><p>The <code>Worker</code> executes asynchronously to update all
 drawables (computing their coordinates in the observer frame).</p></li>
 <li><p><code>SceneView.requestRepaintScene()</code> is called,
-incrementing <code>repaint_counter</code>.</p></li>
+incrementing <code>repaintCounter</code>.</p></li>
 <li><p>CustomPainters (<code>ScenePainter</code> and
-<code>SideViewPainter</code>) listen to <code>repaint_counter</code> and
+<code>SideViewPainter</code>) listen to <code>repaintCounter</code> and
 trigger canvas repaints.</p></li>
 </ol>
 <hr />
-<h2 id="development-checklist-gotchas">5. Development Checklist &amp;
+<h2 id="development-checklist-gotchas">6. Development Checklist &amp;
 Gotchas</h2>
 <ul>
 <li><p><strong>Asynchronous Repaints</strong>: Repainting uses a
@@ -375,7 +523,7 @@ initialize focal points at gesture start without applying an initial
 frame-1 movement jump. Movement deltas are computed dynamically during
 <code>onScaleUpdate</code>.</p></li>
 <li><p><strong>Unsaved State &amp; Undo Checkpoint Sync</strong>:
-<code>MyUndoManager</code> tracks a <code>_saved_index</code>. When
+<code>MyUndoManager</code> tracks a <code>_savedIndex</code>. When
 undoing back to the last save point, <code>unsaved.value</code> is
 automatically set to <code>false</code>. Navigating to auxiliary screens
 (<code>/help</code>, <code>/about</code>, <code>/settings</code>)
@@ -414,9 +562,13 @@ and
 are derived dynamically from container size passed during
 <code>LayoutBuilder</code> <code>resize()</code> calls in
 <code>SceneView.build</code> (<code>lib/scene.dart</code>).</p></li>
+<li><p><strong>Window Size in Tests</strong>: In widget test harnesses,
+avoid deprecated <code>tester.binding.window</code> APIs; use
+<code>tester.view.physicalSize</code> and
+<code>tester.view.devicePixelRatio</code>.</p></li>
 </ul>
 <hr />
-<h2 id="code-style">6. Code Style</h2>
+<h2 id="code-style">7. Code Style</h2>
 <h3 id="markdown-preferences">Markdown Preferences</h3>
 <p>To maintain clean and standardized documentation for both developers
 and automated builders (such as <code>pandoc</code>):</p>
@@ -445,7 +597,7 @@ class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="
 characters.</p></li>
 </ul>
 <hr />
-<h2 id="testing-guidelines">7. Testing Guidelines</h2>
+<h2 id="testing-guidelines">8. Testing Guidelines</h2>
 <p>To maintain fast feedback loops, run targeted tests depending on
 which files are modified. Only run the entire test suite
 (<code>flutter test</code>) before doing a git commit or staging a
@@ -472,6 +624,18 @@ release.</p>
 (<code>lib/drawable.dart</code>)</p>
 <p>Run:
 <code>flutter test test/simple_test.dart test/scene_editor.dart</code></p></li>
+<li><p><strong>Axes &amp; Grid Lines</strong>
+(<code>lib/axis.dart</code>)</p>
+<p>Run: <code>flutter test test/axis_test.dart</code></p></li>
+<li><p><strong>Sprites &amp; Silhouettes</strong>
+(<code>lib/sprites.dart</code>)</p>
+<p>Run: <code>flutter test test/sprites_test.dart</code></p></li>
+<li><p><strong>Split Screen Layout</strong>
+(<code>lib/splitter.dart</code>)</p>
+<p>Run: <code>flutter test test/splitter_test.dart</code></p></li>
+<li><p><strong>Colors &amp; Themes</strong>
+(<code>lib/color.dart</code>)</p>
+<p>Run: <code>flutter test test/color_test.dart</code></p></li>
 <li><p><strong>Undo/Redo History &amp; Unsaved Sync</strong>
 (<code>lib/edit.dart</code>)</p>
 <p>Run: <code>flutter test test/edit_test.dart</code></p></li>
@@ -494,12 +658,18 @@ release.</p>
 <li><p><strong>Background Worker</strong>
 (<code>lib/worker.dart</code>)</p>
 <p>Run: <code>flutter test test/worker_test.dart</code></p></li>
-<li><p><strong>Interactive Scripts / Lessons</strong>
-(<code>lib/script.dart</code>)</p>
-<p>Run: <code>flutter test test/script_test.dart</code></p></li>
-<li><p><strong>Async Animation Helpers</strong>
+<li><p><strong>Interactive Scripts &amp; Tutorials</strong>
+(<code>lib/script.dart</code>,
+<code>lib/tutorial_widget.dart</code>)</p>
+<p>Run:
+<code>flutter test test/script_test.dart test/tutorial_test.dart</code></p></li>
+<li><p><strong>Animation Timing &amp; Helpers</strong>
 (<code>lib/animate.dart</code>)</p>
-<p>Run: <code>flutter test test/async_test.dart</code></p></li>
+<p>Run:
+<code>flutter test test/async_test.dart test/animator_test.dart</code></p></li>
+<li><p><strong>Printer &amp; Logging Utilities</strong>
+(<code>lib/printer.dart</code>)</p>
+<p>Run: <code>flutter test test/printer_test.dart</code></p></li>
 <li><p><strong>General UI / Layout</strong>
 (<code>lib/widget.dart</code>)</p>
 <p>Run:

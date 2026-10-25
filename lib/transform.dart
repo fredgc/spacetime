@@ -91,6 +91,9 @@ class Point {
     return x == pt2.x && t == pt2.t && z == pt2.z;
   }
 
+  @override
+  int get hashCode => Object.hash(x, t, z);
+
   Point min(Point other) {
     return Point(
       x: math.min(x, other.x),
@@ -180,6 +183,9 @@ class Vector {
     return dx == pt2.dx && dt == pt2.dt && dz == pt2.dz;
   }
 
+  @override
+  int get hashCode => Object.hash(dx, dt, dz);
+
   factory Vector.fromJson(Map<String, dynamic> json) => _$VectorFromJson(json);
   Map<String, dynamic> toJson() => _$VectorToJson(this);
   @override
@@ -240,6 +246,9 @@ class ReferenceFrame {
     return center == f2.center && _velocity == f2._velocity;
   }
 
+  @override
+  int get hashCode => Object.hash(center, _velocity);
+
   factory ReferenceFrame.fromJson(Map<String, dynamic> json) =>
       _$ReferenceFrameFromJson(json);
   Map<String, dynamic> toJson() => _$ReferenceFrameToJson(this);
@@ -254,11 +263,11 @@ class ReferenceFrame {
 /// The side view, or bottom canvas, which dislays (x, z).
 /// Notice that x and t share a zoom factor.
 class CoordinateTransform {
-  Size size = Size(100, 100); // Screen size.
+  Size size = const Size(100, 100); // Screen size.
   double _sideHeight = 80.0; // height of side view window.
   ReferenceFrame frame = ReferenceFrame(); // Observer frame.
   // offset == screen coordintes mapped to by (0,0,0).
-  Offset offset = Offset(50, 75);
+  Offset offset = const Offset(50, 75);
   // Side view maps z=0 to (sideHeight - dz) pixels above bottom.
   double dz = 70;
   // This is the initial zoom value from world to screen. If you
@@ -295,8 +304,6 @@ class CoordinateTransform {
     return size != this.size;
   }
 
-  static int _debugCounter = 0;
-  final int _debugId = ++_debugCounter;
   @override
   String toString() => "T${zzz(frame)} - ${zzz(offset)}, z=${zzz(zoom)}";
 
@@ -317,7 +324,7 @@ class CoordinateTransform {
 
   /// Resizes viewport screen dimensions.
   void resize(Size size) {
-    Log.mouse_scale.log("YELLOW: transform size ${this.size} -> $size");
+    Log.mouseScale.log("YELLOW: transform size ${this.size} -> $size");
     if (size.width == 0) return;
     // Keep the relative percentage of the offset for the new offset.
     double dx = size.width * offset.dx / this.size.width;
@@ -329,7 +336,7 @@ class CoordinateTransform {
 
   /// Recomputes min and max bounding points in observer coordinates.
   void findMax() {
-    if (SceneView.use_debug_rect.value) {
+    if (SceneView.useDebugRect.value) {
       min = fromScreen(Offset(size.width * 0.10, size.height * 0.90));
       max = fromScreen(Offset(size.width * 0.90, size.height * 0.10));
     } else {

@@ -5,7 +5,7 @@ class SplitterWidget extends StatefulWidget {
   final Widget Function(BuildContext) top;
   final Widget Function(BuildContext) bottom;
   final void Function(double) setter;
-  final double initial_size;
+  final double initialSize;
   final Color background;
   final Color outline;
 
@@ -13,24 +13,24 @@ class SplitterWidget extends StatefulWidget {
     required this.top,
     required this.bottom,
     required this.setter,
-    required this.initial_size,
+    required this.initialSize,
     this.background = Colors.black,
     this.outline = Colors.green,
     super.key,
   });
 
   @override
-  State<SplitterWidget> createState() => SplitterWidgetState(initial_size);
+  State<SplitterWidget> createState() => SplitterWidgetState();
 }
 
 class SplitterWidgetState extends State<SplitterWidget> {
-  final double minimum_size = 5;
-  double bottom_size;
-  SplitterWidgetState(this.bottom_size);
+  static const double _minimumSize = 5;
+  late double _bottomSize;
 
   @override
   void initState() {
     super.initState();
+    _bottomSize = widget.initialSize;
   }
 
   BoxDecoration decoration() {
@@ -59,7 +59,7 @@ class SplitterWidgetState extends State<SplitterWidget> {
               ),
             ),
             Container(
-              constraints: BoxConstraints(minHeight: bottom_size),
+              constraints: BoxConstraints(minHeight: _bottomSize),
               decoration: decoration(),
               child: ClipRect(child: widget.bottom(context)),
             ),
@@ -67,26 +67,26 @@ class SplitterWidgetState extends State<SplitterWidget> {
         ),
         Positioned(
           right: 3,
-          bottom: bottom_size - iconSize / 2.0,
+          bottom: _bottomSize - iconSize / 2.0,
           child: GestureDetector(
             child: icon,
             onScaleStart: (info) {
-              Log.mouse_scale.log("ICON. scale start in both view.");
+              Log.mouseScale.log("ICON. scale start in both view.");
             },
             onScaleUpdate: (info) {
               if (context.size != null) {
                 setState(() {
-                  bottom_size -= info.focalPointDelta.dy;
-                  double maximumSize = context.size!.height - 2 * minimum_size;
-                  bottom_size = bottom_size.clamp(minimum_size, maximumSize);
-                  widget.setter(bottom_size);
-                  Log.mouse_scale.log("bottom_size = ${zzz(bottom_size)}");
+                  _bottomSize -= info.focalPointDelta.dy;
+                  double maximumSize = context.size!.height - 2 * _minimumSize;
+                  _bottomSize = _bottomSize.clamp(_minimumSize, maximumSize);
+                  widget.setter(_bottomSize);
+                  Log.mouseScale.log("bottom_size = ${zzz(_bottomSize)}");
                 });
               }
             },
             onScaleEnd: (info) {
-              Log.mouse_scale.log(
-                "ICON -- end bottom_size = ${zzz(bottom_size)}",
+              Log.mouseScale.log(
+                "ICON -- end bottom_size = ${zzz(_bottomSize)}",
               );
             },
           ),

@@ -8,14 +8,17 @@ import 'drive.dart';
 import 'file_holder.dart';
 import 'local_file.dart';
 import 'menus.dart';
+import 'name.dart';
 import 'printer.dart';
 import 'recent_file.dart';
 import 'scene.dart';
 import 'settings.dart';
 import 'upload.dart';
+import 'script.dart';
+import 'tutorials.g.dart';
 import 'js_stub.dart' if (dart.library.html) 'js_interface.dart';
 
-enum LoadingStatus { NotInitialized, Initialized, Loading, Loaded, Error }
+enum LoadingStatus { notInitialized, initialized, loading, loaded, error }
 
 class ContextHolder {
   String source;
@@ -36,12 +39,65 @@ class FileAndScene {
 class FileManager {
   final Settings settings;
   ValueNotifier<bool> unsaved = ValueNotifier(false);
+  ValueNotifier<TutorialController?> activeTutorial = ValueNotifier(null);
+  FileAndScene? _stashedUserScene;
   FileAndScene current = FileAndScene();
   FileAndScene previous = FileAndScene();
   Object? exception;
   Object? lastError;
   String rawBlob = "";
   bool isTesting = false;
+
+  void finishTutorial() {
+    if (activeTutorial.value != null) {
+      final tutorialTitle = activeTutorial.value!.tutorial.title;
+      activeTutorial.value?.dispose();
+      activeTutorial.value = null;
+      // Discard stashed scene so the tutorial scene remains!
+      _stashedUserScene?.dispose();
+      _stashedUserScene = null;
+      // Keep scene and convert holder to an editable FileHolder with tutorial title.
+      current.holder = FileHolder("");
+      current.holder.title = tutorialTitle;
+      if (current.scene != null) {
+        current.scene!.data.title = tutorialTitle;
+      }
+      unsaved.value = true;
+      status = LoadingStatus.loaded;
+      notify();
+    }
+  }
+
+  void closeTutorial({bool keepScene = true}) {
+    if (keepScene) {
+      finishTutorial();
+    } else {
+      if (activeTutorial.value != null) {
+        activeTutorial.value?.dispose();
+        activeTutorial.value = null;
+        if (_stashedUserScene != null) {
+          current.dispose();
+          current = _stashedUserScene!;
+          _stashedUserScene = null;
+          status = LoadingStatus.loaded;
+          unsaved.value = false;
+        }
+        notify();
+      }
+    }
+  }
+
+  void startTutorial(Tutorial tutorial) {
+    if (activeTutorial.value != null) {
+      activeTutorial.value?.dispose();
+    }
+    if (current.scene != null) {
+      current.scene!.data.title = tutorial.title;
+      current.holder.title = tutorial.title;
+      activeTutorial.value = TutorialController(current.scene!, tutorial);
+      notify();
+    }
+  }
 
   // XXX This seems hacky.
   ContextHolder _context = ContextHolder("empty", null);
@@ -54,12 +110,12 @@ class FileManager {
     return _context.context;
   }
 
-  LoadingStatus _status = LoadingStatus.NotInitialized;
+  LoadingStatus _status = LoadingStatus.notInitialized;
   final StreamController<LoadingStatus> _statusStream =
       StreamController<LoadingStatus>.broadcast();
 
   RecentFiles recent = RecentFiles();
-  MyDriveAccess drive_access = MyDriveAccess();
+  MyDriveAccess driveAccess = MyDriveAccess();
 
   FileManager(this.settings);
 
@@ -93,7 +149,7 @@ class FileManager {
 
     await LocalFileHolder.initialize();
     await DownloadManager.initialize();
-    await drive_access.initialize();
+    await driveAccess.initialize();
     await recent.initialize();
 
     // XXX add this here? Instead of for menus?
@@ -104,22 +160,24 @@ class FileManager {
     current.scene = SceneView(this, settings, SceneData());
     previous.scene = SceneView(this, settings, SceneData());
 
-    status = LoadingStatus.Initialized;
+    status = LoadingStatus.initialized;
     await reload();
     // Log.files.log("Done with reload in initialization.");
   }
 
   // XXX What about when current has an error. Don't do this.
   void setCurrent(FileHolder holder) {
-    // Log.files.log("Push holder (prev): $previous");
-    // Log.files.log("            (cur)-> $current");
-    // Log.files.log("            (new)-> $holder");
-    if (current.scene == null) {
-      // Log.files.log("Not moving cur to previous because current.scene == null");
-      // Log.files.log("exception = $exception");
+    // If opening a tutorial and currently on a regular scene, stash it.
+    if (holder.kind == FileKind.tutorial &&
+        current.holder.kind == FileKind.scene &&
+        current.scene != null &&
+        _stashedUserScene == null) {
+      _stashedUserScene = current;
     } else {
-      previous.dispose();
-      previous = current;
+      if (current.scene != null) {
+        previous.dispose();
+        previous = current;
+      }
     }
     current = FileAndScene();
     current.holder = holder;
@@ -137,7 +195,7 @@ class FileManager {
     // Log.files.log("RED: maybe therew as an error?");
     // Log.files.log("CYAN: Popping from ${current} to $previous");
     exception = null;
-    status = LoadingStatus.Loaded;
+    status = LoadingStatus.loaded;
     unsaved.value = false; //XXX -- is this true? -- make it current?
     current = previous;
     previous = FileAndScene();
@@ -147,12 +205,16 @@ class FileManager {
 
   // Set the file based on navigation query parameters.
   void checkNavigation(Map<String, String> parameters) {
+    final effectiveParams = <String, String>{
+      ...Uri.base.queryParameters,
+      ...parameters,
+    };
     FileHolder holder;
-    if (parameters['drive'] != null) {
-      holder = DriveHolder(parameters['drive']!);
-    } else if (parameters['state'] != null) {
+    if (effectiveParams['drive'] != null) {
+      holder = DriveHolder(effectiveParams['drive']!);
+    } else if (effectiveParams['state'] != null) {
       try {
-        final stateJson = jsonDecode(parameters['state']!);
+        final stateJson = jsonDecode(effectiveParams['state']!);
         if (stateJson is Map &&
             stateJson['ids'] is List &&
             (stateJson['ids'] as List).isNotEmpty) {
@@ -164,10 +226,10 @@ class FileManager {
       } catch (_) {
         holder = FileHolder("");
       }
-    } else if (parameters['json'] != null) {
-      holder = JsonHolder(parameters['json']!);
-    } else if (parameters['local'] != null) {
-      holder = LocalFileHolder(parameters['local']!);
+    } else if (effectiveParams['json'] != null) {
+      holder = JsonHolder(effectiveParams['json']!);
+    } else if (effectiveParams['local'] != null) {
+      holder = LocalFileHolder(effectiveParams['local']!);
     } else {
       holder = FileHolder("");
     }
@@ -181,15 +243,15 @@ class FileManager {
 
   Future<void> loadFile(FileHolder holder, {bool navigate = true}) async {
     // Log.files.log("BLUE: loadFile $holder, status = $status");
-    if (status == LoadingStatus.Loaded) {
+    if (status == LoadingStatus.loaded) {
       bool saved = await checkSave(_context.context);
       if (!saved) return;
     }
     if (navigate && holder is DriveHolder) {
-      bool authorized = await drive_access.checkAuthorization();
+      bool authorized = await driveAccess.checkAuthorization();
       if (!authorized) {
         if (_context.context != null && _context.context!.mounted) {
-          authorized = await drive_access.getAuthorization(_context.context);
+          authorized = await driveAccess.getAuthorization(_context.context);
         }
         if (!authorized) {
           Log.files.log("User cancelled drive authorization or is logged out.");
@@ -210,7 +272,7 @@ class FileManager {
     if (!saved) return;
     //Cache the holder to prevent a race condition.
     FileHolder holder = current.holder;
-    if (status == LoadingStatus.NotInitialized) {
+    if (status == LoadingStatus.notInitialized) {
       // This happens if the app is loaded from a deep link and
       // we know what file to load before initialization is complete.
       // After initialization is complete, LoadFile is called again.
@@ -218,14 +280,14 @@ class FileManager {
       return;
     }
     // Log.files.log("BLUE: Start reload of $holder");
-    status = LoadingStatus.Loading;
+    status = LoadingStatus.loading;
     String blob = "not loaded";
     try {
       if (holder is DriveHolder) {
-        bool authorized = await drive_access.checkAuthorization();
+        bool authorized = await driveAccess.checkAuthorization();
         if (!authorized) {
           if (_context.context != null && _context.context!.mounted) {
-            authorized = await drive_access.getAuthorization(_context.context);
+            authorized = await driveAccess.getAuthorization(_context.context);
           }
           if (!authorized) {
             throw Exception(
@@ -239,37 +301,52 @@ class FileManager {
       blob = await holder.loadData(this);
       rawBlob = blob;
       SceneData scene;
-      if (blob == "") {
+      Tutorial? tutorial;
+      if (holder.kind == FileKind.tutorial) {
+        tutorial = Tutorial.fromMarkdown(blob);
         scene = SceneData();
+        scene.title = tutorial.title;
+        holder.title = tutorial.title;
       } else {
-        scene = SceneData.fromJsonString(blob);
-        // Log.files.log("scene time is ${zzz(scene.time)}");
+        closeTutorial();
+        if (blob == "") {
+          scene = SceneData();
+        } else {
+          scene = SceneData.fromJsonString(blob);
+        }
       }
       if (!identical(holder, current.holder)) {
         // loadFile must have been called on top of this instance. Give up.
         // Log.files.log("XXX: done loading $holder, but it is not same as ${current}");
         return;
       }
-      if (holder is DriveHolder &&
-          holder.title.isNotEmpty &&
-          holder.title != "-unknown-") {
-        scene.title = holder.title;
-      } else {
-        holder.title = scene.title;
-      }
-      if (holder is DriveHolder && holder.file?.description != null) {
-        String driveDesc = holder.file!.description!.trim();
-        if (driveDesc.isNotEmpty &&
-            (scene.description.isEmpty ||
-                driveDesc !=
-                    "A spacetime diagram created with the Spacetime Drawing Tool.\nhttps://spacetime.gchouse.org")) {
-          scene.description = driveDesc;
+      if (holder.kind != FileKind.tutorial) {
+        if (holder is DriveHolder &&
+            holder.title.isNotEmpty &&
+            holder.title != "-unknown-") {
+          scene.title = holder.title;
+        } else {
+          holder.title = scene.title;
+        }
+        if (holder is DriveHolder && holder.file?.description != null) {
+          String driveDesc = holder.file!.description!.trim();
+          if (driveDesc.isNotEmpty &&
+              (scene.description.isEmpty ||
+                  driveDesc !=
+                      "A spacetime diagram created with the Spacetime Drawing Tool.\nhttps://spacetime.gchouse.org")) {
+            scene.description = driveDesc;
+          }
         }
       }
       unsaved.value = false;
-      recent.add(holder);
+      if (holder.kind != FileKind.tutorial) {
+        recent.add(holder);
+      }
       current.scene = SceneView(this, settings, scene);
-      status = LoadingStatus.Loaded;
+      if (tutorial != null) {
+        startTutorial(tutorial);
+      }
+      status = LoadingStatus.loaded;
       Log.files.log("CYAN: Loaded scene for $holder");
       if (scene.isLegacy &&
           _context.context != null &&
@@ -309,7 +386,7 @@ class FileManager {
       }
       exception = ex;
       unsaved.value = false;
-      status = LoadingStatus.Error;
+      status = LoadingStatus.error;
     }
   }
 
@@ -320,10 +397,10 @@ class FileManager {
       unsaved.value = true;
       current.scene = SceneView(this, settings, scene);
       exception = null;
-      status = LoadingStatus.Loaded;
+      status = LoadingStatus.loaded;
     } catch (ex) {
       exception = ex;
-      status = LoadingStatus.Error;
+      status = LoadingStatus.error;
     }
   }
 
@@ -347,7 +424,7 @@ class FileManager {
   }
 
   void clearUnsaved() {
-    current.scene?.undo_manager.markSaved();
+    current.scene?.undoManager.markSaved();
     unsaved.value = false;
     // Log.files.log("Cleared unsaved.");
   }
@@ -377,7 +454,7 @@ class FileManager {
   }
 
   Future<bool> save() async {
-    if (status != LoadingStatus.Loaded) {
+    if (status != LoadingStatus.loaded) {
       Log.files.log("RED: trying to save while not loaded.");
       return false;
     }
@@ -434,7 +511,7 @@ class FileManager {
       "Trying to save '${viewer.data.title}', type = ${current.holder.type}.",
     );
     current.holder.title = viewer.data.title;
-    var encoder = JsonEncoder.withIndent("  ");
+    var encoder = const JsonEncoder.withIndent("  ");
     String data = encoder.convert(viewer.data);
     bool saved = false;
     if ("empty" == current.holder.type) {
@@ -443,7 +520,7 @@ class FileManager {
     try {
       saved = await current.holder.saveData(data, this);
     } catch (e) {
-      Log.files.log("Save Error: '${e}.");
+      Log.files.log("Save Error: '$e.");
       lastError = e;
       saved = false;
     }
@@ -518,7 +595,7 @@ class FileManager {
       Log.files.log("XXX --- saveAs with null context.");
       return false;
     }
-    if (status != LoadingStatus.Loaded) {
+    if (status != LoadingStatus.loaded) {
       Log.files.log("RED: trying to save while not loaded.");
       return false;
     }
@@ -537,9 +614,24 @@ class FileManager {
     }
 
     if (!isTesting) {
-      final titleController = TextEditingController(
-        text: viewer.data.title.isNotEmpty ? viewer.data.title : file.title,
-      );
+      String proposedTitle = viewer.data.title.isNotEmpty
+          ? viewer.data.title
+          : file.title;
+      final existingTitles = <String>{
+        for (final entry in LocalFileHolder.titles.entries)
+          if (!(file is LocalFileHolder && entry.key == file.id)) entry.value,
+        for (final r in recent.toList()) r.title,
+        ...DriveState.lastFetchedNames,
+      };
+      if ((file is LocalFileHolder && file.isNew) ||
+          (file is DriveHolder && file.id == DriveHolder.createString) ||
+          file is UploadHolder) {
+        proposedTitle = NameGuess.nextAvailableName(
+          proposedTitle,
+          existingTitles,
+        );
+      }
+      final titleController = TextEditingController(text: proposedTitle);
       final descController = TextEditingController(
         text: viewer.data.description,
       );
@@ -590,7 +682,7 @@ class FileManager {
       file.title = viewer.data.title;
     }
 
-    var encoder = JsonEncoder.withIndent("  ");
+    var encoder = const JsonEncoder.withIndent("  ");
     String data = encoder.convert(viewer.data);
     bool saved = false;
     try {
@@ -670,7 +762,7 @@ class FileManager {
   }
 
   Future<void> editDescription(BuildContext context) async {
-    if (status != LoadingStatus.Loaded || current.scene == null) return;
+    if (status != LoadingStatus.loaded || current.scene == null) return;
     SceneView viewer = current.scene!;
     FileHolder holder = current.holder;
 
@@ -730,7 +822,7 @@ class FileManager {
 
   Future<void> logout() async {
     Log.files.log("Logout.. unsaved=${unsaved.value}");
-    await drive_access.logout();
+    await driveAccess.logout();
   }
 
   MyMenu makeMenu() {
@@ -770,6 +862,22 @@ class FileManager {
     return menu;
   }
 
+  List<AssetHolder> get builtInTutorials => getBuiltInTutorials();
+
+  MyMenu makeTutorialMenu() {
+    MyMenu menu = MyMenu("Tutorials");
+    menu.items = [
+      for (var tutorial in builtInTutorials)
+        MyMenuItem(
+          tutorial.title,
+          callback: () {
+            loadFile(tutorial);
+          },
+        ),
+    ];
+    return menu;
+  }
+
   // Returns true if the user has saved or wants to abandon. Returns false
   // if the user wants to cancel the current action.
   Future<bool> checkSave(BuildContext? parentContext) async {
@@ -794,7 +902,7 @@ class FileManager {
               ),
               actions: <Widget>[
                 TextButton(
-                  key: ValueKey('check-discard'),
+                  key: const ValueKey('check-discard'),
                   child: const Text('Discard'),
                   onPressed: () {
                     // Log.files.log("CYAN: checksave discard.");
@@ -803,28 +911,30 @@ class FileManager {
                   },
                 ),
                 TextButton(
-                  key: ValueKey('check-save'),
+                  key: const ValueKey('check-save'),
                   child: const Text('Save'),
                   onPressed: () async {
                     bool result = await save();
                     // Log.files.log("CYAN: checksave save $result.");
+                    if (!context.mounted) return;
                     Navigator.of(context).pop(result);
                     // Log.files.log("CYAN: After pop - check save $result.");
                   },
                 ),
                 TextButton(
-                  key: ValueKey('check-saveas'),
+                  key: const ValueKey('check-saveas'),
                   child: const Text('Save As...'),
                   onPressed: () async {
                     // XXX handle error.
                     bool result = await saveAs();
                     // Log.files.log("CYAN: checksave save as $result.");
+                    if (!context.mounted) return;
                     Navigator.of(context).pop(result);
                     // Log.files.log("CYAN: After pop - checksave saveas $result.");
                   },
                 ),
                 TextButton(
-                  key: ValueKey('check-cancel'),
+                  key: const ValueKey('check-cancel'),
                   child: const Text('Cancel'),
                   onPressed: () {
                     // Log.files.log("CYAN: checksave cancel.");
@@ -872,7 +982,7 @@ class ClipboardRow extends StatefulWidget {
 }
 
 class ClipboardRowState extends State<ClipboardRow> {
-  bool make_url = false;
+  bool makeUrl = false;
 
   @override
   Widget build(BuildContext context) {
@@ -886,17 +996,17 @@ class ClipboardRowState extends State<ClipboardRow> {
           onPressed: () {
             // XXX Does not work on web.
             // Log.files.log("CYAN: clipboard holder pop");
-            Navigator.of(context).pop(ClipboardHolder(make_url));
+            Navigator.of(context).pop(ClipboardHolder(makeUrl));
             // Log.files.log("CYAN: After pop - clipboard.");
           },
         ),
-        if (!widget.load) Text("Copy as URL"),
+        if (!widget.load) const Text("Copy as URL"),
         if (!widget.load)
           Checkbox(
-            value: make_url,
+            value: makeUrl,
             onChanged: (bool? value) => setState(() {
               // Log.files.log("Checkbox changed to $value");
-              if (value != null) make_url = value;
+              if (value != null) makeUrl = value;
             }),
           ),
       ],
@@ -926,7 +1036,7 @@ class RecentTabState extends State<RecentTab> {
     return ListView(
       padding: const EdgeInsets.all(8),
       children: [
-        UploadRow(widget.load, widget.current),
+        UploadRow(widget.load, widget.current, recent: widget.recent),
         ClipboardRow(widget.load),
         for (var (index, r) in widget.recent.toList().indexed)
           ListTile(
@@ -965,16 +1075,16 @@ class RecentTabState extends State<RecentTab> {
 
 class FileChooser {
   BuildContext context;
-  FileManager file_manager;
+  FileManager fileManager;
   bool load;
 
-  FileChooser(this.context, this.file_manager, {required this.load});
+  FileChooser(this.context, this.fileManager, {required this.load});
 
   Future<FileHolder?> choose() {
     final tabs = <OneTab>[
-      RecentTab(load, file_manager.recent, file_manager.current.holder),
-      LocalFileTab(load, file_manager.recent), // Combine with recent?
-      DriveTab(load, file_manager, file_manager.recent),
+      RecentTab(load, fileManager.recent, fileManager.current.holder),
+      LocalFileTab(load, fileManager.recent), // Combine with recent?
+      DriveTab(load, fileManager, fileManager.recent),
     ];
 
     return showDialog<FileHolder?>(
@@ -985,7 +1095,7 @@ class FileChooser {
           length: tabs.length,
           child: Scaffold(
             appBar: AppBar(
-              title: Text("Choose a File"),
+              title: const Text("Choose a File"),
               actions: <Widget>[
                 ElevatedButton(
                   child: const Icon(Icons.close),

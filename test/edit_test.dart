@@ -1,3 +1,4 @@
+// ignore_for_file: avoid_print
 import 'dart:math' as math;
 
 import 'package:flutter_test/flutter_test.dart';
@@ -18,7 +19,7 @@ abstract class EditTest {
   final int seed;
   EditTest(this.name, this.seed);
 
-  List<OneEdit> makeList(app);
+  List<OneEdit> makeList(AppTester app);
 
   // Verify that the first |count| edits in the array |edits| were applied
   // to the scene in |app|.
@@ -49,7 +50,7 @@ abstract class EditTest {
       for (var edit in edits) {
         print("   $edit (undoable=${edit.undoable})");
       }
-      app.scene.view!.undo_manager.dumpList();
+      app.scene.view!.undoManager.dumpList();
       print("GREEN: Expected:");
       for (var i = 0; i < expected.drawables.length; i++) {
         Drawable d = expected.drawables[i];
@@ -68,24 +69,23 @@ abstract class EditTest {
   void tests({Function(AppTester)? check}) {
     oneTest("unsaved", (app, edits) async {
       expect(app.manager.unsaved.value, false);
-      int initialUnsavedCount = app.scene.unsaved_count;
+      int initialUnsavedCount = app.scene.unsavedCount;
       for (var edit in edits) {
         await edit.change(app);
         await app.scene.checkFields();
       }
       await checkExpected(app, edits, edits.length);
       expect(app.manager.unsaved.value, true);
-      expect(app.scene.unsaved_count > initialUnsavedCount, true);
-      int unsavedCountBeforeSave = app.scene.unsaved_count;
+      expect(app.scene.unsavedCount > initialUnsavedCount, true);
+      int unsavedCountBeforeSave = app.scene.unsavedCount;
       await app.saveLocal("5");
       expect(app.manager.unsaved.value, false);
-      expect(unsavedCountBeforeSave + 1, app.scene.unsaved_count);
+      expect(unsavedCountBeforeSave + 1, app.scene.unsavedCount);
       if (check != null) await check(app);
     });
 
     oneTest("one undo", (app, edits) async {
       expect(app.manager.unsaved.value, false);
-      int initialUnsavedCount = app.scene.unsaved_count;
       for (var edit in edits) {
         await edit.change(app);
         await app.scene.checkFields();
@@ -128,7 +128,7 @@ abstract class EditTest {
           }
         }
         await checkExpected(app, edits, cut1);
-        expect(undoCount, app.scene.view!.undo_manager.redoList.length);
+        expect(undoCount, app.scene.view!.undoManager.redoList.length);
         // Now do a few redos.
         redoCount = undoCount == 0 ? 0 : app.scene.random.nextInt(undoCount);
         cut2 = cut1;
@@ -144,7 +144,7 @@ abstract class EditTest {
         await checkExpected(app, edits, cut2);
         expect(
           undoCount - redoCount,
-          app.scene.view!.undo_manager.redoList.length,
+          app.scene.view!.undoManager.redoList.length,
         );
         // Now, do some more undos back to cut3.
         cut3 = cut2 == 0 ? 0 : app.scene.random.nextInt(cut2);
@@ -162,7 +162,7 @@ abstract class EditTest {
         await checkExpected(app, edits, cut3);
         expect(
           undoCount - redoCount + undoCount2,
-          app.scene.view!.undo_manager.redoList.length,
+          app.scene.view!.undoManager.redoList.length,
         );
       } catch (e) {
         print("cut1 = $cut1, undo=$undoCount");
@@ -173,7 +173,7 @@ abstract class EditTest {
     });
   }
 
-  Future<AppTester> setup(tester) async {
+  Future<AppTester> setup(WidgetTester tester) async {
     AppTester app = AppTester(tester, random: math.Random(seed));
     await app.setup();
     await app.initialize();
@@ -215,7 +215,7 @@ void main() {
     await app.initialize();
     await app.loadAndFindScene("initial", SceneData());
     expect(app.manager.unsaved.value, false);
-    int initialUnsavedCount = app.scene.unsaved_count;
+    int initialUnsavedCount = app.scene.unsavedCount;
     app.scene.expectTime(0.0); // An empty scene starts with t=0, v=0.
     app.scene.expectVelocity(0.0);
     // Change the time and velocity a few times.
@@ -231,7 +231,7 @@ void main() {
     }
     // Expect that changing the time or veloicty when the scene has no objects
     // does not change anything.
-    expect(initialUnsavedCount, app.scene.unsaved_count);
+    expect(initialUnsavedCount, app.scene.unsavedCount);
     expect(app.manager.unsaved.value, false);
     await app.teardown();
   });
@@ -242,7 +242,7 @@ void main() {
     await app.loadAndFindScene("initial", SceneData());
     await app.openLocal("3", TestData.train.data);
     expect(app.manager.unsaved.value, false);
-    int initialUnsavedCount = app.scene.unsaved_count;
+    int initialUnsavedCount = app.scene.unsavedCount;
     // Starting values for TestData.train.
     app.scene.expectTime(0.5);
     app.scene.expectVelocity(0.123);
@@ -253,20 +253,20 @@ void main() {
       app.scene.expectTime(0.5); // Time shouldn't change.
     }
     // Expect the unsaved variable is only updated on the first change.
-    expect(initialUnsavedCount + 1, app.scene.unsaved_count);
+    expect(initialUnsavedCount + 1, app.scene.unsavedCount);
     expect(app.manager.unsaved.value, true);
     await app.saveLocal("3");
-    expect(initialUnsavedCount + 2, app.scene.unsaved_count);
+    expect(initialUnsavedCount + 2, app.scene.unsavedCount);
     expect(app.manager.unsaved.value, false);
     for (double x in [-0.2, 0.2, 0.1, -0.2, 0.2]) {
       await app.scene.editTime(x);
       app.scene.expectTime(x);
       app.scene.expectVelocity(0.2); //Last velocity change.
     }
-    expect(initialUnsavedCount + 3, app.scene.unsaved_count);
+    expect(initialUnsavedCount + 3, app.scene.unsavedCount);
     expect(app.manager.unsaved.value, true);
     await app.saveLocal("3");
-    expect(initialUnsavedCount + 4, app.scene.unsaved_count);
+    expect(initialUnsavedCount + 4, app.scene.unsavedCount);
     expect(app.manager.unsaved.value, false);
     await app.teardown();
   });
@@ -334,11 +334,11 @@ void main() {
     ).tests();
 
     EditArray("position", seeder.seed, [
-      PositionEdit(Offset(100, 50)),
-      PositionEdit(Offset(50, 0)),
-      PositionEdit(Offset(-50, 25)),
-      PositionEdit(Offset(0, 10)),
-      PositionEdit(Offset(50, 25)),
+      PositionEdit(const Offset(100, 50)),
+      PositionEdit(const Offset(50, 0)),
+      PositionEdit(const Offset(-50, 25)),
+      PositionEdit(const Offset(0, 10)),
+      PositionEdit(const Offset(50, 25)),
     ]).tests();
 
     EditArray("delete", seeder.seed, [
@@ -355,10 +355,10 @@ void main() {
     );
 
     EditArray("add object", seeder.seed, [
-      AddObjectEdit("P1", DrawType.train, 1, Offset(0.5, 0.5)),
-      AddObjectEdit("P2", DrawType.cone, 1, Offset(0.1, 0.2)),
-      AddObjectEdit("P3", DrawType.instant, 1, Offset(0.3, 0.7)),
-      AddObjectEdit("P4", DrawType.event, 1, Offset(0.8, 0.1)),
+      AddObjectEdit("P1", DrawType.train, 1, const Offset(0.5, 0.5)),
+      AddObjectEdit("P2", DrawType.cone, 1, const Offset(0.1, 0.2)),
+      AddObjectEdit("P3", DrawType.instant, 1, const Offset(0.3, 0.7)),
+      AddObjectEdit("P4", DrawType.event, 1, const Offset(0.8, 0.1)),
     ]).tests(
       check: (app) async {
         expect(app.scene.view!.data.drawables.length, 13);
@@ -369,11 +369,11 @@ void main() {
       "side position",
       seeder.seed,
       [
-        SideEdit(Offset(100, 25)),
-        SideEdit(Offset(50, 0)),
-        SideEdit(Offset(-50, 10)),
-        SideEdit(Offset(0, 10)),
-        SideEdit(Offset(50, 20)),
+        SideEdit(const Offset(100, 25)),
+        SideEdit(const Offset(50, 0)),
+        SideEdit(const Offset(-50, 10)),
+        SideEdit(const Offset(0, 10)),
+        SideEdit(const Offset(50, 20)),
       ].map((edit) => [SelectSide(edit), edit]).expand((l) => l).toList(),
     ).tests();
 

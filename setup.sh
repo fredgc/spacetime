@@ -12,13 +12,9 @@ if [ `hostname -s` == "raven" ]; then
   echo "Using port $FLUTTER_PORT"
   echo "Starting local emacs:"
   export USE_DESKTOP=$workspace
+  echo "Working on $workspace"
   emacs-maybe-client -n -3 plan.md lib/main.dart
   hot-key-start -w $workspace 5 urxvt -geometry 100x28+80-40 -e agy
-  (
-      # Wait for the window to settle, then split into 3 frames.
-      sleep 5;
-      emacs-maybe-client -3
-  ) &
 else
   # This needs to be registered w/the cloud api console?
   export FLUTTER_PORT=5000

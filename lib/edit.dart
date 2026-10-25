@@ -48,7 +48,10 @@ class EditMenu extends MyMenu {
       MyMenuItem.logical(
         "Delete",
         callback: sceneViewer.delete,
-        shortcut: SingleActivator(LogicalKeyboardKey.delete, control: false),
+        shortcut: const SingleActivator(
+          LogicalKeyboardKey.delete,
+          control: false,
+        ),
         isEnabledCallback: () => sceneViewer.selected != null,
       ),
     ];

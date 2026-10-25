@@ -25,7 +25,7 @@ void selectTests(String canvas, bool side) {
       final obj = await app.scene.select(0, side: side);
       expect(obj.name, "P1");
       // For this scene, the object is in the same frame as the observer.
-      expect(obj.pt_obs, obj.pt);
+      expect(obj.ptObs, obj.pt);
       await app.scene.expectName("P1");
       await app.scene.expectType(DrawType.person);
       await app.scene.expectColor(0);
@@ -108,7 +108,7 @@ void selectTests(String canvas, bool side) {
       await app.openLocal("2", TestData.person.data);
 
       expect(app.scene.view!.selected, null);
-      final obj = await app.scene.select(0, side: side);
+      await app.scene.select(0, side: side);
       // Changing the tool to 'Add' should deselect and change the name.
       // But the type and color do not change.
       await app.scene.editTool("Add");
@@ -157,7 +157,7 @@ void selectTests(String canvas, bool side) {
       await app.openLocal("2", TestData.person.data);
 
       await app.scene.expectTool("Select");
-      expect(app.scene.view!.current_tool.value, Tool.select);
+      expect(app.scene.view!.currentTool.value, Tool.select);
 
       // Press Ctrl-A
       await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
@@ -166,14 +166,14 @@ void selectTests(String canvas, bool side) {
       await tester.pumpAndSettle();
 
       await app.scene.expectTool("Add");
-      expect(app.scene.view!.current_tool.value, Tool.add);
+      expect(app.scene.view!.currentTool.value, Tool.add);
 
       // Press Escape
       await tester.sendKeyEvent(LogicalKeyboardKey.escape);
       await tester.pumpAndSettle();
 
       await app.scene.expectTool("Select");
-      expect(app.scene.view!.current_tool.value, Tool.select);
+      expect(app.scene.view!.currentTool.value, Tool.select);
 
       await app.teardown();
     });
@@ -304,13 +304,13 @@ void main() {
       await app.loadAndFindScene("initial", SceneData());
       await app.openLocal("2", TestData.person.data);
       final obj = await app.scene.select(0);
-      // print("PURPLE: Starting drag at ${obj.pt_obs}.");
-      TestGesture drag = await app.scene.dragStart(obj.pt_obs, false);
-      Point p2 = obj.pt_obs + Vector(dx: 0.1, dt: 0.15);
+      // print("PURPLE: Starting drag at ${obj.ptObs}.");
+      TestGesture drag = await app.scene.dragStart(obj.ptObs, false);
+      Point p2 = obj.ptObs + Vector(dx: 0.1, dt: 0.15);
       // print("PURPLE: moving with drag to $p2.");
       await app.scene.dragTo(drag, p2, false);
       // print("PURPLE: done with drag.");
-      expect(obj.pt_obs, PointMatch(p2)); // Object should have moved to p2.
+      expect(obj.ptObs, PointMatch(p2)); // Object should have moved to p2.
       await app.teardown();
     });
     testWidgets('Side', (tester) async {
@@ -320,13 +320,13 @@ void main() {
       await app.loadAndFindScene("initial", SceneData());
       await app.openLocal("2", TestData.person.data);
       final obj = await app.scene.select(0, side: true);
-      // print("PURPLE: Starting drag at ${obj.pt_obs}.");
-      TestGesture drag = await app.scene.dragStart(obj.pt_obs, true);
-      Point p2 = obj.pt_obs + Vector(dx: 0.1, dz: 0.15);
+      // print("PURPLE: Starting drag at ${obj.ptObs}.");
+      TestGesture drag = await app.scene.dragStart(obj.ptObs, true);
+      Point p2 = obj.ptObs + Vector(dx: 0.1, dz: 0.15);
       // print("PURPLE: moving with drag to $p2.");
       await app.scene.dragTo(drag, p2, true);
       // print("PURPLE: done with drag.");
-      expect(obj.pt_obs, PointMatch(p2)); // Object should have moved to p2.
+      expect(obj.ptObs, PointMatch(p2)); // Object should have moved to p2.
       await app.teardown();
     });
     testWidgets('Side offset', (tester) async {
@@ -336,15 +336,15 @@ void main() {
       await app.loadAndFindScene("initial", SceneData());
       await app.openLocal("2", TestData.person.data);
       final obj = await app.scene.select(0, side: true);
-      final original = Point.from(obj.pt_obs);
-      // print("PURPLE: Starting drag at ${obj.pt_obs}.");
-      TestGesture drag = await app.scene.dragStart(obj.pt_obs, true);
-      Offset delta = Offset(20, 30);
+      final original = Point.from(obj.ptObs);
+      // print("PURPLE: Starting drag at ${obj.ptObs}.");
+      TestGesture drag = await app.scene.dragStart(obj.ptObs, true);
+      Offset delta = const Offset(20, 30);
       // print("PURPLE: moving with drag to $p2.");
       await app.scene.dragBy(drag, delta, true);
       await app.scene.dragDone(drag);
       // print("PURPLE: done with drag.");
-      expect(obj.pt_obs, isNot(PointMatch(original)));
+      expect(obj.ptObs, isNot(PointMatch(original)));
       await app.teardown();
     });
 
@@ -357,8 +357,8 @@ void main() {
       Point targetPoint = Point(x: 0.2, t: 0.0, z: 0.15);
       await app.scene.tap(targetPoint, true);
       final added = app.scene.view!.data.drawables.last;
-      expect(added.pt_obs.x, closeTo(targetPoint.x, 1e-3));
-      expect(added.pt_obs.z, closeTo(targetPoint.z, 1e-3));
+      expect(added.ptObs.x, closeTo(targetPoint.x, 1e-3));
+      expect(added.ptObs.z, closeTo(targetPoint.z, 1e-3));
       await app.teardown();
     });
 

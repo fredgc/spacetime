@@ -19,7 +19,7 @@ class Job {
     // print("input = $input.");
     List<int> list = [];
     for (int i = 0; i < 10; i++) {
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future.delayed(const Duration(milliseconds: 100));
       list.add(input * 10 + i);
       // print("input = $input, list=$list");
       if (interrupter.stop) {
@@ -43,13 +43,13 @@ void main() {
       Job job = Job();
       Worker worker = Worker<int, List<int>>(job.part1, job.part2);
       worker.trigger(1);
-      await Future.delayed(Duration(milliseconds: 350));
+      await Future.delayed(const Duration(milliseconds: 350));
       worker.trigger(2);
-      await Future.delayed(Duration(milliseconds: 290));
+      await Future.delayed(const Duration(milliseconds: 290));
       worker.trigger(3);
-      await Future.delayed(Duration(milliseconds: 290));
+      await Future.delayed(const Duration(milliseconds: 290));
       worker.trigger(4);
-      await Future.delayed(Duration(milliseconds: 290));
+      await Future.delayed(const Duration(milliseconds: 290));
       worker.trigger(5);
       await worker.wait();
       // Expect the final result to be from job 5.

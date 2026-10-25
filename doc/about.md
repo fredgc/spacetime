@@ -1,5 +1,5 @@
 ---
-title: About Spacetime (v6.0.1+2)
+title: About Spacetime (v6.1.1+0)
 ---
 
 The **Spacetime Drawing Tool** is an interactive application designed to teach
@@ -8,11 +8,14 @@ and visualize special relativity thought experiments.
 It helps you construct diagrams to visualize thought experiments, such as those
 presented in Einstein’s book [Relativity][book].
 
-This version was written in Dart with Flutter — the source code is available on GitHub at
-[https://github.com/fredgc/spacetime][github].
-The previous version (v5) was written in JavaScript. Audio recordings of lessons from
-version 5 have not yet been ported to version 6, but you can find them at
-[Version 5 Help][version5].
+This version was written in Dart with Flutter — the source code is available
+on GitHub at [https://github.com/fredgc/spacetime][github].
+
+Found a bug or have a feature request? [File an issue on GitHub][issues].
+
+The previous version (v5) was written in JavaScript. You can still run the
+[Version 5 Drawing Tool][v5tool], and audio recordings of lessons from version 5
+(not yet ported to version 6) can be found at [Version 5 Help][version5].
 
 ## Privacy and Data Retention
 
@@ -28,4 +31,6 @@ the `gchouse.org` server.
 
 [book]: https://en.wikipedia.org/wiki/Relativity:_The_Special_and_the_General_Theory
 [github]: https://github.com/fredgc/spacetime
-[version5]: /version5/lessons/help.html
+[issues]: https://github.com/fredgc/spacetime/issues
+[v5tool]: https://spacetime.gchouse.org/version5/index.html
+[version5]: https://spacetime.gchouse.org/version5/lessons/help.html

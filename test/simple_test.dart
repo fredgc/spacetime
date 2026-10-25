@@ -1,12 +1,12 @@
-// import 'package:test/test.dart';
+// ignore_for_file: avoid_print
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:spacetime/drawable.dart';
 import 'package:spacetime/settings.dart';
 import 'package:spacetime/transform.dart';
 
-bool debug_lists = false;
-bool debug_settings = false;
+bool debugLists = false;
+bool debugSettings = false;
 
 List<String> short() {
   return ["alpha", "beta"];
@@ -31,7 +31,7 @@ class MyIterator extends Iterable<List<String>>
   bool moveNext() {
     if (input.isEmpty) return false;
     int i = input.indexWhere((s) => s == "");
-    if (debug_lists) print("Next is at $i.");
+    if (debugLists) print("Next is at $i.");
     if (i < 0) {
       _current = input;
       input = [];
@@ -60,18 +60,18 @@ void main() {
           if (!s.contains("nope")) "one-$s",
         "last",
       ];
-      if (debug_lists) print("GREEN: one = $one");
-      if (debug_lists) print("GREEN: two = $two");
+      if (debugLists) print("GREEN: one = $one");
+      if (debugLists) print("GREEN: two = $two");
     });
     test('check lists 2', () {
       var one = ["a", "b", "", "c", "d", "e", "", "f"];
       List<List<String>> two = [for (var s in MyIterator(one)) s];
-      if (debug_lists) print("GREEN: one = $one");
-      if (debug_lists) print("GREEN: two = $two");
+      if (debugLists) print("GREEN: one = $one");
+      if (debugLists) print("GREEN: two = $two");
     });
     test('settings', () {
       Settings settings = Settings();
-      if (debug_settings) {
+      if (debugSettings) {
         print("Settings instance = $settings. status = ${settings.status}.");
       }
     });

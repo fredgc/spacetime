@@ -1,0 +1,58 @@
+{
+  "hosting": {
+    "public": "build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "redirects": [
+      {
+        "source": "/stylesheets/:file*",
+        "destination": "/version5/stylesheets/:file*",
+        "type": 301
+      },
+      {
+        "source": "/lessons/:file*",
+        "destination": "/version5/lessons/:file*",
+        "type": 301
+      },
+      {
+        "source": "/images/:file*",
+        "destination": "/version5/images/:file*",
+        "type": 301
+      },
+      {
+        "source": "/doc_script.js",
+        "destination": "/version5/doc_script.js",
+        "type": 301
+      }
+    ],
+    "rewrites": [
+      {
+        "source": "!/version5/**",
+        "destination": "/index.html"
+      }
+    ]
+  },
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "fredgc-spacetime",
+          "appId": "1:1008051861201:android:a15d96e568c9f3d0faf7f0",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "fredgc-spacetime",
+          "configurations": {
+            "android": "1:1008051861201:android:a15d96e568c9f3d0faf7f0",
+            "web": "1:1008051861201:web:ea9da141c58dbf97faf7f0"
+          }
+        }
+      }
+    }
+  }
+}

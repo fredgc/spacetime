@@ -14,9 +14,9 @@ import 'app_tester.dart';
 import 'helper.dart';
 
 class SceneEditor {
-  var tester;
+  final WidgetTester tester;
   SceneView? view;
-  int unsaved_count = 0;
+  int unsavedCount = 0;
   math.Random random;
 
   SceneEditor(this.tester, this.random);
@@ -40,7 +40,7 @@ class SceneEditor {
   }
 
   Future<void> expectName(String expectedName) async {
-    expect(view!.current_name.value, expectedName);
+    expect(view!.currentName.value, expectedName);
     var nameEditor = find.byKey(const ValueKey("object_name"));
     expect(nameEditor, findsOneWidget);
     expect(
@@ -89,10 +89,10 @@ class SceneEditor {
   }
 
   Future<void> expectColor(int expectedColor) async {
-    expect(view!.current_color.value, expectedColor);
+    expect(view!.currentColor.value, expectedColor);
     var colorMenu = find.byKey(const ValueKey("Color-Chooser"));
     expect(colorMenu, findsOneWidget);
-    Color c = SceneView.color_list.value[expectedColor];
+    Color c = SceneView.colorList.value[expectedColor];
     expect(
       find.descendant(
         of: colorMenu,
@@ -137,7 +137,7 @@ class SceneEditor {
   Offset mainToWindow(Point pt) {
     final T = view!.data.transform;
     Offset c = T.toScreen(pt); // Point in canvas coordinates.
-    var canvas = find.byKey(ValueKey('MainView'));
+    var canvas = find.byKey(const ValueKey('MainView'));
     var rect = tester.getRect(canvas);
     // print("Pt in main coords is ${zzz(pt)} -> ${zzz(c)}, rect = ${zzz(rect)}");
     // Point in window coordinates.
@@ -151,7 +151,7 @@ class SceneEditor {
     Offset c = T.toSide(pt); // Point in canvas coordinates.
     dprint("T.min = ${zzz(T.min)}, T.max = ${zzz(T.max)}");
     dprint("Pt in side coords is ${zzz(pt)} -> ${zzz(c)}");
-    var canvas = find.byKey(ValueKey('SideView'));
+    var canvas = find.byKey(const ValueKey('SideView'));
     var rect = tester.getRect(canvas);
     dprint("canvas = ${zzz(canvas)}, rect=${zzz(rect)}");
     // Point in window coordinates.
@@ -175,8 +175,8 @@ class SceneEditor {
   // Returns an offset from the corner of the canvas.
   Future<Offset> tapPercent(Offset c, bool side) async {
     var canvas = side
-        ? find.byKey(ValueKey('SideView'))
-        : find.byKey(ValueKey('MainView'));
+        ? find.byKey(const ValueKey('SideView'))
+        : find.byKey(const ValueKey('MainView'));
     var rect = tester.getRect(canvas);
     Offset location = Offset(c.dx * rect.width, c.dy * rect.height);
     Offset win = rect.topLeft + location;
@@ -250,11 +250,11 @@ class SceneEditor {
     await editTool("Select");
     final obj = view!.data.drawables[index];
     // Make sure the object is visible.
-    if (!view!.data.transform.inRange(obj.pt_obs)) {
+    if (!view!.data.transform.inRange(obj.ptObs)) {
       view!.fitViewAndUpdate();
       await tester.pumpAndSettle();
     }
-    double timeTarget = obj.pt_obs.t.clamp(view!.time.min, view!.time.max);
+    double timeTarget = obj.ptObs.t.clamp(view!.time.min, view!.time.max);
     await editTime(timeTarget);
     if (side) {
       // Hack the z coordinate. Scoot the object up/down to the baseline.
@@ -266,23 +266,23 @@ class SceneEditor {
     }
     dprint(
       "ORANGE: select $index, side=$side, obj=${zzz(obj.name)}, "
-      "obs=${obj.pt_obs}",
+      "obs=${obj.ptObs}",
     );
     dprint("obj = $obj");
     dprint("view.selected = ${view!.selected}");
     final int count = 10;
     for (int i = 0; i < count; i++) {
-      await tap(obj.pt_obs, side);
+      await tap(obj.ptObs, side);
       if (view!.selected == obj) return obj;
       dprint("Looking for ($index) $obj");
-      dprint("obs = ${zzz(obj.pt_obs)}, side=$side, t=${zzz(view!.data.time)}");
+      dprint("obs = ${zzz(obj.ptObs)}, side=$side, t=${zzz(view!.data.time)}");
       dprint("Selected instead ${view!.selected}");
     }
     if (view!.selected != obj) {
       view!.selected = obj;
-      view!.current_type.value = obj.type;
-      view!.current_color.value = obj.color;
-      view!.current_name.value = obj.name;
+      view!.currentType.value = obj.type;
+      view!.currentColor.value = obj.color;
+      view!.currentName.value = obj.name;
       view!.updateScene();
       await tester.pumpAndSettle();
     }
@@ -291,13 +291,13 @@ class SceneEditor {
   }
 
   Future<void> deselect() async {
-    var canvas = find.byKey(ValueKey('MainView'));
+    var canvas = find.byKey(const ValueKey('MainView'));
     await tester.tapAt(tester.getTopLeft(canvas));
     await tester.pumpAndSettle();
     expect(view!.selected, null);
   }
 
-  Future<void> setSlider(var tester, MySlider slider, double t) async {
+  Future<void> setSlider(WidgetTester tester, MySlider slider, double t) async {
     var canvas = find.byKey(ValueKey('canvas-${slider.name}'));
     var rect = tester.getRect(canvas);
     double dx = slider.valueToPixel(t).clamp(0.0, rect.width).toDouble();
@@ -382,14 +382,14 @@ class SceneEditor {
       case 4:
         return TypeEdit(randomElement(DrawType.values));
       case 5:
-        return ColorEdit(random.nextInt(SceneView.color_list_light.length));
+        return ColorEdit(random.nextInt(SceneView.colorListLight.length));
       case 6:
         return DeleteEdit();
       case 7:
         return AddObjectEdit(
           "Obj-${random.nextInt(20)}",
           randomElement(DrawType.values),
-          random.nextInt(SceneView.color_list_light.length),
+          random.nextInt(SceneView.colorListLight.length),
           Offset(random.nextDouble(), random.nextDouble()),
         );
       case 8:
@@ -514,7 +514,7 @@ class DeleteEdit extends ObjectEdit {
 
   @override
   Future<void> change(AppTester app) async {
-    Drawable drawable = await select(app.scene);
+    await select(app.scene);
     await app.tapMenu("Cut");
   }
 
@@ -605,7 +605,7 @@ class PositionEdit extends ObjectEdit {
   Future<void> change(AppTester app) async {
     Drawable drawable = await select(app.scene);
     original = Point.from(drawable.frame.center);
-    TestGesture drag = await app.scene.dragStart(drawable.pt_obs, false);
+    TestGesture drag = await app.scene.dragStart(drawable.ptObs, false);
     await app.scene.dragByWithJank(drag, delta, false);
     await app.scene.dragDone(drag);
     destination ??= Point.from(drawable.frame.center);
@@ -631,7 +631,7 @@ class SideEdit extends PositionEdit {
     Drawable drawable = await select(app.scene, side: true);
     original = Point.from(drawable.frame.center);
     dprint("BLUE: starting drag.");
-    TestGesture drag = await app.scene.dragStart(drawable.pt_obs, true);
+    TestGesture drag = await app.scene.dragStart(drawable.ptObs, true);
     dprint("BLUE: doing drag by.");
     await app.scene.dragByWithJank(drag, delta, true);
     await app.scene.dragDone(drag);
@@ -647,19 +647,19 @@ class SideEdit extends PositionEdit {
 }
 
 class SelectSide extends OneEdit {
-  SideEdit side_edit;
+  SideEdit sideEdit;
   double time = 0.0;
   double original = 0.0;
-  SelectSide(this.side_edit);
+  SelectSide(this.sideEdit);
 
   @override
-  String toString() => "Change time to $time for $side_edit";
+  String toString() => "Change time to $time for $sideEdit";
   @override
   bool get undoable => false;
 
   @override
   Future<void> change(AppTester app) async {
-    Drawable drawable = await side_edit.select(app.scene, side: true);
+    await sideEdit.select(app.scene, side: true);
     time = app.scene.view!.data.time;
   }
 
@@ -674,20 +674,20 @@ class AddObjectEdit extends ObjectEdit {
   final String name;
   final DrawType type;
   final int color;
-  Offset relative_location; // offset as a percentage.
+  Offset relativeLocation; // offset as a percentage.
   Drawable? object;
 
   AddObjectEdit(
     this.name,
     this.type,
     this.color,
-    this.relative_location, {
+    this.relativeLocation, {
     super.index = -1,
   });
 
   @override
   String toString() =>
-      "Add object $name, ${zzz(type)}, $color, ${zzz(relative_location)}";
+      "Add object $name, ${zzz(type)}, $color, ${zzz(relativeLocation)}";
 
   @override
   Future<void> change(AppTester app) async {
@@ -697,7 +697,7 @@ class AddObjectEdit extends ObjectEdit {
     await app.scene.editType(type);
     await app.scene.editColor(color);
     await app.scene.editName(name);
-    Offset location = await app.scene.tapPercent(relative_location, false);
+    Offset location = await app.scene.tapPercent(relativeLocation, false);
     Point obs = app.scene.view!.data.transform.fromOffset(
       location,
       app.scene.view!.data.time,
@@ -706,7 +706,7 @@ class AddObjectEdit extends ObjectEdit {
     var frame = ReferenceFrame.fromOffset(
       app.scene.view!.data.transform.frame,
       obs,
-      app.scene.view!.light_speed.value,
+      app.scene.view!.lightSpeed.value,
     );
     object = type.make(name, frame, color);
     expect(app.scene.view!.data.drawables.last, DrawableMatcher(object!));

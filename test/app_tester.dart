@@ -52,48 +52,48 @@ class TestFileManager extends FileManager {
 }
 
 class AppTester {
-  final tester;
+  final WidgetTester tester;
   final Settings settings = Settings();
-  MockDownloadManager download_manager = MockDownloadManager();
-  final LocalFileMock local_files = LocalFileMock();
+  MockDownloadManager downloadManager = MockDownloadManager();
+  final LocalFileMock localFiles = LocalFileMock();
   late final TestFileManager manager;
   late final MyApp app;
   late final SceneEditor scene;
-  final MockSleep debug_time = MockSleep();
+  final MockSleep debugTime = MockSleep();
   final MockWebViewDependencies webview = MockWebViewDependencies();
-  int recent_count = 0;
+  int recentCount = 0;
 
   AppTester(this.tester, {String url = "/scene", math.Random? random}) {
     manager = TestFileManager(settings);
-    manager.drive_access.isTesting = true;
+    manager.driveAccess.isTesting = true;
     manager.isTesting = true;
     app = MyApp(settings, manager, url);
-    DebugSleep.instance = debug_time;
-    UploadHolder.download_manager = download_manager;
+    DebugSleep.instance = debugTime;
+    UploadHolder.downloadManager = downloadManager;
 
     // Avoid sliders getting stuck too often.
-    MySlider.sticky_radius.value = 0.01;
+    MySlider.stickyRadius.value = 0.01;
 
     initSettings();
     initSprites();
     initFileManager();
     scene = SceneEditor(tester, random ?? math.Random());
     manager.recent.addListener(() {
-      recent_count++;
+      recentCount++;
     });
     manager.unsaved.addListener(() {
       // print("GREEN: Unsaved is now ${manager.unsaved.value}");
-      scene.unsaved_count++;
+      scene.unsavedCount++;
     });
   }
 
   // Create the widget and initialize it, but don't actually start the ui
   // initialization.
   Future<void> setup() async {
-    setSize(Size(1000, 2000)); // XXX why is this needed?
+    setSize(const Size(1000, 2000)); // XXX why is this needed?
 
     // XXX await seedRecent();
-    await local_files.initialize();
+    await localFiles.initialize();
     await webview.init();
     await app.initialize();
     await tester.pumpWidget(
@@ -114,26 +114,26 @@ class AppTester {
   Future<void> teardown() async {
     // XXX webview.teardown();
     // Wait until the address bar has been updated.
-    tester.pump(Duration(milliseconds: 200));
+    tester.pump(const Duration(milliseconds: 200));
   }
 
   Future<void> finish(String s) {
-    return debug_time.finish(s);
+    return debugTime.finish(s);
   }
 
   Future<void> finishFile(String s, String? tag) {
     if (tag == null) {
-      return debug_time.finish("$s-${manager.current.holder.tag}");
+      return debugTime.finish("$s-${manager.current.holder.tag}");
     } else {
-      return debug_time.finish("$s-$tag");
+      return debugTime.finish("$s-$tag");
     }
   }
 
   Future<void> finishAll() {
-    return debug_time.finishAll();
+    return debugTime.finishAll();
   }
 
-  void listSleeps() => debug_time.listSleeps();
+  void listSleeps() => debugTime.listSleeps();
 
   void initSettings() {
     PackageInfo.setMockInitialValues(
@@ -320,13 +320,13 @@ class AppTester {
     await tester.testTextInput.receiveAction(TextInputAction.done);
     await tester.pumpAndSettle();
     when(
-      download_manager.saveFile(name: anyNamed('name'), data: anyNamed('data')),
+      downloadManager.saveFile(name: anyNamed('name'), data: anyNamed('data')),
     ).thenAnswer((_) async => filename);
 
-    await tester.tap(find.byKey(ValueKey("download-button")));
+    await tester.tap(find.byKey(const ValueKey("download-button")));
     await tester.pumpAndSettle();
     verify(
-      download_manager.saveFile(
+      downloadManager.saveFile(
         name: filename,
         data: argThat(SceneDataMatcher(expected), named: 'data'),
       ),
@@ -338,7 +338,7 @@ class AppTester {
 
   Future<void> saveDownload(String filename, SceneData expected) async {
     when(
-      download_manager.saveFile(name: anyNamed('name'), data: anyNamed('data')),
+      downloadManager.saveFile(name: anyNamed('name'), data: anyNamed('data')),
     ).thenAnswer((_) async => filename);
     // Open the menu/drawer.
     await tester.tap(find.byIcon(Icons.menu));
@@ -348,7 +348,7 @@ class AppTester {
     await tester.tap(find.text("Save"));
     await tester.pumpAndSettle();
     verify(
-      download_manager.saveFile(
+      downloadManager.saveFile(
         name: filename,
         data: argThat(SceneDataMatcher(expected), named: 'data'),
       ),
@@ -363,37 +363,37 @@ class AppTester {
     // Expect a call to loadFile.
     String json = TestData.toJson(data);
     when(
-      download_manager.loadFile(),
+      downloadManager.loadFile(),
     ).thenAnswer((_) async => Future.value((filename, json)));
     // Start the upload.
-    await tester.tap(find.byKey(ValueKey("upload-button")));
+    await tester.tap(find.byKey(const ValueKey("upload-button")));
     await tester.pumpAndSettle();
     await loadAndFindScene(null, data);
     // Verify that load was called.
-    verify(download_manager.loadFile()).called(1);
+    verify(downloadManager.loadFile()).called(1);
   }
 
   Future<void> uploadSkipped() async {
     await tapMenu("Open");
     when(
-      download_manager.loadFile(),
+      downloadManager.loadFile(),
     ).thenAnswer((_) async => Future.value(("", "")));
-    await tester.tap(find.byKey(ValueKey("upload-button")));
+    await tester.tap(find.byKey(const ValueKey("upload-button")));
     await tester.pumpAndSettle();
     findOneInit(5);
     // There should have been nothing loaded, and no change to the scene.
-    verify(download_manager.loadFile()).called(1);
+    verify(downloadManager.loadFile()).called(1);
   }
 
   Future<void> uploadError() async {
     await tapMenu("Open");
-    when(download_manager.loadFile()).thenAnswer(
+    when(downloadManager.loadFile()).thenAnswer(
       (_) async => Future.value(("filename.txt", "{ time: error }")),
     );
-    await tester.tap(find.byKey(ValueKey("upload-button")));
+    await tester.tap(find.byKey(const ValueKey("upload-button")));
     await tester.pumpAndSettle();
     // There should have been nothing loaded, and no change to the scene.
-    verify(download_manager.loadFile()).called(1);
+    verify(downloadManager.loadFile()).called(1);
     await findError(null);
   }
 
@@ -419,17 +419,15 @@ class AppTester {
   }
 
   Future<void> expectLocal(List<HolderMock> expectedLocal) {
-    return local_files.expectLocal(expectedLocal);
+    return localFiles.expectLocal(expectedLocal);
   }
 
   void setSize(Size size) {
+    // ignore: deprecated_member_use
     final dpi = tester.binding.window.devicePixelRatio;
-    // print("RED: dpi = ${zzz(dpi)}, size = ${zzz(tester.view.physicalSize)}");
-    // XXX Is this really needed? Maybe text size is too big?
-    // XXX https://github.com/flutter/flutter/issues/59755 (text size?)
-    // XXX see https://stackoverflow.com/questions/62447898/flutter-widget-test-cannot-emulate-different-screen-size-properly/62460566#62460566
     double width = size.width;
     double height = size.height;
+    // ignore: deprecated_member_use
     tester.binding.window.physicalSizeTestValue = Size(
       width * dpi,
       height * dpi,

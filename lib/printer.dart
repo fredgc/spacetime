@@ -1,3 +1,4 @@
+// ignore_for_file: avoid_print
 import 'dart:ui';
 import 'dart:async';
 import 'package:flutter/foundation.dart';
@@ -15,13 +16,13 @@ String trunc(Object? obj, {int cutoff = 50}) {
   return (s.length <= cutoff) ? s : '${s.substring(0, cutoff)}...';
 }
 
-String zzz(var vec) {
-  return DebugPrint.pad_zzz > 0
-      ? zzz2(vec).padLeft(DebugPrint.pad_zzz)
+String zzz(Object? vec) {
+  return DebugPrint.padZzz > 0
+      ? zzz2(vec).padLeft(DebugPrint.padZzz)
       : zzz2(vec);
 }
 
-String zzz2(var vec) {
+String zzz2(Object? vec) {
   if (vec is Offset) {
     return "o(${zzz(vec.dx)}, ${zzz(vec.dy)})";
   }
@@ -60,7 +61,7 @@ String zzz2(var vec) {
 
 enum Log {
   errors("errors and exceptions"),
-  mouse_scale("Mouse drag/scaling", verbose: true),
+  mouseScale("Mouse drag/scaling", verbose: true),
   update("Scene and Object update", verbose: true),
   fit("Fitting scene to viewport"),
   dump("Dump debug information"),
@@ -71,7 +72,7 @@ enum Log {
   drive("drive and authorization"),
   local("local files and upload/download"),
   navigation("Navigation and deep links"),
-  text_edit("Tap to Edit text"),
+  textEdit("Tap to Edit text"),
   undo("Undo/Redo manager"),
   settings("Settings, colors, and themes load/save"),
   help("Help and HTML rendering"),
@@ -86,42 +87,42 @@ enum Log {
   final bool verbose;
   const Log(this.description, {this.verbose = false});
 
-  static SavableBool remote_logging = SavableBool(
+  static SavableBool remoteLogging = SavableBool(
     "remote_logging",
     "Send Logs to Server",
     false,
     tip: "Send console logs to a local server at port 5001.",
-    debug_only: true,
+    debugOnly: true,
   );
 
-  static List<SavableBool> group_active = [];
-  static bool include_verbose = false;
-  static RemoteLogger remote_logger = RemoteLogger();
-  static bool running_tests = true;
+  static List<SavableBool> groupActive = [];
+  static bool includeVerbose = false;
+  static RemoteLogger remoteLogger = RemoteLogger();
+  static bool runningTests = true;
 
   static void initSettings(Settings settings) {
-    if (kIsWeb) settings.add(remote_logging);
+    if (kIsWeb) settings.add(remoteLogging);
     for (var group in values) {
       var savableBool = SavableBool(
         group.name,
         "Log ${group.name}",
         false,
         tip: "Log ${group.description}",
-        debug_only: true,
+        debugOnly: true,
       );
-      group_active.add(savableBool);
-      assert(group.name == group_active[group.index].name);
-      settings.add(group_active[group.index]);
+      groupActive.add(savableBool);
+      assert(group.name == groupActive[group.index].name);
+      settings.add(groupActive[group.index]);
     }
     settings.add(EndOfGroup());
     settings.add(
-      SavableBoolGroup("log_controls", "Log Settings", group_active)
-        ..debug_only = true,
+      SavableBoolGroup("log_controls", "Log Settings", groupActive)
+        ..debugOnly = true,
     );
   }
 
   static void fullApp() {
-    running_tests = false;
+    runningTests = false;
   }
 
   void log(Object message) {
@@ -129,64 +130,64 @@ enum Log {
     if (!Settings.kDebugEnabled) return;
     // If debug disabled in settings.
     if (!Settings.debugEnabled) return;
-    internal_log(
+    _internalLog(
       () => "($name) ${message is Function ? (message as dynamic)() : message}",
     );
   }
 
-  void make_active(bool on) {
-    if (group_active.isEmpty) {
+  void makeActive(bool on) {
+    if (groupActive.isEmpty) {
       // Always log messages locally if we have not yet initialized.
       print("Logging not initialized");
       return;
     }
-    group_active[index].value = on;
+    groupActive[index].value = on;
   }
 
-  void internal_log(String Function() message) {
+  void _internalLog(String Function() message) {
     // If debug disabled at compile time.
     if (!Settings.kDebugEnabled) return;
     // If debug disabled in settings.
     if (!Settings.debugEnabled) return;
     // If we have not initialized logging, and we are running tests then we
     // don't need the extra logging.
-    if (group_active.isEmpty && running_tests) {
+    if (groupActive.isEmpty && runningTests) {
       return;
     }
-    if (group_active.isEmpty) {
+    if (groupActive.isEmpty) {
       // Always log messages locally if we have not yet initialized.
       print("(pre-init) ${message()}");
       return;
     }
-    if (index >= group_active.length) return;
-    if (!group_active[index].value) return;
-    if (verbose && !include_verbose) return;
+    if (index >= groupActive.length) return;
+    if (!groupActive[index].value) return;
+    if (verbose && !includeVerbose) return;
     String evaluated = message();
     print(evaluated);
-    if (!remote_logging.value) return;
-    remote_logger.log(evaluated);
+    if (!remoteLogging.value) return;
+    remoteLogger.log(evaluated);
   }
 }
 
 class RemoteLogger {
-  String total_message = "";
+  String _totalMessage = "";
   bool _isSending = false;
-  DateTime last_error = DateTime.utc(1990, 1, 2);
+  DateTime _lastError = DateTime.utc(1990, 1, 2);
 
   void log(String message) async {
     // if recent error, wait 1 minute before trying again.
     DateTime now = DateTime.timestamp();
     final cutoff = now.subtract(const Duration(minutes: 1));
-    if (last_error.isAfter(cutoff)) return;
+    if (_lastError.isAfter(cutoff)) return;
     // If currently active, then append current message to next, return.
-    total_message = "$total_message$message\n";
+    _totalMessage = "$_totalMessage$message\n";
     if (_isSending) {
       return;
     }
     _isSending = true;
-    while (total_message.isNotEmpty) {
-      String current = total_message;
-      total_message = "";
+    while (_totalMessage.isNotEmpty) {
+      String current = _totalMessage;
+      _totalMessage = "";
       try {
         // final url = Uri.parse('http://localhost:5001/log');
         final url = Uri.parse('http://localhost:5001/log');
@@ -196,8 +197,8 @@ class RemoteLogger {
           body: current,
         );
       } catch (err) {
-        last_error = DateTime.timestamp();
-        total_message = "";
+        _lastError = DateTime.timestamp();
+        _totalMessage = "";
         print("RED: HTTP Error: $err");
       }
     }
@@ -207,11 +208,11 @@ class RemoteLogger {
 
 class DebugPrint {
   static String indent = "- ";
-  static int print_debug = 0;
-  static int pad_zzz = 7;
+  static int printDebug = 0;
+  static int padZzz = 7;
 
   static void dprint(String s, {int depth = 0}) {
-    if (print_debug > 0) {
+    if (printDebug > 0) {
       String extraIndent = indent;
       for (int i = 0; i < depth; i++) {
         extraIndent = "$extraIndent  ";
@@ -241,10 +242,10 @@ void dprint(String s, {int depth = 0}) {
 class DebugSleep {
   static DebugSleep instance = DebugSleep();
   // Set this to true in order to add extra delays.
-  static bool add_delay = false;
+  static bool addDelay = false;
 
   Future<void> sleep(String text, Duration duration) async {
-    if (add_delay) {
+    if (addDelay) {
       Log.sleep.log("RED: Debug time $text.");
       await Future.delayed(duration);
       Log.sleep.log("RED: After debug time $text.");

@@ -272,7 +272,7 @@ enum TestData {
   }
 
   static String toJson(SceneData data) {
-    var encoder = JsonEncoder.withIndent("  ");
+    var encoder = const JsonEncoder.withIndent("  ");
     return encoder.convert(data);
   }
 
@@ -288,7 +288,7 @@ enum TestData {
   }
 
   static SceneData clone(SceneData original) {
-    var encoder = JsonEncoder.withIndent("  ");
+    var encoder = const JsonEncoder.withIndent("  ");
     String json = encoder.convert(original);
     var jsonMap = jsonDecode(json);
     SceneData second = SceneData.fromJson(jsonMap);

@@ -36,7 +36,6 @@ void main(List<String> arguments) async {
     );
     exit(1);
   }
-  print("Done with main.");
 }
 
 class MyReWriter {

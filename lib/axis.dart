@@ -12,13 +12,10 @@ class AxisPainter extends CustomPainter {
   PlotAxis xAxis;
   PlotAxis tAxis;
 
-  int _paintCount = 0;
-
   AxisPainter(this.transform, this.color, this.xAxis, this.tAxis);
 
   @override
   void paint(Canvas canvas, Size size) {
-    _paintCount++;
     if (size.width == 0 || size.height == 0) {
       Log.update.log("RED: size is $size");
       return;
@@ -32,7 +29,7 @@ class AxisPainter extends CustomPainter {
     }
     var paint = Paint()
       ..color = color
-      ..strokeWidth = SceneView.line_width.value
+      ..strokeWidth = SceneView.lineWidth.value
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
     xAxis.paint(canvas, transform, paint);
@@ -55,20 +52,17 @@ class SideAxisPainter extends CustomPainter {
   PlotAxis xAxis;
   PlotAxis tAxis;
 
-  int _paintCount = 0;
-
   SideAxisPainter(this.transform, this.color, this.xAxis, this.tAxis);
 
   @override
   void paint(Canvas canvas, Size size) {
-    _paintCount++;
     if (size.width == 0 || size.height == 0) {
       Log.update.log("RED: size is $size");
       return;
     }
     var paint = Paint()
       ..color = color
-      ..strokeWidth = SceneView.line_width.value
+      ..strokeWidth = SceneView.lineWidth.value
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
     xAxis.paintSide(canvas, transform, paint, size.height);
@@ -99,19 +93,17 @@ class PlotAxis {
   Color color = Colors.white;
 
   // Variables for debugging.
-  int _paintCount = 0;
   bool printOnce = false;
 
   PlotAxis({required this.vertical});
 
   void paint(Canvas canvas, CoordinateTransform transform, Paint paint) {
-    _paintCount++;
     if (printOnce) {
       Log.update.log(
         "ORANGE: Axis v=$vertical, min=${zzz(min)}, max=${zzz(max)}",
       );
     }
-    if (SceneView.show_gridlines.value) {
+    if (SceneView.showGridlines.value) {
       // The min/max in the cross direction.
       double min2 = vertical ? transform.min.x : transform.min.t;
       double max2 = vertical ? transform.max.x : transform.max.t;
@@ -140,8 +132,7 @@ class PlotAxis {
     Paint paint,
     double height,
   ) {
-    _paintCount++;
-    if (SceneView.show_gridlines.value) {
+    if (SceneView.showGridlines.value) {
       final gridPaint = Paint()
         ..color = paint.color.withValues(alpha: 0.25)
         ..strokeWidth = math.max(0.5, paint.strokeWidth * 0.75)

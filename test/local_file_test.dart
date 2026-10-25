@@ -7,8 +7,6 @@ import 'package:spacetime/drive.dart';
 import 'package:spacetime/file_holder.dart';
 import 'package:spacetime/file_manager.dart';
 import 'package:spacetime/local_file.dart';
-import 'package:spacetime/printer.dart';
-import 'package:spacetime/settings.dart';
 import 'package:spacetime/scene.dart';
 import 'package:spacetime/transform.dart';
 import 'package:spacetime/upload.dart';
@@ -18,7 +16,12 @@ import 'local_file_mock.dart';
 import 'test_data.dart';
 
 // TODO: Move to local_file_mock.dart
-Future<void> reorderLocal(var tester, String id1, String id2, double dy) async {
+Future<void> reorderLocal(
+  WidgetTester tester,
+  String id1,
+  String id2,
+  double dy,
+) async {
   expect(find.byKey(ValueKey('open-local-$id1')), findsOneWidget);
   var tile = find.byKey(ValueKey('open-local-$id1'));
   // print("tile = $tile");
@@ -255,7 +258,7 @@ void main() {
       ]);
       await app.tapMenu("Open");
       expect(find.textContaining(TestData.person.data.title), findsOneWidget);
-      await tester.tap(find.byKey(ValueKey('forget-recent-1')));
+      await tester.tap(find.byKey(const ValueKey('forget-recent-1')));
       await tester.pumpAndSettle();
       expect(find.textContaining(TestData.person.data.title), findsNothing);
       await app.expectRecent([
@@ -265,7 +268,7 @@ void main() {
         // Gone: LocalFileHolder("1")..title = "First local",
         DriveHolder("drive_id")..title = "Drive File",
       ]);
-      await tester.tap(find.byKey(ValueKey('open-recent-1')));
+      await tester.tap(find.byKey(const ValueKey('open-recent-1')));
       await tester.pumpAndSettle();
       await app.loadAndFindScene(null, TestData.clock.data);
       // Re-open a few files to check that there weren't any dispose problems.
@@ -305,7 +308,7 @@ void main() {
       ]);
       // Now delete a local file. It should no longer be in list of files.
       await app.tapMenus("Open", "Local Data");
-      await tester.tap(find.byKey(ValueKey('delete-local-3')));
+      await tester.tap(find.byKey(const ValueKey('delete-local-3')));
       await tester.pumpAndSettle();
       expect(find.textContaining("Train Local File"), findsNothing);
       await app.expectRecent([
@@ -316,11 +319,11 @@ void main() {
         LocalFileHolder("4"),
       ]);
       // Open dialog is still visible, delete another one.
-      await tester.tap(find.byKey(ValueKey('delete-local-1')));
+      await tester.tap(find.byKey(const ValueKey('delete-local-1')));
       await tester.pumpAndSettle();
       expect(find.textContaining("Error Title"), findsNothing);
       // Open dialog is still visible, select the clock file.
-      await tester.tap(find.byKey(ValueKey('open-local-4')));
+      await tester.tap(find.byKey(const ValueKey('open-local-4')));
       await tester.pumpAndSettle();
       await app.loadAndFindScene(null, TestData.clock.data);
       await app.expectRecent([
@@ -404,7 +407,7 @@ void main() {
       HolderMock(TestData.person.json, "2", "Person Unsaved Title"),
     ]);
     // Open dialog is still visible, select the clock file.
-    await tester.tap(find.byKey(ValueKey('open-local-4')));
+    await tester.tap(find.byKey(const ValueKey('open-local-4')));
     await tester.pumpAndSettle();
     await app.loadAndFindScene(null, TestData.clock.data);
     await app.teardown();
@@ -422,11 +425,11 @@ void main() {
     await app.scene.editTitle("Edited Scene Title");
     expect(app.manager.unsaved.value, true);
 
-    app.manager.current.scene!.undo_manager.undo();
+    app.manager.current.scene!.undoManager.undo();
     await tester.pumpAndSettle();
     expect(app.manager.unsaved.value, false);
 
-    app.manager.current.scene!.undo_manager.redo();
+    app.manager.current.scene!.undoManager.redo();
     await tester.pumpAndSettle();
     expect(app.manager.unsaved.value, true);
 

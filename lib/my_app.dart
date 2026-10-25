@@ -52,7 +52,7 @@ class MyApp {
     // Debug settings.
     settings.initDebug();
     SceneView.initDebugSettings(settings);
-    settings.add(AppWidgetState.debug_logs);
+    settings.add(AppWidgetState.debugLogs);
 
     Log.initSettings(settings);
 
@@ -63,7 +63,7 @@ class MyApp {
     Log.init.log("CYAN: building material app for $this");
     return MaterialApp.router(
       title: "Spacetime Drawing Tool",
-      theme: settings.theme.theme_data,
+      theme: settings.theme.themeData,
       routerConfig: router,
       debugShowCheckedModeBanner: false,
       builder: (context, child) {
@@ -105,13 +105,13 @@ class MyApp {
     return makeSplash(context, state);
   }
 
-  int scene_count = 0;
+  int _sceneCount = 0;
   Widget makeSplash(BuildContext context, GoRouterState state) {
-    scene_count++;
-    Log.init.log("CYAN: makeSplash. count=$scene_count.");
+    _sceneCount++;
+    Log.init.log("CYAN: makeSplash. count=$_sceneCount.");
     Log.init.log("CYAN: in makeSplash, uri=${trunc(state.uri)}, ");
     // So it knows where to put alerts/dialogs.
-    manager.setContext("scene $scene_count", context);
+    manager.setContext("scene $_sceneCount", context);
     fixAddressBar(context, state.uri.toString());
     manager.checkNavigation(state.uri.queryParameters);
     Log.init.log("After check Navigation.");

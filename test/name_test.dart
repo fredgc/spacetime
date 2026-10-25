@@ -51,5 +51,54 @@ void main() {
       guess.increment();
       expect(guess.name, "Dog13");
     });
+
+    test('nextAvailableName increments counter on collision', () {
+      expect(
+        NameGuess.nextAvailableName('My Drawing', []),
+        equals('My Drawing'),
+      );
+      expect(
+        NameGuess.nextAvailableName('My Drawing', ['My Drawing']),
+        equals('My Drawing 2'),
+      );
+      expect(
+        NameGuess.nextAvailableName('My Drawing', [
+          'My Drawing',
+          'My Drawing 2',
+        ]),
+        equals('My Drawing 3'),
+      );
+      expect(
+        NameGuess.nextAvailableName('Train1', ['Train1', 'Train2']),
+        equals('Train3'),
+      );
+    });
+
+    test('nextAvailableFilename increments counter before extension', () {
+      expect(
+        NameGuess.nextAvailableFilename('spacetime_drawing.st.json', []),
+        equals('spacetime_drawing.st.json'),
+      );
+      expect(
+        NameGuess.nextAvailableFilename('spacetime_drawing.st.json', [
+          'spacetime_drawing.st.json',
+        ]),
+        equals('spacetime_drawing_2.st.json'),
+      );
+      expect(
+        NameGuess.nextAvailableFilename('spacetime_drawing_2.st.json', [
+          'spacetime_drawing.st.json',
+          'spacetime_drawing_2.st.json',
+        ]),
+        equals('spacetime_drawing_3.st.json'),
+      );
+      expect(
+        NameGuess.nextAvailableFilename('scene1.json', [
+          'scene1.json',
+          'scene2.json',
+        ]),
+        equals('scene3.json'),
+      );
+    });
   });
 }

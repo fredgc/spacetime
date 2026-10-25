@@ -7,26 +7,28 @@ import "printer.dart";
 import 'recent_file.dart';
 
 class LocalFileHolder extends FileHolder {
-  LocalFileHolder(super.id) {
+  bool isNew = false;
+
+  LocalFileHolder(super.id, {this.isNew = false}) {
     tag = "local-$id";
   }
 
-  static final String type_name = "local";
+  static final String typeName = "local";
   @override
-  String get type => type_name;
+  String get type => typeName;
   @override
-  bool get skip_recent => false;
+  bool get skipRecent => false;
   @override
   String get path => "/scene?local=$id";
 
-  static final String local_file_label = "local_file";
-  static final String id_label = "local_file_id";
+  static final String localFileLabel = "local_file";
+  static final String idLabel = "local_file_id";
   static Map<String, String> titles = {};
   static List<String> ids = [];
 
   static Future<void> initialize() async {
     final prefs = SharedPreferencesAsync();
-    List<String>? savedTitles = await prefs.getStringList(local_file_label);
+    List<String>? savedTitles = await prefs.getStringList(localFileLabel);
     if (savedTitles == null) {
       titles = {};
       ids = [];
@@ -34,7 +36,7 @@ class LocalFileHolder extends FileHolder {
       return;
     }
     // Log.local.log("BLUE: saved titles = $saved_titles.");
-    List<String>? savedIds = await prefs.getStringList(id_label);
+    List<String>? savedIds = await prefs.getStringList(idLabel);
     savedIds ??= List<String>.generate(savedTitles.length, (i) => "${i + 1}");
     ids = savedIds;
     titles = Map.fromIterables(savedIds, savedTitles);
@@ -44,7 +46,7 @@ class LocalFileHolder extends FileHolder {
 
   @override
   String userDescription() {
-    return "$title (local ${id})";
+    return "$title (local $id)";
   }
 
   static LocalFileHolder makeNew() {
@@ -58,7 +60,7 @@ class LocalFileHolder extends FileHolder {
     } while (titles.keys.contains(id));
     ids.add(id);
     titles[id] = "new local file";
-    return LocalFileHolder(id);
+    return LocalFileHolder(id, isNew: true);
   }
 
   Future<void> setTitle(String title) async {
@@ -73,7 +75,7 @@ class LocalFileHolder extends FileHolder {
     titles.remove(id);
     await saveTitles();
     final prefs = SharedPreferencesAsync();
-    await prefs.remove("$local_file_label-$id");
+    await prefs.remove("$localFileLabel-$id");
     // XXX also remove from recent list.
   }
 
@@ -103,8 +105,8 @@ class LocalFileHolder extends FileHolder {
       Log.local.log("Saving titles: $values");
     }
     final prefs = SharedPreferencesAsync();
-    await prefs.setStringList(id_label, ids);
-    await prefs.setStringList(local_file_label, values);
+    await prefs.setStringList(idLabel, ids);
+    await prefs.setStringList(localFileLabel, values);
 
     Log.local.log("Saving map: $titles");
     Log.local.log("Saving ids: $ids");
@@ -116,7 +118,7 @@ class LocalFileHolder extends FileHolder {
     // Log.local.log("save local file $id, title='$title'.");
     await setTitle(title);
     final prefs = SharedPreferencesAsync();
-    await prefs.setString("$local_file_label-$id", data);
+    await prefs.setString("$localFileLabel-$id", data);
     return true;
   }
 
@@ -127,8 +129,7 @@ class LocalFileHolder extends FileHolder {
     final prefs = SharedPreferencesAsync();
     // XXX if null ,then throw exception. Write test for that, too.
     String data =
-        await prefs.getString("$local_file_label-$id") ??
-        "local-data-not-found";
+        await prefs.getString("$localFileLabel-$id") ?? "local-data-not-found";
     return data;
   }
 }
@@ -154,8 +155,8 @@ class LocalFileTabState extends State<LocalFileTab> {
     Widget? footer = widget.load
         ? null
         : ListTile(
-            key: ValueKey('new-local'),
-            title: Text("New Local File"),
+            key: const ValueKey('new-local'),
+            title: const Text("New Local File"),
             leading: const Icon(
               Icons.file_open,
             ), // XXX is there a "new file" icon?
@@ -166,6 +167,7 @@ class LocalFileTabState extends State<LocalFileTab> {
     return ReorderableListView(
       footer: footer,
       primary: true, // This is primary scroll view for this dialog.
+      // ignore: deprecated_member_use
       onReorder: (int oldIndex, int newIndex) {
         setState(() {
           // Log.local.log("Reorder $oldIndex to $newIndex");
@@ -177,7 +179,7 @@ class LocalFileTabState extends State<LocalFileTab> {
           ListTile(
             key: ValueKey('open-local-$id'),
             title: Text(
-              "${id}) ${titles[id]}",
+              "$id) ${titles[id]}",
               softWrap: false,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,

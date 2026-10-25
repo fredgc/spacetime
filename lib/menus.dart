@@ -4,9 +4,9 @@ import 'package:flutter/services.dart';
 import "printer.dart";
 
 class MyShortcutManager {
-  List<_ShortcutMapper> menus = [];
+  List<ShortcutMapper> menus = [];
 
-  void add(_ShortcutMapper menu) {
+  void add(ShortcutMapper menu) {
     menus.add(menu);
   }
 
@@ -65,7 +65,7 @@ class MyShortcutManager {
   }
 }
 
-abstract class _ShortcutMapper {
+abstract class ShortcutMapper {
   void register(
     Map<Type, Action<Intent>> actionMap,
     Map<ShortcutActivator, Intent> shortcutMap,
@@ -80,7 +80,7 @@ abstract class HasShortcut {
 // TODO:Make this a child MySubmenu (with the build).
 // TODO: Or have two builds (Submenu and Menuanchor). what?
 // The shortcut manager needs to iterate through and get MyMenuItem.add().
-class MyMenu with ChangeNotifier implements _ShortcutMapper {
+class MyMenu with ChangeNotifier implements ShortcutMapper {
   final String title;
   List<MyMenuItem> items = [];
   bool isExpanded = false;
@@ -121,25 +121,41 @@ class MyMenu with ChangeNotifier implements _ShortcutMapper {
   }
 
   // Build a submenu button that expands to this menu.
-  Widget buildDrawerList(BuildContext context, [bool? initiallyExpanded]) {
+  Widget buildDrawerList(
+    BuildContext context, [
+    bool? initiallyExpanded,
+    Widget Function(BuildContext, Widget)? titleWrapper,
+    Widget Function(BuildContext, MyMenuItem, Widget)? itemWrapper,
+  ]) {
     return ListenableBuilder(
       listenable: this,
       builder: (BuildContext context, Widget? child) {
+        Widget titleWidget = Text(title);
+        if (titleWrapper != null) {
+          titleWidget = titleWrapper(context, titleWidget);
+        }
         return ExpansionTile(
-          title: Text(title),
+          title: titleWidget,
           initiallyExpanded: initiallyExpanded ?? isExpanded,
           onExpansionChanged: (expanded) {
             isExpanded = expanded;
+            notifyListeners();
           },
-          childrenPadding: EdgeInsets.only(left: 10),
-          children: items.map((item) => item.makeMenuButton(context)).toList(),
+          childrenPadding: const EdgeInsets.only(left: 10),
+          children: items.map((item) {
+            Widget btn = item.makeMenuButton(context);
+            if (itemWrapper != null) {
+              btn = itemWrapper(context, item, btn);
+            }
+            return btn;
+          }).toList(),
         );
       },
     );
   }
 }
 
-class MyMenuItem extends Intent implements _ShortcutMapper, HasShortcut {
+class MyMenuItem extends Intent implements ShortcutMapper, HasShortcut {
   @override
   final MenuSerializableShortcut? shortcut;
   final VoidCallback? callback;
@@ -208,7 +224,7 @@ class MyMenuItem extends Intent implements _ShortcutMapper, HasShortcut {
     } else {
       return Tooltip(
         message: tip,
-        waitDuration: Duration(seconds: 3), //TODO: set elsewhere.
+        waitDuration: const Duration(seconds: 3), //TODO: set elsewhere.
         child: makeMenuButtonNoTip(context),
       );
     }
@@ -237,7 +253,7 @@ class MyMenuSpacer extends MyMenuItem {
   MyMenuSpacer() : super("");
 
   @override
-  Widget makeMenuButton(BuildContext context) => Divider();
+  Widget makeMenuButton(BuildContext context) => const Divider();
 }
 
 Widget toText(Object t) {
@@ -247,7 +263,7 @@ Widget toText(Object t) {
 String empty(Object t) => "";
 
 class ListChooser<T extends Object> extends ValueNotifier<T>
-    implements _ShortcutMapper {
+    implements ShortcutMapper {
   final List<T> possible;
   final Icon Function(T)? makeIcon;
   final Widget Function(T) makeButton;
@@ -308,7 +324,7 @@ class ListChooser<T extends Object> extends ValueNotifier<T>
                 return makeIcon == null
                     ? Tooltip(
                         message: message,
-                        waitDuration: Duration(
+                        waitDuration: const Duration(
                           seconds: 3,
                         ), //TODO: set elsewhere.
                         child: TextButton(
@@ -388,6 +404,7 @@ class RadioItem<T extends Object> extends MyMenuItem {
       groupValue: group.value,
       onChanged: (T? v) {
         // Log.menus.log("Changed radio menu to $v, through $item");
+        Scaffold.maybeOf(context)?.closeDrawer();
         group.value = v!;
         // XXX do something with callback?
       },
@@ -406,11 +423,14 @@ class RadioItem<T extends Object> extends MyMenuItem {
       // }),
 
       // XXX This doesn't wrap correctly.
-      child: Text(
-        name,
-        softWrap: false,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 135),
+        child: Text(
+          name,
+          softWrap: false,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
       ),
     );
   }

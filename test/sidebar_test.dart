@@ -114,17 +114,17 @@ void main() {
         await app.scene.expectColor(3);
 
         // Undo color edit
-        app.scene.view!.undo_manager.undo();
+        app.scene.view!.undoManager.undo();
         await tester.pumpAndSettle();
         await app.scene.expectColor(0);
 
         // Undo type edit
-        app.scene.view!.undo_manager.undo();
+        app.scene.view!.undoManager.undo();
         await tester.pumpAndSettle();
         await app.scene.expectType(DrawType.event);
 
         // Undo name edit
-        app.scene.view!.undo_manager.undo();
+        app.scene.view!.undoManager.undo();
         await tester.pumpAndSettle();
         await app.scene.expectName("E1");
 
