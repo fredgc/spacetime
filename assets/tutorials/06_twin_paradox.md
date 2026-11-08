@@ -1,4 +1,4 @@
-# 5. The Twin Paradox
+# 6. The Twin Paradox
 
 Follow a pair of twins separating at relativistic speed and returning to see why
 the traveling twin comes back younger.
@@ -14,10 +14,10 @@ reaches turnaround event **e2** $(0.3, 0.5)$. Click **Continue**.
 
 > reset
 > setup: v=0.0, t=0.0, mode=lorentz, tool=select
-> object: clock(name="Alice", x=0.0, t=0.0, v=0.0, color=blue)
-> object: clock(name="Bob", x=0.0, t=0.0, v=0.6, color=green)
-> object: event(name="e1", x=0.0, t=0.0, color=red)
-> object: event(name="e2", x=0.3, t=0.5, color=red)
+> object: clock(name="Alice", x=0.0, t=0.0, v=0.0, z=0.05, color=blue)
+> object: clock(name="Bob", x=0.0, t=0.0, v=0.6, z=0.2, color=green)
+> object: event(name="e1", x=0.0, t=0.0, z=0.0, color=red)
+> object: event(name="e2", x=0.3, t=0.5, z=0.0, color=red)
 > ok
 
 ## 2. Introduce Returning Twin Carl
@@ -39,8 +39,8 @@ $t = 0.40$ at **e2**).
 Carl's worldline continues to the left and meets Alice again at reunion event
 **e3** $(0.0, 1.0)$. Click **Continue** to switch back to Alice's frame.
 
-> object: clock(name="Carl", x=0.33, t=0.45, v=-0.6, color=purple)
-> object: event(name="e3", x=0.0, t=1.0, color=red)
+> object: clock(name="Carl", x=0.33, t=0.45, v=-0.6, z=0.15, color=purple)
+> object: event(name="e3", x=0.0, t=1.0, z=0.0, color=red)
 > ok
 
 ## 4. Return to Alice's Reference Frame

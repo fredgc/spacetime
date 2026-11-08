@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import "keyboard_detector.dart";
 import "printer.dart";
 
 class MyShortcutManager {
@@ -200,7 +201,7 @@ class MyMenuItem extends Intent implements ShortcutMapper, HasShortcut {
   Widget makeMenuButtonNoTip(BuildContext context) {
     return MenuItemButton(
       overflowAxis: Axis.vertical,
-      shortcut: shortcut,
+      shortcut: KeyboardDetector.hasKeyboard.value ? shortcut : null,
       onPressed: !isEnabled
           ? null
           : () {
@@ -296,7 +297,7 @@ class ListChooser<T extends Object> extends ValueNotifier<T>
         : null;
     return MenuItemButton(
       key: ValueKey("$T-Chooser-$item"),
-      shortcut: shortcut,
+      shortcut: KeyboardDetector.hasKeyboard.value ? shortcut : null,
       onPressed: () {
         // Log.menus.log("YELLOW: Changed value of menu to $item");
         value = item;
@@ -399,7 +400,7 @@ class RadioItem<T extends Object> extends MyMenuItem {
     }
     return RadioMenuButton<T>(
       value: item,
-      shortcut: sk,
+      shortcut: KeyboardDetector.hasKeyboard.value ? sk : null,
 
       groupValue: group.value,
       onChanged: (T? v) {

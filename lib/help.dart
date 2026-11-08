@@ -371,6 +371,20 @@ class _HelpScreenState extends State<HelpScreen> {
       ),
       buildDrawerItem(
         context,
+        "Privacy Policy",
+        "privacy.html",
+        Icons.privacy_tip_outlined,
+        isSidebar: isSidebar,
+      ),
+      buildDrawerItem(
+        context,
+        "Terms of Service",
+        "terms.html",
+        Icons.gavel_outlined,
+        isSidebar: isSidebar,
+      ),
+      buildDrawerItem(
+        context,
         "Overview",
         "overview.html",
         Icons.visibility_outlined,

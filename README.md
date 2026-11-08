@@ -1,143 +1,134 @@
-# Spacetime Drawing Tool (v6.1.2+0)
+# Spacetime Drawing Tool (v6.1.4+0)
 
 An interactive, educational drawing and animation tool for visualizing special
-relativity in 1 time $t$ and 2 space $(x,z)* dimensions. It helps students,
+relativity in 1 time ($t$) and 2 space ($x, z$) dimensions. It helps students,
 teachers, and enthusiasts build intuition around relativistic concepts.
 
-This project is under the Apache License.
+* **Live Web App**: [spacetime.gchouse.org](https://spacetime.gchouse.org)
+
+* **Android Package**: `org.gchouse.spacetime`
 
 ---
 
+## Documentation
 
-## 1. What This Project Does
+Comprehensive documentation is available in the `doc/` directory:
 
-The **Spacetime Drawing Tool** allows you to construct, animate, and explore
-spacetime diagrams (Minkowski diagrams) and see how they translate to physical
-observations.
+* [doc/about.md](doc/about.md): Project origins, author attribution, and
+  version history.
 
-### Platforms
+* [doc/overview.md](doc/overview.md): Mathematical and physical principles of
+  Minkowski spacetime diagrams.
 
-* **Web**: The app is hosted at [spacetime.gchouse.org](http://spacetime.gchouse.org).
+* [doc/controls.md](doc/controls.md): Guide to the toolbar, velocity sliders,
+  playback controls, and gestures.
 
-* **Android*: package name: `org.gchouse.spacetime`.
+* [doc/objects.md](doc/objects.md): Spacetime entities including events,
+  light cones, instants, and persistent locations.
 
----
+* [doc/transformations.md](doc/transformations.md): Comparative physics models
+  (Lorentz Relativity, Ether, Emitter frame).
 
-There is a web and Andorid build for this project.
+* [doc/files.md](doc/files.md): Saving, loading, JSON schema, and Google Drive
+  synchronization.
 
-### Storage
+* [doc/privacy.md](doc/privacy.md): Application privacy policy and local
+  storage disclosure.
 
-* Save user preferences locally.
-
-* Save/load spacetime drawings in **JSON format** (retaining backwards
-  compatibility with a previous JavaScript version).
-
-* Enable exporting/saving as downloaded local files or storing in Google Drive
-  (with potential future Firebase DB sharing).
-
-
-### Core Features
-
-* **Spacetime Diagram Canvas (Top Panel)**:
-
-  * Draw the paths (worldlines) of physical entities through space and time.
-
-  * Drag, scale, pan, or zoom into the diagram using mouse or touch gestures.
-
-* **Observer View (Bottom Panel)**:
-
-  * A real-time split-screen simulation demonstrating exactly what an observer
-    sees at a selected point in time.
-
-  * Dynamically showcases **length contraction**, **time dilation**, and the
-    **relativity of simultaneity** as you alter the observer's velocity.
-
-* **Interactive Controls**:
-
-  * Adjust current observer **Time** and **Velocity** using interactive sliders.
-
-  * Play, pause, or change playback speed to animate the simulation.
-
-  * Relativistic velocity addition is calculated automatically when transforming
-    frames.
-
-* **Entity Types (Drawables)**:
-
-  * **Events**: Distinct points in spacetime (e.g., spark flashes).
-
-  * **Light Cones**: Visualizes light signal propagation paths.
-
-  * **Instants**: Tilted lines representing planes of simultaneity.
-
-  * **Locations (Persistent Objects)**: Places objects like trains, barns,
-    clocks, flags, or people in motion.
-
-* **Alternative Physics Hypotheses**:
-
-  * Compare standard **Lorentz (Relativity)** transformations (constant speed of
-    light) with historical/alternative physics frames: **Ether Frame** (speed of
-    light relative to a preferred global frame) and **Emitter Frame** (speed of
-    light relative to the source).
-
-* **Save, Load, and Sync**:
-
-  * Save and load scenes to Google Drive.
-
-  * Export/import scenes locally via files or clipboard as JSON.
-
-  * Share scenes easily by copying generated URLs containing serialized state.
-
-  * Full backward compatibility with JSON files saved by the legacy JavaScript
-    version.
+* [doc/terms.md](doc/terms.md): Terms of service.
 
 ---
 
-## 2. Building & Running
+## Core Features
 
-This project is built using **Flutter**. Make sure you have the [Flutter
-SDK](https://docs.flutter.dev/get-started/install) installed.
+* **Spacetime Diagram Canvas**:
+  Draw worldlines of physical entities across space and time. Scale, pan, and
+  zoom dynamically.
 
-### Run Locally
+* **Observer View**:
+  Split-screen real-time simulation displaying what an observer sees at the
+  selected coordinate time, illustrating length contraction, time dilation,
+  and the relativity of simultaneity.
 
-To run the app on your local machine (e.g., in Chrome):
+* **Interactive Tutorials**:
+  Guided interactive lessons with UI highlight targets, automatic verification,
+  and step-by-step instructions.
+
+* **Comparative Hypotheses**:
+  Examine coordinate frames under Lorentz relativity (constant speed of light),
+  Ether drift (preferred rest frame), or Emitter ballistics.
+
+* **Save, Load, and Cloud Sync**:
+  Store scenes locally in JSON format (fully backward-compatible with legacy
+  editions) or sync across devices using Google Drive.
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+* [Flutter SDK](https://docs.flutter.dev/get-started/install)
+  (3.24+ recommended)
+
+* `make` and [Pandoc](https://pandoc.org/) (for compiling documentation assets)
+
+### Forking and Cloning
+
+1. Fork the repository on GitHub to your personal account.
+
+2. Clone your fork locally:
+
+   ```bash
+   git clone https://github.com/<your-username>/spacetime.git
+   cd spacetime
+   ```
+
+3. Install Flutter dependencies:
+
+   ```bash
+   flutter pub get
+   ```
+
+4. Compile documentation and asset bundles:
+
+   ```bash
+   make docs
+   ```
+
+### Running Locally
+
+To run the web version in Chrome:
 
 ```bash
 flutter run -d chrome
 ```
 
-### Run Tests
+To run on a connected Android device or emulator:
 
-To execute the unit and integration tests:
+```bash
+flutter run -d android
+```
+
+### Running Tests
+
+Execute the unit and widget test suite:
 
 ```bash
 flutter test
 ```
 
-### Build Production Releases
+### Building Releases
 
-Use the provided `Makefile` to compile local builds:
+Use the provided `Makefile` to generate release assets:
 
 ```bash
-# Build both Web assets and Android APK
 make build_all
 ```
 
 ---
 
-## 3. Storage and Google Drive Sync
+## License
 
-To support cloud backup and sync, the app integrates with Google Drive API v3.
-
-If you are deploying your own version of this app, configure your credentials by
-running:
-
-```bash
-flutterfire configure -y
-```
-
----
-
-## 4. License
-
-This project is open-source and licensed under the **Apache 2.0 License**. See
-the [LICENSE](LICENSE) file for details.
+This project is open source and licensed under the
+[Apache 2.0 License](LICENSE).

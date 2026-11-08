@@ -6,6 +6,10 @@ double getBrowserRootFontSize() {
   return 16.0;
 }
 
+bool detectWebHasKeyboard() {
+  return false;
+}
+
 void removeSplashFromWeb() {}
 
 void initUnsavedCallback(dynamic fileManager) {}

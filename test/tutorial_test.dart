@@ -7,6 +7,7 @@ import 'package:spacetime/file_manager.dart';
 import 'package:spacetime/scene.dart';
 import 'package:spacetime/script.dart';
 import 'package:spacetime/settings.dart';
+import 'package:spacetime/transform.dart';
 import 'package:spacetime/tutorial_widget.dart';
 import 'package:spacetime/tutorials.g.dart';
 import 'package:spacetime/widget.dart';
@@ -283,11 +284,11 @@ Done immediately.
     });
 
     test('AssetHolder creates correct title and type', () {
-      final holder = AssetHolder('assets/tutorials/02_speed_of_light.md');
+      final holder = AssetHolder('assets/tutorials/03_speed_of_light.md');
       expect(holder.type, equals('asset'));
       expect(holder.kind, equals(FileKind.tutorial));
-      expect(holder.title, equals('02_speed_of_light'));
-      expect(holder.userDescription(), equals('02_speed_of_light (tutorial)'));
+      expect(holder.title, equals('03_speed_of_light'));
+      expect(holder.userDescription(), equals('03_speed_of_light (tutorial)'));
     });
 
     testWidgets('AppWidget drawer contains File, Tutorials, Edit, and View', (
@@ -317,7 +318,7 @@ Done immediately.
       'getBuiltInTutorials toggles dev tutorials based on includeDev flag',
       () {
         final prodOnly = getBuiltInTutorials(includeDev: false);
-        expect(prodOnly.length, equals(6));
+        expect(prodOnly.length, equals(7));
         expect(
           prodOnly.any((t) => t.assetPath.contains('assets/dev/tutorials')),
           isFalse,
@@ -325,7 +326,14 @@ Done immediately.
         expect(
           prodOnly.any(
             (t) =>
-                t.assetPath.contains('assets/tutorials/02_speed_of_light.md'),
+                t.assetPath.contains('assets/tutorials/03_speed_of_light.md'),
+          ),
+          isTrue,
+        );
+        expect(
+          prodOnly.any(
+            (t) =>
+                t.assetPath.contains('assets/tutorials/02_ether_vs_emitter.md'),
           ),
           isTrue,
         );
@@ -340,7 +348,7 @@ Done immediately.
         expect(
           withDev.any(
             (t) =>
-                t.assetPath.contains('assets/tutorials/02_speed_of_light.md'),
+                t.assetPath.contains('assets/tutorials/03_speed_of_light.md'),
           ),
           isTrue,
         );
@@ -356,7 +364,13 @@ Done immediately.
         expect(menu.items.length, equals(fileManager.builtInTutorials.length));
         expect(
           menu.items.any(
-            (item) => item.name == "2. Constant Speed of Light & Simultaneity",
+            (item) => item.name == "2. Constant Speed of Light & Relativity",
+          ),
+          isTrue,
+        );
+        expect(
+          menu.items.any(
+            (item) => item.name == "3. Constant Speed of Light & Simultaneity",
           ),
           isTrue,
         );
@@ -372,7 +386,7 @@ Done immediately.
     );
 
     test(
-      'All 6 built-in tutorials parse and complete every step via doItForMe',
+      'All 7 built-in tutorials parse and complete every step via doItForMe',
       timeout: const Timeout(Duration(minutes: 2)),
       () async {
         for (final holder in kBuiltInTutorials) {
@@ -620,5 +634,181 @@ Change mode from Lorentz to Ether.
       expect(controller.isCurrentStepSatisfied, true);
       expect(controller.isContinueEnabled, true);
     });
+
+    test('Slider value jumps to tutorial target when dragged close', () {
+      final markdown = '''
+# Slider Snapping Tutorial
+
+## 1. Set Time
+> t = 0.50 [tol 0.05]
+
+## 2. Set Velocity
+> v = 0.40 [tol 0.05]
+''';
+      final tutorial = Tutorial.fromMarkdown(markdown);
+      final controller = TutorialController(scene, tutorial);
+
+      expect(scene.time.snapTarget, equals(0.50));
+      // Moving close to 0.50 (e.g. 0.48) should snap exactly to 0.50
+      scene.time.value = 0.48;
+      expect(scene.time.value, equals(0.50));
+      expect(controller.isCurrentStepSatisfied, isTrue);
+
+      // Moving far away should not snap
+      scene.time.value = -0.50;
+      expect(scene.time.value, equals(-0.50));
+      expect(controller.isCurrentStepSatisfied, isFalse);
+
+      controller.doItForMe();
+      controller.nextStep();
+
+      // Step 2: velocity
+      expect(scene.velocity.snapTarget, equals(0.40));
+      scene.velocity.value = 0.38;
+      expect(scene.velocity.value, equals(0.40));
+      expect(controller.isCurrentStepSatisfied, isTrue);
+
+      controller.dispose();
+      expect(scene.time.snapTarget, isNull);
+      expect(scene.velocity.snapTarget, isNull);
+    });
+
+    test('Adding object near target coordinates snaps directly to target', () {
+      final markdown = '''
+# Canvas Snap Tutorial
+
+## 1. Add Event
+> add = event(x=0.20, t=1.00)
+''';
+      final tutorial = Tutorial.fromMarkdown(markdown);
+      fileManager.activeTutorial.value = TutorialController(scene, tutorial);
+
+      scene.currentTool.value = Tool.add;
+      scene.currentType.value = DrawType.event;
+
+      // Click near target: (x=0.18, t=0.95), tolerance is 0.5
+      scene.addObject(Point(x: 0.18, t: 0.95));
+
+      final added = scene.data.drawables.last;
+      expect(added.pt.x, closeTo(0.20, 1e-6));
+      expect(added.pt.t, closeTo(1.00, 1e-6));
+      expect(fileManager.activeTutorial.value!.isCurrentStepSatisfied, isTrue);
+
+      fileManager.activeTutorial.value!.dispose();
+      fileManager.activeTutorial.value = null;
+    });
+
+    test(
+      "Tutorial 3 initializes Alice's clock with z = 0.125 (50% flag height)",
+      () async {
+        final tutorials = getBuiltInTutorials();
+        final tutHolder = tutorials.firstWhere(
+          (t) => t.title.contains('Dilation'),
+        );
+        final md = await tutHolder.loadData(fileManager);
+        final tut3 = Tutorial.fromMarkdown(md);
+        final controller = TutorialController(scene, tut3);
+
+        final alice = scene.data.drawables.firstWhere((d) => d.name == 'Alice');
+        expect(alice.pt.z, equals(0.125));
+        controller.dispose();
+      },
+    );
+
+    test(
+      'Tutorial 2 contains train sprite and ground flags at flash origins',
+      () async {
+        final tutorials = getBuiltInTutorials();
+        final tutHolder = tutorials.firstWhere(
+          (t) => t.title.contains('Constant Speed of Light & Relativity'),
+        );
+        final md = await tutHolder.loadData(fileManager);
+        final tut2 = Tutorial.fromMarkdown(md);
+        final controller = TutorialController(scene, tut2);
+
+        expect(tut2.steps.length, equals(10));
+
+        // Advance to step 2 (setup with train, flags, and end flashes)
+        controller.doItForMe();
+        controller.nextStep();
+
+        final train = scene.data.drawables.firstWhere((d) => d.name == 'Train');
+        expect(train.type, equals(DrawType.train));
+        expect(train.frame.velocity, equals(0.25));
+
+        final backFlag = scene.data.drawables.firstWhere((d) => d.name == 'BF');
+        expect(backFlag.type, equals(DrawType.flag));
+        expect(backFlag.frame.velocity, equals(0.0));
+        expect(backFlag.pt.x, equals(-0.25));
+
+        final frontFlag = scene.data.drawables.firstWhere(
+          (d) => d.name == 'FF',
+        );
+        expect(frontFlag.type, equals(DrawType.flag));
+        expect(frontFlag.frame.velocity, equals(0.0));
+        expect(frontFlag.pt.x, equals(0.25));
+
+        final backFlash = scene.data.drawables.firstWhere((d) => d.name == 'B');
+        expect(backFlash.type, equals(DrawType.cone));
+
+        final frontFlash = scene.data.drawables.firstWhere(
+          (d) => d.name == 'F',
+        );
+        expect(frontFlash.type, equals(DrawType.cone));
+
+        controller.dispose();
+      },
+    );
+
+    test(
+      'Tutorial 3 sets up train at v=0.25 and marks front and back hit events',
+      () async {
+        final tutorials = getBuiltInTutorials();
+        final tutHolder = tutorials.firstWhere(
+          (t) => t.title.contains('Constant Speed of Light & Simultaneity'),
+        );
+        final md = await tutHolder.loadData(fileManager);
+        final tut3 = Tutorial.fromMarkdown(md);
+        final controller = TutorialController(scene, tut3);
+
+        expect(tut3.steps.length, equals(10));
+
+        // Step 1: add flash cone in center of train
+        controller.doItForMe();
+        expect(controller.isContinueEnabled, isTrue);
+        controller.nextStep();
+
+        // Step 2: advance time in train frame to t=0.25
+        controller.doItForMe();
+        expect(scene.time.value, closeTo(0.25, 0.01));
+        controller.nextStep();
+
+        // Step 3: ground frame v=0, t=0
+        controller.doItForMe();
+        expect(scene.velocity.value, closeTo(0.0, 0.01));
+        controller.nextStep();
+
+        // Advance through remaining steps
+        int guard = 0;
+        while (!controller.isCompleted && guard < 20) {
+          if (!controller.isContinueEnabled && controller.canDoItForMe) {
+            controller.doItForMe();
+          }
+          controller.nextStep();
+          guard++;
+        }
+
+        expect(controller.isCompleted, isTrue);
+        final backHit = scene.data.drawables.firstWhere((d) => d.name == 'B');
+        final frontHit = scene.data.drawables.firstWhere((d) => d.name == 'F');
+        expect(backHit.type, equals(DrawType.event));
+        expect(frontHit.type, equals(DrawType.event));
+
+        final flash = scene.data.drawables.firstWhere((d) => d.name == 'Flash');
+        expect(flash.pt.z, equals(0.15));
+
+        controller.dispose();
+      },
+    );
   });
 }

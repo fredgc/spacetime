@@ -753,12 +753,14 @@ class TutorialCanvasOverlay extends StatelessWidget {
   final SceneView scene;
   final TutorialController controller;
   final Widget child;
+  final bool side;
 
   const TutorialCanvasOverlay({
     super.key,
     required this.scene,
     required this.controller,
     required this.child,
+    this.side = false,
   });
 
   @override
@@ -769,8 +771,12 @@ class TutorialCanvasOverlay extends StatelessWidget {
         final highlightId = controller.currentHighlightId;
         final targetDrawable = controller.highlightedDrawable;
         final targetPoint = controller.highlightedPoint;
+        final addDirective = controller.activeAddObjectDirective;
+        final isSideTarget =
+            addDirective?.side ?? (targetPoint != null && targetPoint.z != 0.0);
+        final matchesView = (isSideTarget == side);
 
-        if (highlightId == 'canvas.main') {
+        if (!side && highlightId == 'canvas.main') {
           return TutorialHighlight(
             highlightId: 'canvas.main',
             activeHighlightId: highlightId,
@@ -781,9 +787,9 @@ class TutorialCanvasOverlay extends StatelessWidget {
         }
 
         final hasObjectHighlight =
-            highlightId == 'canvas.object' && targetDrawable != null;
+            !side && highlightId == 'canvas.object' && targetDrawable != null;
         final hasPointHighlight =
-            highlightId == 'canvas.point' && targetPoint != null;
+            highlightId == 'canvas.point' && targetPoint != null && matchesView;
 
         if (!hasObjectHighlight && !hasPointHighlight) {
           return child;
@@ -805,6 +811,7 @@ class TutorialCanvasOverlay extends StatelessWidget {
                 targetPoint: targetPoint,
                 accentColor: accentColor,
                 pulse: pulse,
+                side: side,
               ),
               child: child,
             );
@@ -821,6 +828,7 @@ class _TutorialCanvasHighlightPainter extends CustomPainter {
   final Point? targetPoint;
   final Color accentColor;
   final double pulse;
+  final bool side;
 
   _TutorialCanvasHighlightPainter({
     required this.scene,
@@ -828,6 +836,7 @@ class _TutorialCanvasHighlightPainter extends CustomPainter {
     required this.targetPoint,
     required this.accentColor,
     required this.pulse,
+    this.side = false,
   });
 
   @override
@@ -837,7 +846,7 @@ class _TutorialCanvasHighlightPainter extends CustomPainter {
 
     final transform = scene.data.transform;
 
-    if (targetDrawable != null) {
+    if (!side && targetDrawable != null) {
       final glowPaint = targetDrawable!.getHighlightPaint(accentColor, p);
       targetDrawable!.paintHighlight(canvas, transform, glowPaint);
 
@@ -850,7 +859,9 @@ class _TutorialCanvasHighlightPainter extends CustomPainter {
     }
 
     if (targetPoint != null) {
-      final c = transform.toScreen(targetPoint!);
+      final c = side
+          ? transform.toSide(targetPoint!)
+          : transform.toScreen(targetPoint!);
       final baseRadius = SceneView.dotSize.value + 6.0;
       final outerRadius = baseRadius + 8.0 * p;
 
