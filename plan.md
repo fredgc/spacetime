@@ -1,112 +1,71 @@
-# Spacetime Project Plan (v6.1.2+0)
+# Spacetime Project Plan (v6.1.4+0)
 
-This document outlines the roadmap for the **Spacetime** Flutter project.
-It is intended as a reminder for the human what we are working on, and
-as an explanation for Gemini what we are planning.
+This document outlines the strategic roadmap, architecture goals, and long-term
+milestones for the **Spacetime** Flutter project.
 
-Here are some tips:
+> **Note**: Tactical day-to-day tasks and active issue tracking are managed
+> dynamically using `~/bin/todo.py`. Run `~/bin/todo.py list` to view active
+> tasks.
 
-- use `/usage` to see quota usage.
+---
 
-- use `/clear` to clear ai state between tasks.
+## 1. Android Release & Store Publishing
 
+* Build and test on real Android devices via `adb`.
 
-### Cleanup and Bug Fix
+* Configure store assets, screenshots, and metadata.
 
-- trying to open a file via drive gave oauth error. investigate.
+* Submit and publish release bundle to Google Play (`org.gchouse.spacetime`).
 
-### Android
+---
 
-- Build and test android version.
+## 2. Dynamic Files & Real-Time Collaboration
 
-- Release android version to play store.
+Research and prototype multi-user collaborative editing where multiple users
+can view and edit a shared spacetime diagram simultaneously:
 
+* **Backend Storage**:
+  Evaluate storing scene objects as rows in Google Sheets or documents in
+  Firebase Realtime Database / Firestore.
 
-### File Load/Save
+* **Permissions & Access Control**:
+  Investigate how Firebase access rules integrate with Google Drive OAuth
+  sharing permissions.
 
-- [ ] Don't forget to update Google Drive API integration after we've published
-      the first release:
-      https://console.cloud.google.com/apis/api/drive.googleapis.com/drive_sdk?project=fredgc-spacetime
+* **Quotas & Cost Modeling**:
+  Establish quotas, free tier boundaries, and storage limits for cloud-synced
+  collaborative scenes.
 
+---
 
-### UI, Interaction & Gestures
+## 3. Path Objects & Generalized Worldlines
 
+* **Variable Velocity Worldlines**:
+  Implement worldline path objects defined by piecewise linear or spline
+  segments to model acceleration and multi-stage motion.
 
-### Path Objects
+* **Curved Spacetime Explorations**:
+  Investigate pedagogical visualizations for accelerated frames (Rindler
+  coordinates) and uniform gravitational fields.
 
-- [ ] Create objects that have variable velocity (worldline paths with multiple
-      points).
+---
 
+## 4. Enhanced Interactive Tutorials
 
-### Dynamic Files
+* **Snap-to-Target Interaction**:
+  Implement magnetic snapping when users drag or manipulate sliders and canvas
+  objects close to tutorial target coordinates.
 
-Research collaborative editing where two users can edit the same file
-simultaneously and see real-time updates:
+* **Additional Scenarios**:
+  Create comparative tutorials illustrating moving observers under Ether and
+  Emitter physics hypotheses.
 
-- [ ] Explore storing scenes in a Google Sheet (saving individual objects as
-      spreadsheet rows) or Firebase Realtime Database records.
+---
 
-- [ ] Explore Firebase DB sharing and how permissions interact with Google
-      Drive file access.
+## 5. Deployment and Publishing Infrastructure
 
-- [ ] Research pricing, limits, and monetization schemes to support free/cheap
-      tiers.
+* Maintain automated release workflows via `Makefile` (`make stage`,
+  `make release`).
 
-
-### Web & Android Release
-
-- [ ] **Pre-Release Verification & Staging Checklist**
-
-  - [ ] **Synchronize Assets & Documentation**:
-    Run `make docs` and `python3 generate_tutorials.py` to ensure all
-    markdown docs compile to HTML in `assets/dev/` and tutorials are updated.
-
-  - [ ] **Deploy to Staging Preview**:
-    Run `make stage` (with `DEBUG_ENABLED=true`) or `make stage-release` to
-    push to the staging preview channel
-    (`https://fredgc-spacetime--staging-hfoxw6cy.web.app`).
-
-  - [ ] **Manual Staging Verification**:
-
-    - **Tutorial Flow & Markdown**: Confirm rich typography (bold, italics,
-      bullets) renders without raw markdown tokens. Verify animated pulsing
-      highlights, card dragging/minimization, and "Do it for me".
-
-    - **Google Drive Authentication**: Verify Google Sign-in on web, saving
-      diagrams, search query parsing (`owner:me`, partial names), and session
-      persistence across reloads.
-
-    - **Unsaved State & Navigation**: Verify leave-site warnings on unsaved
-      edits, dialog confirmation on file changes, and unsaved state clearance
-      on undo back to save checkpoints.
-
-    - **Version & Debug Docs Visibility**: Verify the Help menu displays the
-      active version (`About Spacetime v${settings.fullVersion}`) matching
-      `pubspec.yaml`, and Developer Docs appear when "Enable Debug Mode" is
-      toggled in Settings (under `DEBUG_ENABLED=true`).
-
-    - **Layout & Animations**: Drag the split screen divider, advance time
-      animation ($t$), switch relativity modes (Lorentz/Ether/Emitter), and
-      verify narrow mobile viewport reflow without overflow errors.
-
-  - [ ] **Recommended Additional Automated Tests**:
-
-    - `JsonSyntaxEditorDialog`: Verify interactive error banners on malformed
-      JSON and successful load on correction.
-
-    - Tutorial Undo: Verify undoing object placement during a tutorial step
-      reverts satisfaction status and disables advancing.
-
-    - Help Menu Version: Verify dynamic version string rendering without
-      hardcoded version fallbacks.
-
-  - [ ] **Production Release Execution**:
-    Run `make release` (which invokes `./roll_build_number.sh --release`,
-    `make build_all`, and `firebase deploy`) to publish to
-    `spacetime.gchouse.org`.
-
-- [ ] Document publishing new versions of the web app to
-      `spacetime.gchouse.org`.
-
-- [ ] Document building and publishing the Android package
-      (`org.gchouse.spacetime`).
+* Document cross-platform build and release procedures for both web hosting and
+  mobile app stores.

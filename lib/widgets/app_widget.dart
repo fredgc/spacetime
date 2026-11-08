@@ -8,6 +8,7 @@ import '../animate.dart';
 import '../edit.dart';
 import '../file_manager.dart';
 import '../js_stub.dart' if (dart.library.html) '../js_interface.dart';
+import '../keyboard_detector.dart';
 import '../menus.dart';
 import '../navigation.dart';
 import '../printer.dart';
@@ -87,6 +88,8 @@ class AppWidgetState extends State<AppWidget>
     });
     animator = MyAnimator(this, widget.sceneViewer);
     _setupSceneViewer();
+    KeyboardDetector.init();
+    KeyboardDetector.hasKeyboard.addListener(_onKeyboardChanged);
     HardwareKeyboard.instance.addHandler(keyHandler);
   }
 
@@ -160,13 +163,25 @@ class AppWidgetState extends State<AppWidget>
   @override
   void dispose() {
     _settingsListener.cancel();
+    KeyboardDetector.hasKeyboard.removeListener(_onKeyboardChanged);
     HardwareKeyboard.instance.removeHandler(keyHandler);
     animator.dispose();
     _cleanupSceneViewer(widget.sceneViewer);
     super.dispose();
   }
 
+  void _onKeyboardChanged() {
+    widget.fileMenu.rebuild();
+    widget.tutorialMenu.rebuild();
+    widget.editMenu.rebuild();
+    viewMenu.rebuild();
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
   bool keyHandler(KeyEvent event) {
+    KeyboardDetector.onKeyEvent(event);
     if (widget.sceneViewer.keyHandle(event.character, event.logicalKey)) {
       setState(() {
         Log.widget.log('Key state changed.');
@@ -451,7 +466,7 @@ class AppWidgetState extends State<AppWidget>
     );
   }
 
-  Widget _wrapCanvasTutorialHighlight(Widget child) {
+  Widget _wrapCanvasTutorialHighlight(Widget child, {bool side = false}) {
     return ValueListenableBuilder<TutorialController?>(
       valueListenable: widget.fileManager.activeTutorial,
       builder: (context, controller, _) {
@@ -459,6 +474,7 @@ class AppWidgetState extends State<AppWidget>
         return TutorialCanvasOverlay(
           scene: widget.sceneViewer,
           controller: controller,
+          side: side,
           child: child,
         );
       },
@@ -545,9 +561,12 @@ class AppWidgetState extends State<AppWidget>
               SplitterWidget(
                 top: (context) => _wrapCanvasTutorialHighlight(
                   widget.sceneViewer.build(context, this),
+                  side: false,
                 ),
-                bottom: (context) =>
-                    widget.sceneViewer.buildSideView(context, this),
+                bottom: (context) => _wrapCanvasTutorialHighlight(
+                  widget.sceneViewer.buildSideView(context, this),
+                  side: true,
+                ),
                 setter: (double x) {
                   widget.sceneViewer.data.transform.sideHeight = x;
                 },

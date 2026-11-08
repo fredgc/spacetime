@@ -1,7 +1,8 @@
 DRIVE_ICON_SIZES := 256 128 64 32 16
 DRIVE_ICONS := $(patsubst %,assets/icons/drive-icon-%.png,$(DRIVE_ICON_SIZES))
+FIREBASE_FILES := lib/firebase_options.dart android/app/google-services.json firebase.json
 
-ASSETS := docs web/favicon.ico web/favicon.png $(DRIVE_ICONS) web/version.json lib/transform.g.dart lib/tutorials.g.dart
+ASSETS := docs web/favicon.ico web/favicon.png web/privacy.html web/terms.html $(DRIVE_ICONS) web/version.json lib/transform.g.dart lib/tutorials.g.dart $(FIREBASE_FILES)
 
 build_all: $(ASSETS)
 	flutter build web
@@ -21,11 +22,16 @@ DEV_TUTORIALS_MD := $(wildcard assets/dev/tutorials/*.md)
 
 .PHONY: docs stage build_all test release ASSETS
 
-docs: $(USER_DOCS_HTML) $(DEV_DOCS_HTML)
+docs: $(USER_DOCS_HTML) $(DEV_DOCS_HTML) web/privacy.html web/terms.html
 
 assets/%.html: doc/%.md
 	@mkdir -p assets
 	pandoc $< -s --mathml --css=css/doc_style.css -o $@
+
+web/%.html: assets/%.html
+	@mkdir -p web/css
+	cp -f assets/css/doc_style.css web/css/doc_style.css 2>/dev/null || true
+	cp -f $< $@
 
 assets/dev/%.html: %.md
 	@mkdir -p assets/dev

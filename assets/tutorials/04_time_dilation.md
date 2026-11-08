@@ -1,11 +1,11 @@
-# 3. Time Dilation & Moving Clocks
+# 4. Time Dilation & Moving Clocks
 
 Discover why a moving clock ticks more slowly than a stationary clock, and how
 relativity of simultaneity resolves the apparent symmetry paradox.
 
 ## 1. Alice's Light Clock
 
-In Lesson 2 we saw that different observers disagree on which events happen at
+In Lesson 3 we saw that different observers disagree on which events happen at
 the same time. Now let's see why they also measure time passing at different
 rates.
 
@@ -16,7 +16,7 @@ $(0.0, 0.8)$. Click **Continue**.
 
 > reset
 > setup: v=0.0, t=0.0, mode=lorentz, tool=select
-> object: clock(name="Alice", x=0.0, t=0.0, v=0.0, color=blue)
+> object: clock(name="Alice", x=0.0, t=0.0, z=0.125, v=0.0, color=blue)
 > object: flag(name="Mirror", x=0.4, t=0.0, v=0.0, color=teal)
 > object: cone(name="L1", x=0.0, t=0.0, color=orange)
 > object: cone(name="L2", x=0.4, t=0.4, color=orange)
@@ -72,7 +72,8 @@ Observer View:
 * **Alice's clock** at **P3** still reads $t = 0.80$!
 
 Ben concludes that Alice's moving clock is running slow by a factor of
-$\gamma = 1.25$. Click **Continue** to see why this doesn't cause a contradiction.
+$\gamma = 1.25$. Click **Continue** to see why this doesn't cause a
+contradiction.
 
 > ok
 

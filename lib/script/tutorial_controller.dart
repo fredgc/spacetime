@@ -72,6 +72,18 @@ class TutorialController extends ChangeNotifier {
     return null;
   }
 
+  /// If the current step has an unsatisfied [AddObjectDirective], returns it.
+  AddObjectDirective? get activeAddObjectDirective {
+    final step = currentStep;
+    if (step == null) return null;
+    for (final d in step.directives) {
+      if (d is AddObjectDirective && !d.isSatisfied(scene)) {
+        return d;
+      }
+    }
+    return null;
+  }
+
   bool get isCurrentStepSatisfied =>
       currentStep != null && currentStep!.isSatisfied(scene);
 
@@ -104,7 +116,42 @@ class TutorialController extends ChangeNotifier {
 
   void _applyStepStart() {
     currentStep?.onStepStart(scene);
+    _updateSliderSnapTargets();
     _checkCondition();
+  }
+
+  void _updateSliderSnapTargets() {
+    final step = currentStep;
+    if (step == null || isCompleted) {
+      scene.time.clearSnapTarget();
+      scene.velocity.clearSnapTarget();
+      return;
+    }
+    TimeDirective? timeDir;
+    VelocityDirective? velDir;
+    for (final d in step.directives) {
+      if (d is TimeDirective) {
+        timeDir = d;
+      } else if (d is VelocityDirective) {
+        velDir = d;
+      }
+    }
+    if (timeDir != null) {
+      scene.time.setSnapTarget(
+        timeDir.targetTime,
+        timeDir.effectiveTolerance(scene),
+      );
+    } else {
+      scene.time.clearSnapTarget();
+    }
+    if (velDir != null) {
+      scene.velocity.setSnapTarget(
+        velDir.targetVelocity,
+        velDir.effectiveTolerance(scene),
+      );
+    } else {
+      scene.velocity.clearSnapTarget();
+    }
   }
 
   void _checkCondition() {
@@ -120,6 +167,8 @@ class TutorialController extends ChangeNotifier {
       notifyListeners();
     } else {
       isCompleted = true;
+      scene.time.clearSnapTarget();
+      scene.velocity.clearSnapTarget();
       notifyListeners();
     }
   }
@@ -140,6 +189,8 @@ class TutorialController extends ChangeNotifier {
 
   @override
   void dispose() {
+    scene.time.clearSnapTarget();
+    scene.velocity.clearSnapTarget();
     scene.velocity.removeListener(_checkCondition);
     scene.time.removeListener(_checkCondition);
     scene.lightSpeed.removeListener(_checkCondition);

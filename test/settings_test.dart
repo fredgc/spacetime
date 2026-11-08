@@ -2,8 +2,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:spacetime/drawable.dart';
 import 'package:spacetime/printer.dart';
 import 'package:spacetime/scene.dart';
+import 'package:spacetime/transform.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:spacetime/settings.dart';
 
@@ -29,6 +31,7 @@ void main() {
     expect(find.textContaining("Theme Brightness:"), findsOneWidget);
     expect(find.textContaining("Sticky delay:"), findsOneWidget);
     expect(find.textContaining("Sticky radius:"), findsOneWidget);
+    expect(find.textContaining("Velocity sticky:"), findsOneWidget);
     expect(find.textContaining("Dot Size:"), findsOneWidget);
     listener.cancel();
     await app.teardown();
@@ -204,4 +207,41 @@ void main() {
 
     await app.teardown();
   });
+
+  testWidgets(
+    'velocity sticky setting sets object velocities as sticky points on slider',
+    (tester) async {
+      final app = AppTester(tester);
+      await app.setup();
+      await app.initialize();
+      await app.loadAndFindScene("initial", SceneData());
+
+      final scene = app.scene.view!;
+
+      final train = DrawType.train.make("Train", ReferenceFrame.fromV(0.25), 0);
+      final flag = DrawType.flag.make("Flag", ReferenceFrame.fromV(0.0), 1);
+      final person = DrawType.person.make(
+        "Person",
+        ReferenceFrame.fromV(-0.5),
+        2,
+      );
+      scene.data.drawables.addAll([train, flag, person]);
+
+      SceneView.velocitySticky.value = false;
+      scene.updateVelocitySticky();
+      expect(scene.velocity.sticky, isEmpty);
+
+      SceneView.velocitySticky.value = true;
+      scene.updateVelocitySticky();
+
+      expect(scene.velocity.sticky, containsAllInOrder([-0.5, 0.0, 0.25]));
+
+      SceneView.velocitySticky.value = false;
+      scene.updateVelocitySticky();
+      expect(scene.velocity.sticky, isEmpty);
+
+      await tester.pump(const Duration(milliseconds: 200));
+      await app.teardown();
+    },
+  );
 }

@@ -3,7 +3,42 @@
 Welcome! This guide is designed to help future LLM agents and human developers
 get up to speed quickly on the **Spacetime** Flutter application.
 
-Build Version v6.1.2+0
+Build Version v6.1.4+0
+
+---
+
+## Developer Rules & Environment Configuration
+
+All contributors and AI agents must follow the central rules defined in
+`~/source/gemini/config/rules/`:
+
+* **Task Management (`todo.md`)**:
+  Project tasks and issues are tracked using `~/bin/todo.py`. When asked about
+  tasks or what to work on next, execute:
+
+  ```bash
+  ~/bin/todo.py list
+  ```
+
+  Before starting an item, mark it in progress (`~/bin/todo.py doing <N>`). Once
+  completed, mark it done (`~/bin/todo.py done <N>`). Do not archive completed
+  tasks until reviewed and verified.
+
+* **Communication Style (`style.md`)**:
+  Be blunt and direct. Avoid polite filler and superlatives. Keep responses
+  concise, technical, and focused strictly on facts and instructions.
+
+* **Documentation Formatting (`markdown.md`)**:
+  Keep line lengths strictly under 80 characters. Always separate list items
+  with a blank line. Always follow headers with a blank line. Visually align
+  markdown table column borders (`|`).
+
+* **Emacs Integration (`emacs.md`)**:
+  When requested to send a file to Emacs, run `emacs-maybe-client -f <file>`.
+
+* **Hardware & Testing (`devices.md`)**:
+  On host `raven`, an Android device may be connected via `adb` for Android
+  testing.
 
 ---
 
@@ -460,7 +495,51 @@ Tutorials are written in markdown and parsed by `Tutorial.fromMarkdown()`:
 
 ---
 
-## 7. Code Style
+## 7. Build, Versioning & Deployment Workflow
+
+### Build and Asset Automation (`Makefile`)
+
+The project uses `make` targets to coordinate asset compilation, icon
+generation, and builds:
+
+* `make docs`: Compiles user markdown docs from `doc/*.md` into
+  `assets/*.html` and developer docs (`plan.md`, `README.md`, `GEMINI.md`,
+  `tutorial_plan.md`) into `assets/dev/*.html` using `pandoc`.
+
+* `make ASSETS`: Generates icons, favicons, version metadata, tutorials,
+  and compiled documentation.
+
+* `make test`: Runs all Flutter unit and widget tests.
+
+* `make stage`: Builds the web application with debug flags enabled and runs
+  `firebase_stage.pl` to deploy to the staging preview channel.
+
+* `make stage-release`: Builds the production web bundle and runs
+  `firebase_stage.pl`.
+
+* `make release`: Rolls the release version number, rebuilds all assets,
+  and deploys to production on Firebase (`spacetime.gchouse.org`).
+
+### Version Rolling (`roll_build_number.sh`)
+
+Increments the build/release number in `pubspec.yaml` and propagates the update
+to `doc/about.md`, `README.md`, `GEMINI.md`, and `plan.md`:
+
+```bash
+./roll_build_number.sh           # Increments build number (+1)
+./roll_build_number.sh --release # Increments patch and resets build number
+```
+
+### Icon Management (`icon.xcf`, `icon-generate`)
+
+* Master icon is maintained in GIMP format: `icon.xcf`.
+
+* Running `icon-generate icon.xcf` extracts `icon.png`, `foreground.png`,
+  and `background.png` into `assets/icons/`.
+
+---
+
+## 8. Code Style
 
 ### Markdown Preferences
 
@@ -499,7 +578,7 @@ To ensure clean and standard commit logs:
 
 ---
 
-## 8. Testing Guidelines
+## 9. Testing Guidelines
 
 To maintain fast feedback loops, run targeted tests depending on which files
 are modified. Only run the entire test suite (`flutter test`) before doing a

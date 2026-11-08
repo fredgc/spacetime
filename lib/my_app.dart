@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import 'file_manager.dart';
 import 'help.dart';
+import 'keyboard_detector.dart';
 import 'printer.dart';
 import 'scene.dart';
 import 'settings.dart';
@@ -28,6 +29,8 @@ class MyApp {
         GoRoute(path: "/settings", builder: makeSettings),
         GoRoute(path: "/help", builder: makeHelp),
         GoRoute(path: "/about", builder: makeHelp),
+        GoRoute(path: "/privacy", builder: makeHelp),
+        GoRoute(path: "/terms", builder: makeHelp),
       ],
       errorBuilder: errorBuilder, // Default is to make a scene.
     );
@@ -43,6 +46,7 @@ class MyApp {
 
   // This kicks off app initialization for both the full app and for tests.
   Future<void> initialize() async {
+    KeyboardDetector.init();
     settings.addTheme();
     SceneView.initSettings(settings);
 
@@ -93,6 +97,12 @@ class MyApp {
     if (state.uri.path == "/about") {
       initialPage = "about.html";
       fixAddressBar(context, "/about");
+    } else if (state.uri.path == "/privacy") {
+      initialPage = "privacy.html";
+      fixAddressBar(context, "/privacy");
+    } else if (state.uri.path == "/terms") {
+      initialPage = "terms.html";
+      fixAddressBar(context, "/terms");
     } else {
       initialPage = state.uri.queryParameters['page'] ?? "overview.html";
       fixAddressBar(context, state.uri.toString());

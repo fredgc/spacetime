@@ -24,112 +24,73 @@
   <link rel="stylesheet" href="../css/doc_style.css" />
 </head>
 <body>
-<h1 id="spacetime-project-plan-v6.1.20">Spacetime Project Plan
-(v6.1.2+0)</h1>
-<p>This document outlines the roadmap for the <strong>Spacetime</strong>
-Flutter project. It is intended as a reminder for the human what we are
-working on, and as an explanation for Gemini what we are planning.</p>
-<p>Here are some tips:</p>
+<h1 id="spacetime-project-plan-v6.1.40">Spacetime Project Plan
+(v6.1.4+0)</h1>
+<p>This document outlines the strategic roadmap, architecture goals, and
+long-term milestones for the <strong>Spacetime</strong> Flutter
+project.</p>
+<blockquote>
+<p><strong>Note</strong>: Tactical day-to-day tasks and active issue
+tracking are managed dynamically using <code>~/bin/todo.py</code>. Run
+<code>~/bin/todo.py list</code> to view active tasks.</p>
+</blockquote>
+<hr />
+<h2 id="android-release-store-publishing">1. Android Release &amp; Store
+Publishing</h2>
 <ul>
-<li><p>use <code>/usage</code> to see quota usage.</p></li>
-<li><p>use <code>/clear</code> to clear ai state between tasks.</p></li>
+<li><p>Build and test on real Android devices via
+<code>adb</code>.</p></li>
+<li><p>Configure store assets, screenshots, and metadata.</p></li>
+<li><p>Submit and publish release bundle to Google Play
+(<code>org.gchouse.spacetime</code>).</p></li>
 </ul>
-<h3 id="cleanup-and-bug-fix">Cleanup and Bug Fix</h3>
+<hr />
+<h2 id="dynamic-files-real-time-collaboration">2. Dynamic Files &amp;
+Real-Time Collaboration</h2>
+<p>Research and prototype multi-user collaborative editing where
+multiple users can view and edit a shared spacetime diagram
+simultaneously:</p>
 <ul>
-<li>trying to open a file via drive gave oauth error. investigate.</li>
+<li><p><strong>Backend Storage</strong>: Evaluate storing scene objects
+as rows in Google Sheets or documents in Firebase Realtime Database /
+Firestore.</p></li>
+<li><p><strong>Permissions &amp; Access Control</strong>: Investigate
+how Firebase access rules integrate with Google Drive OAuth sharing
+permissions.</p></li>
+<li><p><strong>Quotas &amp; Cost Modeling</strong>: Establish quotas,
+free tier boundaries, and storage limits for cloud-synced collaborative
+scenes.</p></li>
 </ul>
-<h3 id="android">Android</h3>
+<hr />
+<h2 id="path-objects-generalized-worldlines">3. Path Objects &amp;
+Generalized Worldlines</h2>
 <ul>
-<li><p>Build and test android version.</p></li>
-<li><p>Release android version to play store.</p></li>
+<li><p><strong>Variable Velocity Worldlines</strong>: Implement
+worldline path objects defined by piecewise linear or spline segments to
+model acceleration and multi-stage motion.</p></li>
+<li><p><strong>Curved Spacetime Explorations</strong>: Investigate
+pedagogical visualizations for accelerated frames (Rindler coordinates)
+and uniform gravitational fields.</p></li>
 </ul>
-<h3 id="file-loadsave">File Load/Save</h3>
-<ul class="task-list">
-<li><label><input type="checkbox" />Don’t forget to update Google Drive
-API integration after we’ve published the first release:
-https://console.cloud.google.com/apis/api/drive.googleapis.com/drive_sdk?project=fredgc-spacetime</label></li>
-</ul>
-<h3 id="ui-interaction-gestures">UI, Interaction &amp; Gestures</h3>
-<h3 id="path-objects">Path Objects</h3>
-<ul class="task-list">
-<li><label><input type="checkbox" />Create objects that have variable
-velocity (worldline paths with multiple points).</label></li>
-</ul>
-<h3 id="dynamic-files">Dynamic Files</h3>
-<p>Research collaborative editing where two users can edit the same file
-simultaneously and see real-time updates:</p>
-<ul class="task-list">
-<li><p><label><input type="checkbox" />Explore storing scenes in a
-Google Sheet (saving individual objects as spreadsheet rows) or Firebase
-Realtime Database records.</label></p></li>
-<li><p><label><input type="checkbox" />Explore Firebase DB sharing and
-how permissions interact with Google Drive file access.</label></p></li>
-<li><p><label><input type="checkbox" />Research pricing, limits, and
-monetization schemes to support free/cheap tiers.</label></p></li>
-</ul>
-<h3 id="web-android-release">Web &amp; Android Release</h3>
-<ul class="task-list">
-<li><p><label><input type="checkbox" /><strong>Pre-Release Verification
-&amp; Staging Checklist</strong></label></p>
-<ul class="task-list">
-<li><p><label><input type="checkbox" /><strong>Synchronize Assets &amp;
-Documentation</strong>: Run <code>make docs</code> and
-<code>python3 generate_tutorials.py</code> to ensure all markdown docs
-compile to HTML in <code>assets/dev/</code> and tutorials are
-updated.</label></p></li>
-<li><p><label><input type="checkbox" /><strong>Deploy to Staging
-Preview</strong>: Run <code>make stage</code> (with
-<code>DEBUG_ENABLED=true</code>) or <code>make stage-release</code> to
-push to the staging preview channel
-(<code>https://fredgc-spacetime--staging-hfoxw6cy.web.app</code>).</label></p></li>
-<li><p><label><input type="checkbox" /><strong>Manual Staging
-Verification</strong>:</label></p>
+<hr />
+<h2 id="enhanced-interactive-tutorials">4. Enhanced Interactive
+Tutorials</h2>
 <ul>
-<li><p><strong>Tutorial Flow &amp; Markdown</strong>: Confirm rich
-typography (bold, italics, bullets) renders without raw markdown tokens.
-Verify animated pulsing highlights, card dragging/minimization, and “Do
-it for me”.</p></li>
-<li><p><strong>Google Drive Authentication</strong>: Verify Google
-Sign-in on web, saving diagrams, search query parsing
-(<code>owner:me</code>, partial names), and session persistence across
-reloads.</p></li>
-<li><p><strong>Unsaved State &amp; Navigation</strong>: Verify
-leave-site warnings on unsaved edits, dialog confirmation on file
-changes, and unsaved state clearance on undo back to save
-checkpoints.</p></li>
-<li><p><strong>Version &amp; Debug Docs Visibility</strong>: Verify the
-Help menu displays the active version
-(<code>About Spacetime v${settings.fullVersion}</code>) matching
-<code>pubspec.yaml</code>, and Developer Docs appear when “Enable Debug
-Mode” is toggled in Settings (under
-<code>DEBUG_ENABLED=true</code>).</p></li>
-<li><p><strong>Layout &amp; Animations</strong>: Drag the split screen
-divider, advance time animation
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>),
-switch relativity modes (Lorentz/Ether/Emitter), and verify narrow
-mobile viewport reflow without overflow errors.</p></li>
-</ul></li>
-<li><p><label><input type="checkbox" /><strong>Recommended Additional
-Automated Tests</strong>:</label></p>
+<li><p><strong>Snap-to-Target Interaction</strong>: Implement magnetic
+snapping when users drag or manipulate sliders and canvas objects close
+to tutorial target coordinates.</p></li>
+<li><p><strong>Additional Scenarios</strong>: Create comparative
+tutorials illustrating moving observers under Ether and Emitter physics
+hypotheses.</p></li>
+</ul>
+<hr />
+<h2 id="deployment-and-publishing-infrastructure">5. Deployment and
+Publishing Infrastructure</h2>
 <ul>
-<li><p><code>JsonSyntaxEditorDialog</code>: Verify interactive error
-banners on malformed JSON and successful load on correction.</p></li>
-<li><p>Tutorial Undo: Verify undoing object placement during a tutorial
-step reverts satisfaction status and disables advancing.</p></li>
-<li><p>Help Menu Version: Verify dynamic version string rendering
-without hardcoded version fallbacks.</p></li>
-</ul></li>
-<li><p><label><input type="checkbox" /><strong>Production Release
-Execution</strong>: Run <code>make release</code> (which invokes
-<code>./roll_build_number.sh --release</code>,
-<code>make build_all</code>, and <code>firebase deploy</code>) to
-publish to <code>spacetime.gchouse.org</code>.</label></p></li>
-</ul></li>
-<li><p><label><input type="checkbox" />Document publishing new versions
-of the web app to <code>spacetime.gchouse.org</code>.</label></p></li>
-<li><p><label><input type="checkbox" />Document building and publishing
-the Android package
-(<code>org.gchouse.spacetime</code>).</label></p></li>
+<li><p>Maintain automated release workflows via <code>Makefile</code>
+(<code>make stage</code>, <code>make release</code>).</p></li>
+<li><p>Document cross-platform build and release procedures for both web
+hosting and mobile app stores.</p></li>
 </ul>
 </body>
 </html>

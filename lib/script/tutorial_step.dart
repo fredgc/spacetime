@@ -251,6 +251,8 @@ class AddObjectDirective extends TutorialDirective {
   final DrawType targetType;
   final double? targetX;
   final double? targetT;
+  final double? targetZ;
+  final bool side;
   final double tolerance;
   final String? targetName;
   final int? targetColor;
@@ -261,13 +263,16 @@ class AddObjectDirective extends TutorialDirective {
     required this.targetType,
     this.targetX,
     this.targetT,
+    this.targetZ,
+    this.side = false,
     this.tolerance = 0.5,
     this.targetName,
     this.targetColor,
   });
 
-  /// Recommended location where the object should be placed (defaults to 0, 0).
-  Point get recommendedPoint => Point(x: targetX ?? 0.0, t: targetT ?? 0.0);
+  /// Recommended location where the object should be placed (defaults to 0, 0, 0).
+  Point get recommendedPoint =>
+      Point(x: targetX ?? 0.0, t: targetT ?? 0.0, z: targetZ ?? 0.0);
 
   @override
   String get highlightId => 'canvas.point';
@@ -306,6 +311,11 @@ class AddObjectDirective extends TutorialDirective {
         (d.ptObs.t - targetT!).abs() > tolerance) {
       return false;
     }
+    if (targetZ != null &&
+        (d.pt.z - targetZ!).abs() > tolerance &&
+        (d.ptObs.z - targetZ!).abs() > tolerance) {
+      return false;
+    }
     return true;
   }
 
@@ -337,6 +347,10 @@ class AddObjectDirective extends TutorialDirective {
     }
     final pt = recommendedPoint;
     final xStr = pt.x.toStringAsFixed(1);
+    if (side || targetZ != null) {
+      final zStr = pt.z.toStringAsFixed(2);
+      return 'Click in Observer View near (x=$xStr, z=$zStr) to place ${targetType.label}';
+    }
     final tStr = pt.t.toStringAsFixed(1);
     return 'Click canvas near (x=$xStr, t=$tStr) to place ${targetType.label}';
   }

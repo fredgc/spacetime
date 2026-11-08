@@ -35,6 +35,9 @@ class MySlider with ChangeNotifier {
   double currentTimeAtStickyPoint = 0;
   List<double> sticky = []; //Sorted list of sticky points.
 
+  double? snapTarget;
+  double? snapTolerance;
+
   VoidCallback? startAnimation;
   Color backgroundColor = Colors.black;
   Color textColor = Colors.white;
@@ -93,6 +96,33 @@ class MySlider with ChangeNotifier {
   void setSticky(Iterable<double> iterable) {
     sticky = [];
     addSticky(iterable);
+    if (snapTarget != null &&
+        !sticky.any((p) => (p - snapTarget!).abs() < 1e-6)) {
+      addSticky([snapTarget!]);
+    }
+  }
+
+  void setSnapTarget(double? target, [double? tolerance]) {
+    if (snapTarget != null && snapTarget != target) {
+      sticky.removeWhere((p) => (p - snapTarget!).abs() < 1e-6);
+    }
+    snapTarget = target;
+    snapTolerance = tolerance;
+    if (target != null) {
+      addSticky([target]);
+    }
+    findNextSticky();
+    notifyListeners();
+  }
+
+  void clearSnapTarget() {
+    if (snapTarget != null) {
+      sticky.removeWhere((p) => (p - snapTarget!).abs() < 1e-6);
+      snapTarget = null;
+      snapTolerance = null;
+      findNextSticky();
+      notifyListeners();
+    }
   }
 
   // Add array of important points.
@@ -145,24 +175,46 @@ class MySlider with ChangeNotifier {
   set value(double x) {
     // If there is a sticky radius, find the closest sticky point.
     currentSticky = -1;
-    if (stickyRadius.value > 0) {
-      final double stickyWidth = (max - min) * stickyRadius.value * 0.01;
+    if (stickyRadius.value > 0 && sticky.isNotEmpty) {
+      final double defaultStickyWidth = (max - min) * stickyRadius.value * 0.01;
       int stickyPoint = 0;
       for (int i = 1; i < sticky.length; i++) {
         if ((x - sticky[i]).abs() < (x - sticky[stickyPoint]).abs()) {
           stickyPoint = i;
         }
-        // If the closest sticky point is within the sticky radius (as a percent),
-        // then move to that point.
-        if ((x - sticky[stickyPoint]).abs() < stickyWidth) {
-          x = sticky[stickyPoint];
-          currentSticky = stickyPoint;
-          currentTimeAtStickyPoint = 0.0;
-          // Log.animate.log("GREEN: set value to sticky s[$currentSticky] = ${zzz(x)}");
-        }
       }
-      // If we didn't hit a sticky point, but 0 is a sticky point, then stick at 0.
-      if (currentSticky < 0 && stickAtZero && x.abs() < stickyWidth) {
+      final double target = sticky[stickyPoint];
+      double snapDist = defaultStickyWidth;
+      if (snapTarget != null &&
+          (target - snapTarget!).abs() < 1e-6 &&
+          snapTolerance != null) {
+        snapDist = snapTolerance! > defaultStickyWidth
+            ? snapTolerance!
+            : defaultStickyWidth;
+      }
+      if ((x - target).abs() <= snapDist) {
+        x = target;
+        currentSticky = stickyPoint;
+        currentTimeAtStickyPoint = 0.0;
+      }
+    }
+    // If snapTarget is configured and not yet hit, check directly.
+    if (currentSticky < 0 && snapTarget != null) {
+      final defaultStickyWidth =
+          (max - min) *
+          (stickyRadius.value > 0 ? stickyRadius.value * 0.01 : 0.02);
+      final tol = snapTolerance != null && snapTolerance! > defaultStickyWidth
+          ? snapTolerance!
+          : defaultStickyWidth;
+      if ((x - snapTarget!).abs() <= tol) {
+        x = snapTarget!;
+        currentTimeAtStickyPoint = 0.0;
+      }
+    }
+    // If we didn't hit a sticky point, but 0 is a sticky point, then stick at 0.
+    if (currentSticky < 0 && stickAtZero && stickyRadius.value > 0) {
+      final double stickyWidth = (max - min) * stickyRadius.value * 0.01;
+      if (x.abs() < stickyWidth) {
         x = 0;
       }
     }
@@ -203,6 +255,9 @@ class MySlider with ChangeNotifier {
       currentSticky = nextSticky;
       _value = sticky[currentSticky];
       currentTimeAtStickyPoint = 0.0;
+      if (snapTarget != null && (_value - snapTarget!).abs() < 1e-6) {
+        speed = 0.0;
+      }
       // Log.animate.log("GREEN: hit next sticky s[$currentSticky] = ${zzz(_value)}");
     } else {
       _value += dh;

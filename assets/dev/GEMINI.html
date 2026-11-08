@@ -21,9 +21,8 @@
       vertical-align: middle;
     }
     /* CSS for syntax highlighting */
-    html { -webkit-text-size-adjust: 100%; }
     pre > code.sourceCode { white-space: pre; position: relative; }
-    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span { line-height: 1.25; }
     pre > code.sourceCode > span:empty { height: 1.2em; }
     .sourceCode { overflow: visible; }
     code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -95,7 +94,39 @@ Developer Guide for Spacetime Drawing Tool</h1>
 <p>Welcome! This guide is designed to help future LLM agents and human
 developers get up to speed quickly on the <strong>Spacetime</strong>
 Flutter application.</p>
-<p>Build Version v6.1.2+0</p>
+<p>Build Version v6.1.4+0</p>
+<hr />
+<h2 id="developer-rules-environment-configuration">Developer Rules &amp;
+Environment Configuration</h2>
+<p>All contributors and AI agents must follow the central rules defined
+in <code>~/source/gemini/config/rules/</code>:</p>
+<ul>
+<li><p><strong>Task Management (<code>todo.md</code>)</strong>: Project
+tasks and issues are tracked using <code>~/bin/todo.py</code>. When
+asked about tasks or what to work on next, execute:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">~/bin/todo.py</span> list</span></code></pre></div>
+<p>Before starting an item, mark it in progress
+(<code>~/bin/todo.py doing &lt;N&gt;</code>). Once completed, mark it
+done (<code>~/bin/todo.py done &lt;N&gt;</code>). Do not archive
+completed tasks until reviewed and verified.</p></li>
+<li><p><strong>Communication Style (<code>style.md</code>)</strong>: Be
+blunt and direct. Avoid polite filler and superlatives. Keep responses
+concise, technical, and focused strictly on facts and
+instructions.</p></li>
+<li><p><strong>Documentation Formatting
+(<code>markdown.md</code>)</strong>: Keep line lengths strictly under 80
+characters. Always separate list items with a blank line. Always follow
+headers with a blank line. Visually align markdown table column borders
+(<code>|</code>).</p></li>
+<li><p><strong>Emacs Integration (<code>emacs.md</code>)</strong>: When
+requested to send a file to Emacs, run
+<code>emacs-maybe-client -f &lt;file&gt;</code>.</p></li>
+<li><p><strong>Hardware &amp; Testing
+(<code>devices.md</code>)</strong>: On host <code>raven</code>, an
+Android device may be connected via <code>adb</code> for Android
+testing.</p></li>
+</ul>
 <hr />
 <h2 id="project-purpose-features">1. Project Purpose &amp; Features</h2>
 <p>The Spacetime Drawing Tool is an interactive, cross-platform (Web and
@@ -322,7 +353,7 @@ by:</p>
 <li><p>Relative velocity
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>v</mi><annotation encoding="application/x-tex">v</annotation></semantics></math>
 ranges within
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">[</mo><mi>−</mi><mn>0.999</mn><mo>,</mo><mn>0.999</mn><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[-0.999, 0.999]</annotation></semantics></math>.</p></li>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">[</mo><mo>−</mo><mn>0.999</mn><mo>,</mo><mn>0.999</mn><mo stretchy="true" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[-0.999, 0.999]</annotation></semantics></math>.</p></li>
 <li><p>Lorentz factor
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mo>=</mo><mfrac><mn>1</mn><msqrt><mrow><mn>1</mn><mo>−</mo><msup><mi>v</mi><mn>2</mn></msup></mrow></msqrt></mfrac></mrow><annotation encoding="application/x-tex">\gamma = \frac{1}{\sqrt{1 - v^2}}</annotation></semantics></math>.</p></li>
 </ul>
@@ -332,25 +363,25 @@ Frame Transform (World Frame
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>↔</mo><annotation encoding="application/x-tex">\leftrightarrow</annotation></semantics></math>
 Reference Frame)</h3>
 <p>Transform from observer frame to world frame:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mn>0</mn></msub><mo>=</mo><mi>γ</mi><mo stretchy="false" form="prefix">(</mo><mi>x</mi><mo>+</mo><mi>v</mi><mi>t</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">x_0 = \gamma (x + v t)</annotation></semantics></math></p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>t</mi><mn>0</mn></msub><mo>=</mo><mi>γ</mi><mo stretchy="false" form="prefix">(</mo><mi>t</mi><mo>+</mo><mi>v</mi><mi>x</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">t_0 = \gamma (t + v x)</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mn>0</mn></msub><mo>=</mo><mi>γ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo>+</mo><mi>v</mi><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">x_0 = \gamma (x + v t)</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>t</mi><mn>0</mn></msub><mo>=</mo><mi>γ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>+</mo><mi>v</mi><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">t_0 = \gamma (t + v x)</annotation></semantics></math></p>
 <p>Transform from world frame to observer frame:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>=</mo><mi>γ</mi><mo stretchy="false" form="prefix">(</mo><msub><mi>x</mi><mn>0</mn></msub><mo>−</mo><mi>v</mi><msub><mi>t</mi><mn>0</mn></msub><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">x = \gamma (x_0 - v t_0)</annotation></semantics></math></p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>=</mo><mi>γ</mi><mo stretchy="false" form="prefix">(</mo><msub><mi>t</mi><mn>0</mn></msub><mo>−</mo><mi>v</mi><msub><mi>x</mi><mn>0</mn></msub><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">t = \gamma (t_0 - v x_0)</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>=</mo><mi>γ</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>x</mi><mn>0</mn></msub><mo>−</mo><mi>v</mi><msub><mi>t</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">x = \gamma (x_0 - v t_0)</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>=</mo><mi>γ</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>t</mi><mn>0</mn></msub><mo>−</mo><mi>v</mi><msub><mi>x</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">t = \gamma (t_0 - v x_0)</annotation></semantics></math></p>
 <p>In code (see <a href="lib/transform.dart#L49">Point.toFrame</a>):</p>
-<div class="sourceCode" id="cb2"><pre
-class="sourceCode dart"><code class="sourceCode dart"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> x0 <span class="op">=</span> frame<span class="op">.</span>gamma <span class="op">*</span> (x <span class="op">-</span> frame<span class="op">.</span>velocity <span class="op">*</span> t);</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> t0 <span class="op">=</span> frame<span class="op">.</span>gamma <span class="op">*</span> (t <span class="op">-</span> frame<span class="op">.</span>velocity <span class="op">*</span> x);</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode dart"><code class="sourceCode dart"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> x0 <span class="op">=</span> frame<span class="op">.</span>gamma <span class="op">*</span> (x <span class="op">-</span> frame<span class="op">.</span>velocity <span class="op">*</span> t);</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> t0 <span class="op">=</span> frame<span class="op">.</span>gamma <span class="op">*</span> (t <span class="op">-</span> frame<span class="op">.</span>velocity <span class="op">*</span> x);</span></code></pre></div>
 <h3 id="length-contraction">Length Contraction</h3>
 <p>For <code>Location</code> entities, visual width in the side view is
 length-contracted based on relative velocity to the observer (see <a
 href="lib/drawable.dart#L565">Location.update</a>):</p>
-<div class="sourceCode" id="cb3"><pre
-class="sourceCode dart"><code class="sourceCode dart"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> v <span class="op">=</span> frame<span class="op">.</span>velocity;</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> u <span class="op">=</span> transform<span class="op">.</span>frame<span class="op">.</span>velocity;</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> w <span class="op">=</span> (v <span class="op">-</span> u) <span class="op">/</span> (<span class="fl">1.0</span> <span class="op">-</span> u <span class="op">*</span> v); <span class="co">// Relative velocity addition formula</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> gammaInv <span class="op">=</span> math<span class="op">.</span>sqrt(<span class="fl">1.0</span> <span class="op">-</span> w <span class="op">*</span> w);</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>contracted_width <span class="op">=</span> width <span class="op">*</span> gammaInv;</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode dart"><code class="sourceCode dart"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> v <span class="op">=</span> frame<span class="op">.</span>velocity;</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> u <span class="op">=</span> transform<span class="op">.</span>frame<span class="op">.</span>velocity;</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> w <span class="op">=</span> (v <span class="op">-</span> u) <span class="op">/</span> (<span class="fl">1.0</span> <span class="op">-</span> u <span class="op">*</span> v); <span class="co">// Relative velocity addition formula</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> gammaInv <span class="op">=</span> math<span class="op">.</span>sqrt(<span class="fl">1.0</span> <span class="op">-</span> w <span class="op">*</span> w);</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>contracted_width <span class="op">=</span> width <span class="op">*</span> gammaInv;</span></code></pre></div>
 <hr />
 <h2 id="interactive-tutorial-system">4. Interactive Tutorial System</h2>
 <p>The application includes an interactive tutorial engine
@@ -485,8 +516,8 @@ leakage.</p></li>
 <code>lib/printer.dart</code>) sends HTTP logs to a local logging server
 when running on web (controlled via <code>remote_logging</code>
 setting). Start logging server by running:</p>
-<div class="sourceCode" id="cb4"><pre
-class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> log_server.py</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> log_server.py</span></code></pre></div>
 <p>This server runs on port 5001 and writes client logs to
 <code>client_logs.log</code> and standard output.</p></li>
 <li><p><strong>Drive Auth &amp; Token Invalidation</strong>:
@@ -568,7 +599,51 @@ avoid deprecated <code>tester.binding.window</code> APIs; use
 <code>tester.view.devicePixelRatio</code>.</p></li>
 </ul>
 <hr />
-<h2 id="code-style">7. Code Style</h2>
+<h2 id="build-versioning-deployment-workflow">7. Build, Versioning &amp;
+Deployment Workflow</h2>
+<h3 id="build-and-asset-automation-makefile">Build and Asset Automation
+(<code>Makefile</code>)</h3>
+<p>The project uses <code>make</code> targets to coordinate asset
+compilation, icon generation, and builds:</p>
+<ul>
+<li><p><code>make docs</code>: Compiles user markdown docs from
+<code>doc/*.md</code> into <code>assets/*.html</code> and developer docs
+(<code>plan.md</code>, <code>README.md</code>, <code>GEMINI.md</code>,
+<code>tutorial_plan.md</code>) into <code>assets/dev/*.html</code> using
+<code>pandoc</code>.</p></li>
+<li><p><code>make ASSETS</code>: Generates icons, favicons, version
+metadata, tutorials, and compiled documentation.</p></li>
+<li><p><code>make test</code>: Runs all Flutter unit and widget
+tests.</p></li>
+<li><p><code>make stage</code>: Builds the web application with debug
+flags enabled and runs <code>firebase_stage.pl</code> to deploy to the
+staging preview channel.</p></li>
+<li><p><code>make stage-release</code>: Builds the production web bundle
+and runs <code>firebase_stage.pl</code>.</p></li>
+<li><p><code>make release</code>: Rolls the release version number,
+rebuilds all assets, and deploys to production on Firebase
+(<code>spacetime.gchouse.org</code>).</p></li>
+</ul>
+<h3 id="version-rolling-roll_build_number.sh">Version Rolling
+(<code>roll_build_number.sh</code>)</h3>
+<p>Increments the build/release number in <code>pubspec.yaml</code> and
+propagates the update to <code>doc/about.md</code>,
+<code>README.md</code>, <code>GEMINI.md</code>, and
+<code>plan.md</code>:</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./roll_build_number.sh</span>           <span class="co"># Increments build number (+1)</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">./roll_build_number.sh</span> <span class="at">--release</span> <span class="co"># Increments patch and resets build number</span></span></code></pre></div>
+<h3 id="icon-management-icon.xcf-icon-generate">Icon Management
+(<code>icon.xcf</code>, <code>icon-generate</code>)</h3>
+<ul>
+<li><p>Master icon is maintained in GIMP format:
+<code>icon.xcf</code>.</p></li>
+<li><p>Running <code>icon-generate icon.xcf</code> extracts
+<code>icon.png</code>, <code>foreground.png</code>, and
+<code>background.png</code> into <code>assets/icons/</code>.</p></li>
+</ul>
+<hr />
+<h2 id="code-style">8. Code Style</h2>
 <h3 id="markdown-preferences">Markdown Preferences</h3>
 <p>To maintain clean and standardized documentation for both developers
 and automated builders (such as <code>pandoc</code>):</p>
@@ -583,8 +658,8 @@ lines.</p></li>
 <ul>
 <li><p>After editing or creating any Dart files, format the code by
 executing:</p>
-<div class="sourceCode" id="cb5"><pre
-class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">dart</span> format .</span></code></pre></div></li>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">dart</span> format .</span></code></pre></div></li>
 </ul>
 <h3 id="git-commit-preferences">Git Commit Preferences</h3>
 <p>To ensure clean and standard commit logs:</p>
@@ -597,7 +672,7 @@ class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="
 characters.</p></li>
 </ul>
 <hr />
-<h2 id="testing-guidelines">8. Testing Guidelines</h2>
+<h2 id="testing-guidelines">9. Testing Guidelines</h2>
 <p>To maintain fast feedback loops, run targeted tests depending on
 which files are modified. Only run the entire test suite
 (<code>flutter test</code>) before doing a git commit or staging a

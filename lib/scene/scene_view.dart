@@ -76,6 +76,7 @@ class SceneView {
   // used so that a file is not marked as "unsaved" whenever the window changes
   // size.
   final ValueNotifier<double> _timeBuffer = ValueNotifier<double>(0.0);
+  final ValueNotifier<double> _velocityBuffer = ValueNotifier<double>(0.0);
 
   // Managers updating the scene when there are multiple requests.
   late Worker worker;
@@ -98,6 +99,8 @@ class SceneView {
     time.value = data.time;
     _timeBuffer.value = data.time;
     velocity.value = data.velocity;
+    _velocityBuffer.value = data.velocity;
+    updateVelocitySticky();
     // Log.widget.log("done with initializing time and velocity from data.");
     // time.addListener(() {
     //   Log.widget.log("FDGC: time value for $this changed to ${time.value}");
@@ -117,8 +120,14 @@ class SceneView {
     }); // XXX dispose of this?
     time.addListener(requestRepaintScene); // XXX dispose of this?
     _timeBuffer.addListener(fileManager.maybeChange); //XXX dispose?
-    velocity.addListener(updateScene); //XXX dispose of this?
-    velocity.addListener(fileManager.maybeChange);
+    velocity.addListener(() {
+      if (_velocityBuffer.value != velocity.value) {
+        _velocityBuffer.value = velocity.value;
+        data.velocity = velocity.value;
+        updateScene();
+      }
+    });
+    _velocityBuffer.addListener(fileManager.maybeChange);
     undoManager.addListener(() {
       if (undoManager.isUnsaved) {
         fileManager.change();
@@ -128,7 +137,6 @@ class SceneView {
     });
     setupEdits();
     fileManager.clearUnsaved();
-    velocity.addListener(() => data.velocity = velocity.value);
     // Log.widget.log("ORANGE: Done creating $this.");
   }
 
@@ -221,6 +229,13 @@ class SceneView {
     1.5,
     tip: "Line width used when drawing objects and axes.",
   );
+  static SavableBool velocitySticky = SavableBool(
+    "velocity_sticky",
+    "Velocity sticky",
+    false,
+    tip:
+        "When set, the velocity of each object is a sticky point on the velocity slider.",
+  );
 
   static void initSettings(Settings settings) {
     settings.add(timeSliceColor);
@@ -233,6 +248,7 @@ class SceneView {
     settings.add(showClockTime);
     settings.add(showGridlines);
     settings.add(lineWidth);
+    settings.add(velocitySticky);
     MySlider.initSettings(settings);
   }
 
@@ -245,10 +261,27 @@ class SceneView {
     // XXX scene.dispose();
   }
 
+  void updateVelocitySticky() {
+    if (velocitySticky.value) {
+      final velocities = <double>{};
+      for (final d in data.drawables) {
+        velocities.add(d.frame.velocity);
+      }
+      if (!setEquals(velocities, velocity.sticky.toSet())) {
+        velocity.setSticky(velocities);
+      }
+    } else {
+      if (velocity.sticky.isNotEmpty) {
+        velocity.setSticky([]);
+      }
+    }
+  }
+
   void updateSettings() {
     Log.widget.log("BLUE: Scene update settings.");
     xAxis.color = axisColor.value;
     tAxis.color = axisColor.value;
+    updateVelocitySticky();
     updateScene(triggerRepaint: true);
     requestRepaintScene();
   }
@@ -320,6 +353,7 @@ class SceneView {
     time.setSticky(sticky);
     time.min = data.transform.min.t;
     time.max = data.transform.max.t;
+    updateVelocitySticky();
     if (triggerRepaint) requestRepaintScene();
   }
 
@@ -511,6 +545,27 @@ class SceneView {
   }
 
   void addObject(Point obs) {
+    final activeTutorial = fileManager.activeTutorial.value;
+    if (activeTutorial != null) {
+      final addDirective = activeTutorial.activeAddObjectDirective;
+      if (addDirective != null &&
+          currentType.value == addDirective.targetType) {
+        final targetX = addDirective.targetX;
+        final targetT = addDirective.targetT;
+        final targetZ = addDirective.targetZ;
+        final tol = addDirective.tolerance;
+        final closeX = targetX == null || (obs.x - targetX).abs() <= tol;
+        final closeT = targetT == null || (obs.t - targetT).abs() <= tol;
+        final closeZ = targetZ == null || (obs.z - targetZ).abs() <= tol;
+        if (closeX && closeT && closeZ) {
+          obs = Point(
+            x: targetX ?? obs.x,
+            t: targetT ?? obs.t,
+            z: targetZ ?? obs.z,
+          );
+        }
+      }
+    }
     ReferenceFrame frame = ReferenceFrame.fromOffset(
       data.transform.frame,
       obs,

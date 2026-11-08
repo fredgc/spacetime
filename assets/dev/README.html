@@ -21,9 +21,8 @@
       vertical-align: middle;
     }
     /* CSS for syntax highlighting */
-    html { -webkit-text-size-adjust: 100%; }
     pre > code.sourceCode { white-space: pre; position: relative; }
-    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span { line-height: 1.25; }
     pre > code.sourceCode > span:empty { height: 1.2em; }
     .sourceCode { overflow: visible; }
     code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -89,124 +88,107 @@
   <link rel="stylesheet" href="../css/doc_style.css" />
 </head>
 <body>
-<h1 id="spacetime-drawing-tool-v6.1.20">Spacetime Drawing Tool
-(v6.1.2+0)</h1>
+<h1 id="spacetime-drawing-tool-v6.1.40">Spacetime Drawing Tool
+(v6.1.4+0)</h1>
 <p>An interactive, educational drawing and animation tool for
 visualizing special relativity in 1 time
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>
-and 2 space $(x,z)* dimensions. It helps students, teachers, and
-enthusiasts build intuition around relativistic concepts.</p>
-<p>This project is under the Apache License.</p>
-<hr />
-<h2 id="what-this-project-does">1. What This Project Does</h2>
-<p>The <strong>Spacetime Drawing Tool</strong> allows you to construct,
-animate, and explore spacetime diagrams (Minkowski diagrams) and see how
-they translate to physical observations.</p>
-<h3 id="platforms">Platforms</h3>
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>)
+and 2 space
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>,</mo><mi>z</mi></mrow><annotation encoding="application/x-tex">x, z</annotation></semantics></math>)
+dimensions. It helps students, teachers, and enthusiasts build intuition
+around relativistic concepts.</p>
 <ul>
-<li><p><strong>Web</strong>: The app is hosted at <a
-href="http://spacetime.gchouse.org">spacetime.gchouse.org</a>.</p></li>
-<li><p>**Android*: package name:
-<code>org.gchouse.spacetime</code>.</p></li>
+<li><p><strong>Live Web App</strong>: <a
+href="https://spacetime.gchouse.org">spacetime.gchouse.org</a></p></li>
+<li><p><strong>Android Package</strong>:
+<code>org.gchouse.spacetime</code></p></li>
 </ul>
 <hr />
-<p>There is a web and Andorid build for this project.</p>
-<h3 id="storage">Storage</h3>
+<h2 id="documentation">Documentation</h2>
+<p>Comprehensive documentation is available in the <code>doc/</code>
+directory:</p>
 <ul>
-<li><p>Save user preferences locally.</p></li>
-<li><p>Save/load spacetime drawings in <strong>JSON format</strong>
-(retaining backwards compatibility with a previous JavaScript
-version).</p></li>
-<li><p>Enable exporting/saving as downloaded local files or storing in
-Google Drive (with potential future Firebase DB sharing).</p></li>
+<li><p><a href="doc/about.md">doc/about.md</a>: Project origins, author
+attribution, and version history.</p></li>
+<li><p><a href="doc/overview.md">doc/overview.md</a>: Mathematical and
+physical principles of Minkowski spacetime diagrams.</p></li>
+<li><p><a href="doc/controls.md">doc/controls.md</a>: Guide to the
+toolbar, velocity sliders, playback controls, and gestures.</p></li>
+<li><p><a href="doc/objects.md">doc/objects.md</a>: Spacetime entities
+including events, light cones, instants, and persistent
+locations.</p></li>
+<li><p><a href="doc/transformations.md">doc/transformations.md</a>:
+Comparative physics models (Lorentz Relativity, Ether, Emitter
+frame).</p></li>
+<li><p><a href="doc/files.md">doc/files.md</a>: Saving, loading, JSON
+schema, and Google Drive synchronization.</p></li>
+<li><p><a href="doc/privacy.md">doc/privacy.md</a>: Application privacy
+policy and local storage disclosure.</p></li>
+<li><p><a href="doc/terms.md">doc/terms.md</a>: Terms of
+service.</p></li>
 </ul>
-<h3 id="core-features">Core Features</h3>
+<hr />
+<h2 id="core-features">Core Features</h2>
 <ul>
-<li><p><strong>Spacetime Diagram Canvas (Top Panel)</strong>:</p>
-<ul>
-<li><p>Draw the paths (worldlines) of physical entities through space
-and time.</p></li>
-<li><p>Drag, scale, pan, or zoom into the diagram using mouse or touch
-gestures.</p></li>
-</ul></li>
-<li><p><strong>Observer View (Bottom Panel)</strong>:</p>
-<ul>
-<li><p>A real-time split-screen simulation demonstrating exactly what an
-observer sees at a selected point in time.</p></li>
-<li><p>Dynamically showcases <strong>length contraction</strong>,
-<strong>time dilation</strong>, and the <strong>relativity of
-simultaneity</strong> as you alter the observer’s velocity.</p></li>
-</ul></li>
-<li><p><strong>Interactive Controls</strong>:</p>
-<ul>
-<li><p>Adjust current observer <strong>Time</strong> and
-<strong>Velocity</strong> using interactive sliders.</p></li>
-<li><p>Play, pause, or change playback speed to animate the
-simulation.</p></li>
-<li><p>Relativistic velocity addition is calculated automatically when
-transforming frames.</p></li>
-</ul></li>
-<li><p><strong>Entity Types (Drawables)</strong>:</p>
-<ul>
-<li><p><strong>Events</strong>: Distinct points in spacetime (e.g.,
-spark flashes).</p></li>
-<li><p><strong>Light Cones</strong>: Visualizes light signal propagation
-paths.</p></li>
-<li><p><strong>Instants</strong>: Tilted lines representing planes of
+<li><p><strong>Spacetime Diagram Canvas</strong>: Draw worldlines of
+physical entities across space and time. Scale, pan, and zoom
+dynamically.</p></li>
+<li><p><strong>Observer View</strong>: Split-screen real-time simulation
+displaying what an observer sees at the selected coordinate time,
+illustrating length contraction, time dilation, and the relativity of
 simultaneity.</p></li>
-<li><p><strong>Locations (Persistent Objects)</strong>: Places objects
-like trains, barns, clocks, flags, or people in motion.</p></li>
-</ul></li>
-<li><p><strong>Alternative Physics Hypotheses</strong>:</p>
-<ul>
-<li>Compare standard <strong>Lorentz (Relativity)</strong>
-transformations (constant speed of light) with historical/alternative
-physics frames: <strong>Ether Frame</strong> (speed of light relative to
-a preferred global frame) and <strong>Emitter Frame</strong> (speed of
-light relative to the source).</li>
-</ul></li>
-<li><p><strong>Save, Load, and Sync</strong>:</p>
-<ul>
-<li><p>Save and load scenes to Google Drive.</p></li>
-<li><p>Export/import scenes locally via files or clipboard as
-JSON.</p></li>
-<li><p>Share scenes easily by copying generated URLs containing
-serialized state.</p></li>
-<li><p>Full backward compatibility with JSON files saved by the legacy
-JavaScript version.</p></li>
-</ul></li>
+<li><p><strong>Interactive Tutorials</strong>: Guided interactive
+lessons with UI highlight targets, automatic verification, and
+step-by-step instructions.</p></li>
+<li><p><strong>Comparative Hypotheses</strong>: Examine coordinate
+frames under Lorentz relativity (constant speed of light), Ether drift
+(preferred rest frame), or Emitter ballistics.</p></li>
+<li><p><strong>Save, Load, and Cloud Sync</strong>: Store scenes locally
+in JSON format (fully backward-compatible with legacy editions) or sync
+across devices using Google Drive.</p></li>
 </ul>
 <hr />
-<h2 id="building-running">2. Building &amp; Running</h2>
-<p>This project is built using <strong>Flutter</strong>. Make sure you
-have the <a href="https://docs.flutter.dev/get-started/install">Flutter
-SDK</a> installed.</p>
-<h3 id="run-locally">Run Locally</h3>
-<p>To run the app on your local machine (e.g., in Chrome):</p>
+<h2 id="getting-started">Getting Started</h2>
+<h3 id="prerequisites">Prerequisites</h3>
+<ul>
+<li><p><a href="https://docs.flutter.dev/get-started/install">Flutter
+SDK</a> (3.24+ recommended)</p></li>
+<li><p><code>make</code> and <a href="https://pandoc.org/">Pandoc</a>
+(for compiling documentation assets)</p></li>
+</ul>
+<h3 id="forking-and-cloning">Forking and Cloning</h3>
+<ol type="1">
+<li><p>Fork the repository on GitHub to your personal account.</p></li>
+<li><p>Clone your fork locally:</p>
 <div class="sourceCode" id="cb1"><pre
-class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">flutter</span> run <span class="at">-d</span> chrome</span></code></pre></div>
-<h3 id="run-tests">Run Tests</h3>
-<p>To execute the unit and integration tests:</p>
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/<span class="op">&lt;</span>your-username<span class="op">&gt;</span>/spacetime.git</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> spacetime</span></code></pre></div></li>
+<li><p>Install Flutter dependencies:</p>
 <div class="sourceCode" id="cb2"><pre
-class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">flutter</span> test</span></code></pre></div>
-<h3 id="build-production-releases">Build Production Releases</h3>
-<p>Use the provided <code>Makefile</code> to compile local builds:</p>
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">flutter</span> pub get</span></code></pre></div></li>
+<li><p>Compile documentation and asset bundles:</p>
 <div class="sourceCode" id="cb3"><pre
-class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Build both Web assets and Android APK</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> build_all</span></code></pre></div>
-<hr />
-<h2 id="storage-and-google-drive-sync">3. Storage and Google Drive
-Sync</h2>
-<p>To support cloud backup and sync, the app integrates with Google
-Drive API v3.</p>
-<p>If you are deploying your own version of this app, configure your
-credentials by running:</p>
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> docs</span></code></pre></div></li>
+</ol>
+<h3 id="running-locally">Running Locally</h3>
+<p>To run the web version in Chrome:</p>
 <div class="sourceCode" id="cb4"><pre
-class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">flutterfire</span> configure <span class="at">-y</span></span></code></pre></div>
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">flutter</span> run <span class="at">-d</span> chrome</span></code></pre></div>
+<p>To run on a connected Android device or emulator:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">flutter</span> run <span class="at">-d</span> android</span></code></pre></div>
+<h3 id="running-tests">Running Tests</h3>
+<p>Execute the unit and widget test suite:</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">flutter</span> test</span></code></pre></div>
+<h3 id="building-releases">Building Releases</h3>
+<p>Use the provided <code>Makefile</code> to generate release
+assets:</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> build_all</span></code></pre></div>
 <hr />
-<h2 id="license">4. License</h2>
-<p>This project is open-source and licensed under the <strong>Apache 2.0
-License</strong>. See the <a href="LICENSE">LICENSE</a> file for
-details.</p>
+<h2 id="license">License</h2>
+<p>This project is open source and licensed under the <a
+href="LICENSE">Apache 2.0 License</a>.</p>
 </body>
 </html>

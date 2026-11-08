@@ -10,24 +10,28 @@ final List<AssetHolder> kBuiltInTutorials = [
     title: "1. Introduction: Using the Spacetime Tool",
   ),
   AssetHolder(
-    "assets/tutorials/02_speed_of_light.md",
-    title: "2. Constant Speed of Light & Simultaneity",
+    "assets/tutorials/02_ether_vs_emitter.md",
+    title: "2. Constant Speed of Light & Relativity",
   ),
   AssetHolder(
-    "assets/tutorials/03_time_dilation.md",
-    title: "3. Time Dilation & Moving Clocks",
+    "assets/tutorials/03_speed_of_light.md",
+    title: "3. Constant Speed of Light & Simultaneity",
   ),
   AssetHolder(
-    "assets/tutorials/04_length_contraction.md",
-    title: "4. Length Contraction & the Train-Barn Paradox",
+    "assets/tutorials/04_time_dilation.md",
+    title: "4. Time Dilation & Moving Clocks",
   ),
   AssetHolder(
-    "assets/tutorials/05_twin_paradox.md",
-    title: "5. The Twin Paradox",
+    "assets/tutorials/05_length_contraction.md",
+    title: "5. Length Contraction & the Train-Barn Paradox",
   ),
   AssetHolder(
-    "assets/tutorials/06_ftl_time_travel.md",
-    title: "6. Faster-Than-Light & Time Travel",
+    "assets/tutorials/06_twin_paradox.md",
+    title: "6. The Twin Paradox",
+  ),
+  AssetHolder(
+    "assets/tutorials/07_ftl_time_travel.md",
+    title: "7. Faster-Than-Light & Time Travel",
   ),
 ];
 

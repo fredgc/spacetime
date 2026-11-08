@@ -1,4 +1,4 @@
-# 4. Length Contraction & the Train-Barn Paradox
+# 5. Length Contraction & the Train-Barn Paradox
 
 Explore how moving objects contract along their direction of motion and how
 relativity of simultaneity resolves the classic Train-and-Barn paradox.
@@ -50,11 +50,11 @@ In the Barn's frame ($v = 0.00$) at $t = 0.0$, the moving Train is contracted
 by $\sqrt{1 - 0.6^2} = 0.8$ to a width of $0.40$ (spanning $x = -0.20$ to
 $0.20$), so it fits completely inside the Barn!
 
-We placed a red event **Back** at $(-0.20, 0.0)$ where the back of the train is
+We placed a red event **B** at $(-0.20, 0.0)$ where the back of the train is
 inside the left door. Add an **Event** at $(x = 0.2, t = 0.0)$ to mark the
 front of the train inside the right door.
 
-> object: event(name="Back", x=-0.20, t=0.0, color=red)
+> object: event(name="B", x=-0.20, t=0.0, color=red)
 > add = event(x=0.2, t=0.0)
 
 ## 5. Switch to the Train's Frame
@@ -64,34 +64,34 @@ reference frame.
 
 In this frame, the Train has its full width ($0.50$) while the Barn is
 contracted to $0.40$—the Train is *longer* than the Barn! What happened to our
-two events **Back** (red) and **Front** (blue)?
+two events **B** (red) and **F** (blue)?
 
 > reset
 > setup: v=0.0, t=0.0, mode=lorentz, tool=select
 > object: barn(name="Barn", x=-0.25, t=0.0, v=0.0, color=green)
 > object: train(name="Train", x=-0.20, t=0.0, v=0.6, color=orange)
-> object: event(name="Back", x=-0.20, t=0.0, color=red)
-> object: event(name="Front", x=0.20, t=0.0, color=blue)
+> object: event(name="B", x=-0.20, t=0.0, color=red)
+> object: event(name="F", x=0.20, t=0.0, color=blue)
 > v = 0.6
 
-## 6. Front Reaches the Exit First
+## 6. F Reaches the Exit First
 
-In the Train's frame ($v = 0.60$), **Front** and **Back** do *not* happen at
-the same time!
+In the Train's frame ($v = 0.60$), **F** and **B** do *not* happen at the same
+time!
 
-Move the **Time** slider to $t = -0.15$ (when **Front** occurs). Look at the
+Move the **Time** slider to $t = -0.15$ (when **F** occurs). Look at the
 Observer View: the front of the train is at the right edge of the barn, while
 the back of the train is still outside to the left.
 
 > t = -0.15
 
-## 7. Back Enters Later
+## 7. B Enters Later
 
-Now move the **Time** slider forward to $t = 0.15$ (when **Back** occurs).
+Now move the **Time** slider forward to $t = 0.15$ (when **B** occurs).
 
 By the time the back of the train is inside the left door of the barn, the
 front of the train has already passed well beyond the right door! Both frames
-agree on the events **Front** and **Back**, but they only happen simultaneously
-in the Barn's reference frame.
+agree on the events **F** and **B**, but they only happen simultaneously in the
+Barn's reference frame.
 
 > t = 0.15

@@ -1,4 +1,4 @@
-# 6. Faster-Than-Light & Time Travel
+# 7. Faster-Than-Light & Time Travel
 
 See why sending a faster-than-light or instantaneous message in special
 relativity allows you to send a message back in time into your own past.
@@ -25,11 +25,11 @@ Click **Continue**.
 > setup: v=0.0, t=0.6, mode=lorentz, tool=select
 > object: person(name="A1", x=-0.5, t=0.0, v=0.0, color=blue)
 > object: person(name="A2", x=0.5, t=0.0, v=0.0, color=blue)
-> object: event(name="P1", x=-0.5, t=0.5, color=red)
-> object: event(name="P2", x=-0.5, t=0.6, color=red)
+> object: event(name="P1", x=-0.5, t=0.5, z=0.15, color=red)
+> object: event(name="P2", x=-0.5, t=0.6, z=0.15, color=red)
 > object: instant(name="MsgA", x=0.0, t=0.6, v=0.0, color=orange)
-> object: event(name="P3", x=0.5, t=0.6, color=red)
-> object: event(name="P4", x=0.5, t=0.7, color=red)
+> object: event(name="P3", x=0.5, t=0.6, z=0.15, color=red)
+> object: event(name="P4", x=0.5, t=0.7, z=0.15, color=red)
 > ok
 
 ## 2. Switch to a Moving Frame
@@ -70,7 +70,7 @@ message along instant **MsgB** to **B1**, who receives it immediately at event
 Notice that **P6** is on **B1**'s worldline *below* (earlier than) event **P1**
 ($t = 1.00$)! Now set the **Velocity** slider back to $v = 0.00$.
 
-> object: event(name="P5", x=0.65, t=0.95, color=red)
+> object: event(name="P5", x=0.65, t=0.95, z=0.15, color=red)
 > object: instant(name="MsgB", x=0.65, t=0.95, v=0.6, color=purple)
 > object: event(name="P6", x=-0.725, t=0.125, color=red)
 > v = 0.0

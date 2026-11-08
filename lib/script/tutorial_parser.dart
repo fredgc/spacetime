@@ -225,6 +225,10 @@ class Tutorial {
               targetT: (args['t'] ?? args['time']) != null
                   ? double.tryParse((args['t'] ?? args['time'])!)
                   : null,
+              targetZ: args['z'] != null ? double.tryParse(args['z']!) : null,
+              side: args['side'] != null
+                  ? (args['side'] == 'true' || args['side'] == '1')
+                  : (args['z'] != null),
               tolerance: (args['tol'] ?? args['tolerance']) != null
                   ? (double.tryParse((args['tol'] ?? args['tolerance'])!) ??
                         0.5)
@@ -346,7 +350,7 @@ class Tutorial {
 
       // 13. Velocity: v = <num> [tol=<num>] or velocity = <num>
       final vMatch = RegExp(
-        r'^(?:v|velocity)\s*=\s*(-?[\d.]+)(?:\s+tol\s*=\s*([\d.]+))?',
+        r'^(?:v|velocity)\s*=\s*(-?[\d.]+)(?:\s+\[?tol(?:erance)?\s*=?\s*([\d.]+)\]?)?',
         caseSensitive: false,
       ).firstMatch(rem);
       if (vMatch != null) {
@@ -365,7 +369,7 @@ class Tutorial {
 
       // 14. Time: t = <num> [tol=<num>] or time = <num>
       final tMatch = RegExp(
-        r'^(?:t|time)\s*=\s*(-?[\d.]+)(?:\s+tol\s*=\s*([\d.]+))?',
+        r'^(?:t|time)\s*=\s*(-?[\d.]+)(?:\s+\[?tol(?:erance)?\s*=?\s*([\d.]+)\]?)?',
         caseSensitive: false,
       ).firstMatch(rem);
       if (tMatch != null) {
