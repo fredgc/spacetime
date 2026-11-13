@@ -31,8 +31,8 @@ graph TD
   support both scenes (JSON) and tutorials (Markdown). Provide `AssetHolder`
   for offline built-in tutorials.
 
-- **`TutorialEngine` (`lib/script.dart`)**: Parses Markdown tutorial files into
-  structured step models, listens to scene/slider changes, checks exit
+- **`TutorialEngine` (`lib/script.dart`)**: Parses Markdown tutorial files
+  into structured step models, listens to scene/slider changes, checks exit
   criteria, and manages step transitions.
 
 - **`TutorialCard` UI Overlay**: A floating, non-intrusive card that renders
@@ -59,6 +59,7 @@ use blockquotes (`>`).
 This single line instructs the engine to:
 
 1. **Highlight** the observer velocity slider.
+
 1. **Wait for exit**: trigger step completion when the observer velocity
    reaches `0.25` within default tolerance.
 
@@ -76,10 +77,11 @@ This single line instructs the engine to:
 - `> lorentz`: Highlights light speed menu; exits when Lorentz mode is
   selected.
 
-- `> ok` or `> next`: Highlights "Continue" button on the card; exits on click.
+- `> ok` or `> next`: Highlights "Continue" button on the card; exits on
+  click.
 
-- `> setup: <actions>`: Programmatically sets scene state (e.g.,
-  `v=0, t=0, mode=lorentz`). Exits immediately without user interaction.
+- `> setup: <actions>`: Programmatically sets scene state (e.g., `v=0, t=0,
+  mode=lorentz`). Exits immediately without user interaction.
 
 - `> reset`: Clears the canvas to a clean baseline state. Exits immediately
   without user interaction.
@@ -97,8 +99,8 @@ directives when finer or coarser precision is needed:
 ### Setup Directives
 
 When a step requires preparing the drawing without requiring the student to
-manually build it, a `setup:` directive configures the scene state at the start
-of that step:
+manually build it, a `setup:` directive configures the scene state at the
+start of that step:
 
 ```markdown
 > setup: v=0, t=0, mode=lorentz
@@ -169,8 +171,11 @@ allowing users and educators to create, share, and open custom tutorials.
 - An asset manifest or registry lists available built-in tutorials:
 
   - `01_speed_of_light.md`: Light speed constancy across frames.
+
   - `02_time_dilation.md`: Moving clocks run slow.
+
   - `03_length_contraction.md`: Moving rulers contract.
+
   - `04_barn_pole_paradox.md`: Simultaneity and the barn-pole paradox.
 
 - Users can open any built-in tutorial directly from the dedicated "Tutorials"
@@ -213,6 +218,7 @@ classDiagram
 1. **`FileKind` Enumeration**: Add an explicit kind to `FileHolder`:
 
    - `FileKind.scene` (standard spacetime drawings, `.sp` / `.json`).
+
    - `FileKind.tutorial` (interactive tutorial lessons, `.md` / `.sptut`).
 
 1. **`AssetHolder` Implementation**: A concrete `FileHolder` that loads text
@@ -224,16 +230,20 @@ classDiagram
    - [`DriveHolder`](lib/drive.dart) and
      [`LocalFileHolder`](lib/local_file.dart) already load and save arbitrary
      text strings.
-   - By associating `FileKind`, `FileManager` can filter file pickers to either
-     drawings or tutorials.
+
+   - By associating `FileKind`, `FileManager` can filter file pickers to
+     either drawings or tutorials.
 
 1. **Scene Stashing & Session Safety**:
 
    - When launching a tutorial, `FileManager` checks if the current scene has
      unsaved changes.
+
    - If clean (or after user saves), the active scene is stashed in memory.
+
    - While the tutorial is active, the scene view operates in a tutorial
      sandbox.
+
    - When the user exits or finishes the tutorial, the stashed user scene is
      restored cleanly.
 
@@ -268,34 +278,42 @@ interactive canvas or the sliders.
   - **Desktop / Wide Layout**: Docked in the upper right corner of the main
     workspace, floating over the canvas with subtle shadow. Can be dragged or
     collapsed by the user if it covers an area of interest.
+
   - **Mobile / Narrow Layout**: Compact panel pinned between the main canvas
     and the sliders, with an expandable drawer for longer explanations.
 
 - **Header**:
 
   - Tutorial title and step badge (`Step 2 of 5`).
+
   - Linear progress bar indicating completion percentage.
+
   - **Reset Step Button**: Reapplies the step's initial baseline setup if the
     user gets confused or makes unintentional scene changes.
+
   - **Close Button ($X$)**: Prompts confirmation to exit tutorial mode and
     returns to normal drawing.
 
 - **Body Content**:
 
   - Formatted Markdown text (rendered with Flutter `markdown` widget).
+
   - Supports bullet points, emphasis, and math symbols.
 
 - **Live Feedback Status**:
 
-  - Shows target vs current state in real time: e.g.,
-    `Target: v = 0.25 | Current: 0.10`.
-  - When criteria are met, the badge flashes green: `✓ Target reached!`.
+  - Shows target vs current state in real time: e.g., `Target: v = 0.25 |
+    Current: 0.10`.
+
+  - When criteria are met, the badge flashes green: `✓Target reached!`.
+
   - A brief delay (400–600ms) gives the user satisfying visual feedback before
     advancing to the next step.
 
 - **Navigation**:
 
   - `< Back`: Returns to the previous step and restores its baseline setup.
+
   - `Continue >`: Active for informational steps (`> ok`), or allows manual
     advance if the user wants to skip.
 
@@ -305,14 +323,18 @@ interactive canvas or the sliders.
   IDs:
 
   - `slider.velocity` $\rightarrow$ Velocity slider row.
+
   - `slider.time` $\rightarrow$ Time slider row.
+
   - `menu.light_speed` $\rightarrow$ Light speed model menu / dropdown.
+
   - `tutorial.continue` $\rightarrow$ "Continue" button on the tutorial card.
 
 - **Visual Effect**:
 
   - When highlighted, the target widget displays an animated pulsing border or
     glowing accent outline (using the theme's secondary or accent color).
+
   - When criteria are satisfied, the pulse transitions to a steady green check
     glow before advancing.
 
@@ -328,29 +350,37 @@ slider, detecting exit criteria, and progressing through steps.
 
 1. **Parser (`lib/script.dart`)**:
 
-   - Parse Markdown into a `Tutorial` model containing a list of `TutorialStep`
-     objects.
+   - Parse Markdown into a `Tutorial` model containing a list of
+     `TutorialStep` objects.
+
    - Parse combined directives:
+
      - `> v = <number>` / `> velocity = <number>` (default $\pm 0.02$ tol).
+
      - `> t = <number>` / `> time = <number>` (default $\pm 0.1$ tol).
+
      - `> ok` / `> next` (advances on button tap).
+
      - `> reset` (clears drawing).
 
 1. **File Loading (`AssetHolder`)**:
 
    - Add `AssetHolder` to `lib/file_holder.dart`.
+
    - Bundle a 4-step tutorial at `assets/tutorials/speed_of_light.md`.
 
 1. **Overlay & Highlight UI**:
 
    - Create `TutorialCard` in `lib/widget.dart` (or
      `lib/tutorial_widget.dart`).
+
    - Add highlight wrapper around the velocity and time sliders.
 
 1. **Test Suite**:
 
    - Unit tests for directive parsing and tolerance math in
      `test/script_test.dart`.
+
    - Widget test verifying tutorial step advancement in
      `test/tutorial_test.dart`.
 
@@ -359,6 +389,9 @@ ______________________________________________________________________
 ## 7. Future Enhancements (Post-PoC)
 
 - Relational entity criteria (e.g. checking position of objects in canvas).
+
 - Canvas reticle overlays pointing to specific drawing entities.
+
 - Google Drive file picker filtering for `.md` / `.sptut` tutorial files.
+
 - Authoring mode / in-app tutorial editor.

@@ -7,7 +7,7 @@
 name: spacetime
 description: "Spacetime Diagrams"
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-version: 6.1.4+0
+version: 6.2.0+0
 
 environment:
   sdk: ^3.12.2
@@ -15,6 +15,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: any
   cupertino_icons: ^1.0.8
   extension_google_sign_in_as_googleapis_auth: ^3.0.0
   file_picker: ^12.0.0-beta.7
@@ -73,11 +76,94 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
   uses-material-design: true
+  generate: true
 
   assets:
-    - assets/
+    - path: assets/about.html
+      transformers:
+        - package: html_tweak
+    - path: assets/about_de.html
+      transformers:
+        - package: html_tweak
+    - path: assets/about_es.html
+      transformers:
+        - package: html_tweak
+    - path: assets/about_fr.html
+      transformers:
+        - package: html_tweak
+    - path: assets/about_ja.html
+      transformers:
+        - package: html_tweak
+    - path: assets/about_lt.html
+      transformers:
+        - package: html_tweak
+    - path: assets/about_pt.html
+      transformers:
+        - package: html_tweak
+    - path: assets/about_zh.html
+      transformers:
+        - package: html_tweak
+    - assets/controls.html
+    - assets/controls_de.html
+    - assets/controls_es.html
+    - assets/controls_fr.html
+    - assets/controls_ja.html
+    - assets/controls_lt.html
+    - assets/controls_pt.html
+    - assets/controls_zh.html
+    - assets/files.html
+    - assets/files_de.html
+    - assets/files_es.html
+    - assets/files_fr.html
+    - assets/files_ja.html
+    - assets/files_lt.html
+    - assets/files_pt.html
+    - assets/files_zh.html
+    - assets/help.html
+    - assets/objects.html
+    - assets/objects_de.html
+    - assets/objects_es.html
+    - assets/objects_fr.html
+    - assets/objects_ja.html
+    - assets/objects_lt.html
+    - assets/objects_pt.html
+    - assets/objects_zh.html
+    - assets/overview.html
+    - assets/overview_de.html
+    - assets/overview_es.html
+    - assets/overview_fr.html
+    - assets/overview_ja.html
+    - assets/overview_lt.html
+    - assets/overview_pt.html
+    - assets/overview_zh.html
+    - assets/privacy.html
+    - assets/privacy_de.html
+    - assets/privacy_es.html
+    - assets/privacy_fr.html
+    - assets/privacy_ja.html
+    - assets/privacy_lt.html
+    - assets/privacy_pt.html
+    - assets/privacy_zh.html
+    - assets/slice.html
+    - assets/terms.html
+    - assets/terms_de.html
+    - assets/terms_es.html
+    - assets/terms_fr.html
+    - assets/terms_ja.html
+    - assets/terms_lt.html
+    - assets/terms_pt.html
+    - assets/terms_zh.html
+    - assets/transformations.html
+    - assets/transformations_de.html
+    - assets/transformations_es.html
+    - assets/transformations_fr.html
+    - assets/transformations_ja.html
+    - assets/transformations_lt.html
+    - assets/transformations_pt.html
+    - assets/transformations_zh.html
     - assets/dev/
     - assets/css/
+    - assets/icons/
     - assets/tutorials/
     - assets/dev/tutorials/
 

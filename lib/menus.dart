@@ -334,6 +334,7 @@ class ListChooser<T extends Object> extends ValueNotifier<T>
                         ),
                       )
                     : IconButton(
+                        tooltip: message.isNotEmpty ? message : null,
                         onPressed: () => _toggle(controller),
                         icon: makeIcon!.call(value),
                       );

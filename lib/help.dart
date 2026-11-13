@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -11,6 +12,7 @@ import 'webview_stub.dart' if (dart.library.html) 'webview_web.dart';
 
 import "printer.dart";
 import 'settings.dart';
+import 'l10n/l10n_extension.dart';
 import 'navigation.dart';
 
 class HelpScreen extends StatefulWidget {
@@ -18,6 +20,133 @@ class HelpScreen extends StatefulWidget {
   final String initialPage;
   static const routeName = "/help";
   const HelpScreen(this.settings, {this.initialPage = "about.html", super.key});
+
+  /// Decodes an HTTP response body as UTF-8 regardless of whether the server
+  /// includes a `charset=utf-8` parameter in `Content-Type` (`response.body`
+  /// defaults to Latin-1 when `charset` is omitted, corrupting UTF-8 smart
+  /// quotes and localized text).
+  static String decodeHttpResponse(http.Response response) {
+    return utf8.decode(response.bodyBytes, allowMalformed: true);
+  }
+
+  /// Prepares raw HTML documentation for display in the WebView.
+  static String prepareHtmlContent(
+    String htmlContent, {
+    required String cssContent,
+    required bool isDark,
+    String? versionTag,
+  }) {
+    if (versionTag != null && versionTag.isNotEmpty) {
+      htmlContent = htmlContent.replaceAll(
+        RegExp(r'\{\{\s*VERSION\s*\}\}'),
+        versionTag,
+      );
+    }
+
+    // Ensure external links and /version5/ links open in the top browser tab/window
+    // rather than inside the srcdoc iframe or triggering Flutter's SPA router.
+    final anchorTargetRegExp = RegExp(
+      r'<a\s+href="(https?://[^"]+|/version5/[^"]*)"(?![^>]*\btarget=)',
+    );
+    htmlContent = htmlContent.replaceAllMapped(anchorTargetRegExp, (match) {
+      return '<a href="${match.group(1)}" target="_blank" rel="noopener"';
+    });
+
+    // Clean up any <pre class="mermaid"><code> blocks and unescape HTML entities
+    // inside Mermaid source so quoted node labels and <br> tags parse cleanly.
+    final mermaidRegExp = RegExp(
+      r'<pre class="mermaid"><code>([\s\S]*?)</code></pre>',
+    );
+    htmlContent = htmlContent.replaceAllMapped(mermaidRegExp, (match) {
+      final rawMermaid = (match.group(1) ?? '')
+          .replaceAll('&quot;', '"')
+          .replaceAll('&#39;', "'")
+          .replaceAll('&lt;', '<')
+          .replaceAll('&gt;', '>')
+          .replaceAll('&amp;', '&');
+      return '<pre class="mermaid">$rawMermaid</pre>';
+    });
+
+    if (htmlContent.contains('<pre class="mermaid">') &&
+        !htmlContent.contains('mermaid.min.js')) {
+      const mermaidScript =
+          '<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>\n'
+          "<script>mermaid.initialize({ startOnLoad: true, theme: 'default' });</script>";
+      if (htmlContent.contains('</body>')) {
+        htmlContent = htmlContent.replaceFirst(
+          '</body>',
+          '$mermaidScript\n</body>',
+        );
+      } else {
+        htmlContent = '$htmlContent\n$mermaidScript';
+      }
+    }
+
+    // Replace stylesheet link with inlined CSS to avoid relative path loading issues on web and mobile.
+    final linkRegExp = RegExp(
+      r'''<link\s+rel=["']stylesheet["']\s+href=["'][^"']*doc_style\.css["']\s*/?>''',
+    );
+    if (htmlContent.contains(linkRegExp)) {
+      htmlContent = htmlContent.replaceFirst(
+        linkRegExp,
+        '<style>$cssContent</style>',
+      );
+    } else if (htmlContent.contains('</head>')) {
+      htmlContent = htmlContent.replaceFirst(
+        '</head>',
+        '<style>$cssContent</style></head>',
+      );
+    } else {
+      htmlContent = '<head><style>$cssContent</style></head>$htmlContent';
+    }
+
+    if (isDark) {
+      // Change mermaid theme to dark.
+      htmlContent = htmlContent.replaceFirst(
+        "theme: 'default'",
+        "theme: 'dark'",
+      );
+      htmlContent = htmlContent.replaceFirst(
+        'theme: "default"',
+        'theme: "dark"',
+      );
+
+      if (htmlContent.contains("<html")) {
+        htmlContent = htmlContent.replaceFirst(
+          "<html",
+          "<html class=\"dark-theme\"",
+        );
+      } else if (htmlContent.contains("<body")) {
+        htmlContent = htmlContent.replaceFirst(
+          "<body",
+          "<body class=\"dark-theme\"",
+        );
+      }
+    } else {
+      // Change mermaid theme to default.
+      htmlContent = htmlContent.replaceFirst(
+        "theme: 'dark'",
+        "theme: 'default'",
+      );
+      htmlContent = htmlContent.replaceFirst(
+        'theme: "dark"',
+        'theme: "default"',
+      );
+
+      if (htmlContent.contains("<html")) {
+        htmlContent = htmlContent.replaceFirst(
+          "<html",
+          "<html class=\"light-theme\"",
+        );
+      } else if (htmlContent.contains("<body")) {
+        htmlContent = htmlContent.replaceFirst(
+          "<body",
+          "<body class=\"light-theme\"",
+        );
+      }
+    }
+    return htmlContent;
+  }
 
   @override
   State<HelpScreen> createState() => _HelpScreenState();
@@ -98,13 +227,60 @@ class _HelpScreenState extends State<HelpScreen> {
         _checkAndReloadTheme();
       }
     });
+    LocaleController.currentLocale.addListener(_onLocaleChanged);
     loadHelpFile(_currentFilename);
   }
 
   @override
   void dispose() {
+    LocaleController.currentLocale.removeListener(_onLocaleChanged);
     _settingsListener.cancel();
     super.dispose();
+  }
+
+  void _onLocaleChanged() {
+    if (mounted) {
+      loadHelpFile(_currentFilename);
+      setState(() {});
+    }
+  }
+
+  Locale _resolveEffectiveLocale() {
+    final active = LocaleController.currentLocale.value;
+    if (active != null) return active;
+    final systemLocale = WidgetsBinding.instance.platformDispatcher.locale;
+    for (final supported in LocaleController.supportedLocales) {
+      if (supported.languageCode == systemLocale.languageCode &&
+          (systemLocale.countryCode == null ||
+              supported.countryCode == null ||
+              supported.countryCode == systemLocale.countryCode)) {
+        return supported;
+      }
+    }
+    for (final supported in LocaleController.supportedLocales) {
+      if (supported.languageCode == systemLocale.languageCode) {
+        return supported;
+      }
+    }
+    return const Locale('en');
+  }
+
+  String _resolveLocalizedFilename(String filename) {
+    final cleanBase = filename.replaceAll(
+      RegExp(r'_[a-z]{2}(?:_[a-z]{2})?\.html$'),
+      '.html',
+    );
+    final locale = _resolveEffectiveLocale();
+    if (cleanBase.endsWith('.html') && !cleanBase.startsWith('dev/')) {
+      final base = cleanBase.substring(0, cleanBase.length - 5);
+      if (locale.countryCode != null && locale.countryCode!.isNotEmpty) {
+        return '${base}_${locale.languageCode}_${locale.countryCode!.toLowerCase()}.html';
+      }
+      if (locale.languageCode != 'en') {
+        return '${base}_${locale.languageCode}.html';
+      }
+    }
+    return cleanBase;
   }
 
   void _applyTheme() {
@@ -143,141 +319,64 @@ class _HelpScreenState extends State<HelpScreen> {
 
   void loadHelpFile(String filename) async {
     _lastLoadedBrightness = widget.settings.theme.scheme.brightness;
+    final cleanBase = filename.replaceAll(
+      RegExp(r'_[a-z]{2}(?:_[a-z]{2})?\.html$'),
+      '.html',
+    );
+    _currentFilename = cleanBase;
+    final localizedFilename = _resolveLocalizedFilename(cleanBase);
     try {
       String htmlContent;
       String cssContent;
+      final versionTag =
+          '${widget.settings.version}+${widget.settings.buildNumber}';
       if (kIsWeb) {
-        final versionTag =
-            '${widget.settings.version}+${widget.settings.buildNumber}';
-        final htmlUri = Uri.parse('assets/assets/$filename?v=$versionTag');
+        var htmlUri = Uri.parse(
+          'assets/assets/$localizedFilename?v=$versionTag',
+        );
         final cssUri = Uri.parse(
           'assets/assets/css/doc_style.css?v=$versionTag',
         );
 
-        final htmlResponse = await http.get(htmlUri);
+        var htmlResponse = await http.get(htmlUri);
         final cssResponse = await http.get(cssUri);
 
         if (htmlResponse.statusCode == 200) {
-          htmlContent = htmlResponse.body;
+          htmlContent = HelpScreen.decodeHttpResponse(htmlResponse);
+        } else if (localizedFilename != cleanBase) {
+          htmlUri = Uri.parse('assets/assets/$cleanBase?v=$versionTag');
+          htmlResponse = await http.get(htmlUri);
+          if (htmlResponse.statusCode == 200) {
+            htmlContent = HelpScreen.decodeHttpResponse(htmlResponse);
+          } else {
+            htmlContent = await rootBundle.loadString('assets/$cleanBase');
+          }
         } else {
-          htmlContent = await rootBundle.loadString('assets/$filename');
+          htmlContent = await rootBundle.loadString('assets/$cleanBase');
         }
 
         if (cssResponse.statusCode == 200) {
-          cssContent = cssResponse.body;
+          cssContent = HelpScreen.decodeHttpResponse(cssResponse);
         } else {
           cssContent = await rootBundle.loadString('assets/css/doc_style.css');
         }
-
-        // Scan HTML content for embedded version string (e.g., "v2.1.0+70").
-        // If the document version is older than current version, perform a forced reload.
-        final versionMatch = RegExp(
-          r'\(v(\d+\.\d+\.\d+\+\d+)\)',
-        ).firstMatch(htmlContent);
-        if (versionMatch != null) {
-          final embeddedVersion = versionMatch.group(1);
-          if (embeddedVersion != null &&
-              embeddedVersion != versionTag &&
-              embeddedVersion != widget.settings.version) {
-            final cacheBuster = DateTime.now().millisecondsSinceEpoch;
-            final forcedResponse = await http.get(
-              Uri.parse('assets/assets/$filename?nocache=$cacheBuster'),
-              headers: {
-                'Cache-Control': 'no-cache, no-store, must-revalidate',
-                'Pragma': 'no-cache',
-              },
-            );
-            if (forcedResponse.statusCode == 200) {
-              htmlContent = forcedResponse.body;
-            }
-          }
-        }
       } else {
-        htmlContent = await rootBundle.loadString('assets/$filename');
+        try {
+          htmlContent = await rootBundle.loadString(
+            'assets/$localizedFilename',
+          );
+        } catch (_) {
+          htmlContent = await rootBundle.loadString('assets/$cleanBase');
+        }
         cssContent = await rootBundle.loadString('assets/css/doc_style.css');
       }
 
-      // Ensure external links and /version5/ links open in the top browser tab/window
-      // rather than inside the srcdoc iframe or triggering Flutter's SPA router.
-      final anchorTargetRegExp = RegExp(
-        r'<a\s+href="(https?://[^"]+|/version5/[^"]*)"(?![^>]*\btarget=)',
+      htmlContent = HelpScreen.prepareHtmlContent(
+        htmlContent,
+        cssContent: cssContent,
+        isDark: _lastLoadedBrightness == Brightness.dark,
+        versionTag: versionTag,
       );
-      htmlContent = htmlContent.replaceAllMapped(anchorTargetRegExp, (match) {
-        return '<a href="${match.group(1)}" target="_blank" rel="noopener"';
-      });
-
-      // Clean up any <pre class="mermaid"><code> blocks to prevent Mermaid syntax error.
-      final mermaidRegExp = RegExp(
-        r'<pre class="mermaid"><code>([\s\S]*?)</code></pre>',
-      );
-      htmlContent = htmlContent.replaceAllMapped(mermaidRegExp, (match) {
-        return '<pre class="mermaid">${match.group(1)}</pre>';
-      });
-
-      // Replace stylesheet link with inlined CSS to avoid relative path loading issues on web and mobile.
-      final linkRegExp = RegExp(
-        r'''<link\s+rel=["']stylesheet["']\s+href=["'][^"']*doc_style\.css["']\s*/?>''',
-      );
-      if (htmlContent.contains(linkRegExp)) {
-        htmlContent = htmlContent.replaceFirst(
-          linkRegExp,
-          '<style>$cssContent</style>',
-        );
-      } else if (htmlContent.contains('</head>')) {
-        htmlContent = htmlContent.replaceFirst(
-          '</head>',
-          '<style>$cssContent</style></head>',
-        );
-      } else {
-        htmlContent = '<head><style>$cssContent</style></head>$htmlContent';
-      }
-
-      bool isDark = _lastLoadedBrightness == Brightness.dark;
-      if (isDark) {
-        // Change mermaid theme to dark.
-        htmlContent = htmlContent.replaceFirst(
-          "theme: 'default'",
-          "theme: 'dark'",
-        );
-        htmlContent = htmlContent.replaceFirst(
-          'theme: "default"',
-          'theme: "dark"',
-        );
-
-        if (htmlContent.contains("<html")) {
-          htmlContent = htmlContent.replaceFirst(
-            "<html",
-            "<html class=\"dark-theme\"",
-          );
-        } else if (htmlContent.contains("<body")) {
-          htmlContent = htmlContent.replaceFirst(
-            "<body",
-            "<body class=\"dark-theme\"",
-          );
-        }
-      } else {
-        // Change mermaid theme to default.
-        htmlContent = htmlContent.replaceFirst(
-          "theme: 'dark'",
-          "theme: 'default'",
-        );
-        htmlContent = htmlContent.replaceFirst(
-          'theme: "dark"',
-          'theme: "default"',
-        );
-
-        if (htmlContent.contains("<html")) {
-          htmlContent = htmlContent.replaceFirst(
-            "<html",
-            "<html class=\"light-theme\"",
-          );
-        } else if (htmlContent.contains("<body")) {
-          htmlContent = htmlContent.replaceFirst(
-            "<body",
-            "<body class=\"light-theme\"",
-          );
-        }
-      }
       await webViewController.loadHtmlString(htmlContent);
     } catch (e) {
       Log.help.log("Error loading help file: $e");
@@ -285,14 +384,14 @@ class _HelpScreenState extends State<HelpScreen> {
   }
 
   AppBar appBar(BuildContext context, {required bool isWideScreen}) {
-    // Log.help.log("Building appbar.");
+    final l10n = context.l10n;
     return AppBar(
       title: Text((!isWideScreen && _isMenuOpen) ? "Help Menu" : "Help & Docs"),
       leading: isWideScreen
           ? null
           : IconButton(
               icon: Icon(_isMenuOpen ? Icons.close : Icons.menu),
-              tooltip: _isMenuOpen ? "Close Menu" : "Open Menu",
+              tooltip: _isMenuOpen ? l10n.close : "Open Menu",
               onPressed: () {
                 setState(() {
                   _isMenuOpen = !_isMenuOpen;
@@ -303,16 +402,15 @@ class _HelpScreenState extends State<HelpScreen> {
       actions: <Widget>[
         IconButton(
           icon: const Icon(Icons.settings),
-          tooltip: "Settings",
+          tooltip: l10n.settings,
           onPressed: () {
             context.push(SettingsScreen.routeName);
           },
         ),
         IconButton(
           icon: const Icon(Icons.close),
-          tooltip: "Close",
+          tooltip: l10n.close,
           onPressed: () {
-            // Log.help.log("CYAN: help close.");
             popOrHome(context);
           },
         ),
@@ -321,6 +419,7 @@ class _HelpScreenState extends State<HelpScreen> {
   }
 
   Widget buildNavigationList(BuildContext context, {required bool isSidebar}) {
+    final l10n = context.l10n;
     List<Widget> items = [
       if (isSidebar) ...[
         const Padding(
@@ -334,11 +433,11 @@ class _HelpScreenState extends State<HelpScreen> {
       ] else ...[
         DrawerHeader(
           decoration: BoxDecoration(color: Theme.of(context).primaryColor),
-          child: const Column(
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Text(
+              const Text(
                 "Spacetime Help",
                 style: TextStyle(
                   color: Colors.white,
@@ -346,106 +445,112 @@ class _HelpScreenState extends State<HelpScreen> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
-                "Documentation & Guides",
-                style: TextStyle(color: Colors.white70, fontSize: 14),
+                l10n.helpDocumentationAndGuides,
+                style: const TextStyle(color: Colors.white70, fontSize: 14),
               ),
             ],
           ),
         ),
       ],
-      const Padding(
-        padding: EdgeInsets.only(left: 16, top: 16, bottom: 8),
+      Padding(
+        padding: const EdgeInsets.only(left: 16, top: 16, bottom: 8),
         child: Text(
-          "User Guides",
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
+          l10n.helpUserGuides,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.grey,
+          ),
         ),
       ),
       buildDrawerItem(
         context,
-        "About Spacetime",
+        l10n.aboutSpacetime,
         "about.html",
         Icons.info_outline,
         isSidebar: isSidebar,
       ),
       buildDrawerItem(
         context,
-        "Privacy Policy",
-        "privacy.html",
-        Icons.privacy_tip_outlined,
-        isSidebar: isSidebar,
-      ),
-      buildDrawerItem(
-        context,
-        "Terms of Service",
-        "terms.html",
-        Icons.gavel_outlined,
-        isSidebar: isSidebar,
-      ),
-      buildDrawerItem(
-        context,
-        "Overview",
+        l10n.helpOverview,
         "overview.html",
         Icons.visibility_outlined,
         isSidebar: isSidebar,
       ),
       buildDrawerItem(
         context,
-        "Toolbar and Sliders",
+        l10n.helpControls,
         "controls.html",
         Icons.tune,
         isSidebar: isSidebar,
       ),
       buildDrawerItem(
         context,
-        "Spacetime Objects",
+        l10n.helpObjects,
         "objects.html",
         Icons.category_outlined,
         isSidebar: isSidebar,
       ),
       buildDrawerItem(
         context,
-        "Relativistic Transformations",
+        l10n.helpTransformations,
         "transformations.html",
         Icons.transform,
         isSidebar: isSidebar,
       ),
       buildDrawerItem(
         context,
-        "File Management",
+        l10n.helpFiles,
         "files.html",
         Icons.folder_open_outlined,
+        isSidebar: isSidebar,
+      ),
+      buildDrawerItem(
+        context,
+        l10n.helpPrivacy,
+        "privacy.html",
+        Icons.privacy_tip_outlined,
+        isSidebar: isSidebar,
+      ),
+      buildDrawerItem(
+        context,
+        l10n.helpTerms,
+        "terms.html",
+        Icons.gavel_outlined,
         isSidebar: isSidebar,
       ),
     ];
     if (Settings.kDebugEnabled && Settings.debugEnabled) {
       items.addAll([
         const Divider(),
-        const Padding(
-          padding: EdgeInsets.only(left: 16, top: 8, bottom: 8),
+        Padding(
+          padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
           child: Text(
-            "Developer Docs",
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
+            l10n.developerDocs,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.grey,
+            ),
           ),
         ),
         buildDrawerItem(
           context,
-          "Readme",
+          l10n.helpReadme,
           "dev/README.html",
           Icons.description_outlined,
           isSidebar: isSidebar,
         ),
         buildDrawerItem(
           context,
-          "Developer Guide",
+          l10n.helpDeveloperGuide,
           "dev/GEMINI.html",
           Icons.code_outlined,
           isSidebar: isSidebar,
         ),
         buildDrawerItem(
           context,
-          "Project Plan",
+          l10n.helpProjectPlan,
           "dev/plan.html",
           Icons.assignment_outlined,
           isSidebar: isSidebar,

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Transformaciones Relativistas</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+  </style>
+  <link rel="stylesheet" href="css/doc_style.css" />
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Transformaciones Relativistas</h1>
+</header>
+<p>La herramienta de dibujo Spacetime le permite explorar cómo se
+transforman las coordenadas bajo diferentes hipótesis físicas sobre la
+velocidad de la luz:</p>
+<h2 id="lorentz-relatividad-especial">1. Lorentz (Relatividad
+Especial)</h2>
+<p>De acuerdo con la teoría de la Relatividad Especial de Einstein, la
+velocidad de la luz
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mo>=</mo><mn>1.0</mn></mrow><annotation encoding="application/x-tex">c = 1.0</annotation></semantics></math>)
+es constante e idéntica en todos los sistemas de referencia
+inerciales.</p>
+<ul>
+<li><p>Las coordenadas se transforman mediante la <strong>transformación
+de Lorentz</strong>:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>x</mi><mo>′</mo></msup><mo>=</mo><mi>γ</mi><mo stretchy="false" form="prefix">(</mo><mi>x</mi><mo>−</mo><mi>v</mi><mi>t</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">x&#39; = \gamma (x - v t)</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>t</mi><mo>′</mo></msup><mo>=</mo><mi>γ</mi><mo stretchy="false" form="prefix">(</mo><mi>t</mi><mo>−</mo><mi>v</mi><mi>x</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">t&#39; = \gamma (t - v x)</annotation></semantics></math></p></li>
+</ul>
+<p>donde
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mo>=</mo><mn>1</mn><mi>/</mi><msqrt><mrow><mn>1</mn><mo>−</mo><msup><mi>v</mi><mn>2</mn></msup></mrow></msqrt></mrow><annotation encoding="application/x-tex">\gamma = 1 / \sqrt{1 - v^2}</annotation></semantics></math>.</p>
+<ul>
+<li>Esto produce la contracción de la longitud, la dilatación del tiempo
+y la relatividad de la simultaneidad.</li>
+</ul>
+<h2 id="éter">2. Éter</h2>
+<p>La hipótesis del <strong>Éter</strong> asume que existe un sistema de
+referencia global único y preferente (el “éter”) en el que la luz viaja
+a una velocidad
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mo>=</mo><mn>1.0</mn></mrow><annotation encoding="application/x-tex">c =
+1.0</annotation></semantics></math>.</p>
+<ul>
+<li><p>En cualquier sistema de referencia que se mueva a una velocidad
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>v</mi><annotation encoding="application/x-tex">v</annotation></semantics></math>
+relativa aléter, la velocidad de la luz es relativa y depende de la
+dirección de propagación
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>c</mi><mo>′</mo></msup><mo>=</mo><mi>c</mi><mo>±</mo><mi>v</mi></mrow><annotation encoding="application/x-tex">c&#39; = c \pm v</annotation></semantics></math>).</p></li>
+<li><p>Este es un modelo newtoniano clásico con tiempo absoluto, y asume
+que la luz se comporta como una onda que se propaga a través
+deléter.</p></li>
+</ul>
+<h2 id="velocidad-del-emisor-relatividad-de-la-fuente">3. Velocidad del
+emisor (Relatividad de la fuente)</h2>
+<p>La hipótesis de la <strong>Velocidad del emisor</strong> (propuesta
+históricamente por Ritz y otros) asume que la luz se propaga a una
+velocidad
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mo>=</mo><mn>1.0</mn></mrow><annotation encoding="application/x-tex">c = 1.0</annotation></semantics></math>
+relativa a la fuente emisora que la generó.</p>
+<ul>
+<li><p>Si la fuente emisora se mueve a una velocidad
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>u</mi><annotation encoding="application/x-tex">u</annotation></semantics></math>
+relativa a un observador, el observador mide la velocidad de la luz
+procedente de esa fuente como
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>c</mi><mo>′</mo></msup><mo>=</mo><mi>c</mi><mo>±</mo><mi>u</mi></mrow><annotation encoding="application/x-tex">c&#39;
+= c \pm u</annotation></semantics></math>.</p></li>
+<li><p>Esto también preserva el espacio y el tiempo clásicos. Este
+modelo es válido si la luz es una partícula.</p></li>
+</ul>
+</body>
+</html>

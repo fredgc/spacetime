@@ -1,0 +1,387 @@
+{
+  "@@locale": "en",
+  "appTitle": "Spacetime Drawing Tool",
+  "@appTitle": {
+    "description": "Application title displayed in browser tabs and headers"
+  },
+  "language": "Language",
+  "@language": {
+    "description": "Tooltip and label for language selector"
+  },
+  "systemDefault": "System Default",
+  "@systemDefault": {
+    "description": "Option to use system default language"
+  },
+  "settings": "Settings",
+  "@settings": {
+    "description": "Settings label and tooltip"
+  },
+  "settingsTitle": "Settings",
+  "@settingsTitle": {
+    "description": "Title of settings screen"
+  },
+  "initializingSettings": "Initializing Settings...",
+  "@initializingSettings": {
+    "description": "Message shown while settings load"
+  },
+  "helpOptions": "Help Options",
+  "@helpOptions": {
+    "description": "Tooltip for help menu button"
+  },
+  "aboutSpacetime": "About Spacetime",
+  "@aboutSpacetime": {
+    "description": "Help menu item for about dialog"
+  },
+  "helpAndUserGuides": "Help & User Guides",
+  "@helpAndUserGuides": {
+    "description": "Help menu item for documentation"
+  },
+  "developerDocs": "Developer Docs",
+  "@developerDocs": {
+    "description": "Help menu item for developer documentation"
+  },
+  "close": "Close",
+  "@close": {
+    "description": "Close button label"
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button label"
+  },
+  "save": "Save",
+  "@save": {
+    "description": "Save button label"
+  },
+  "saveAs": "Save As...",
+  "@saveAs": {
+    "description": "Save As button label"
+  },
+  "discard": "Discard",
+  "@discard": {
+    "description": "Discard button label"
+  },
+  "ok": "OK",
+  "@ok": {
+    "description": "OK button label"
+  },
+  "title": "Title",
+  "@title": {
+    "description": "Label for title field"
+  },
+  "description": "Description",
+  "@description": {
+    "description": "Label for description field"
+  },
+  "objectName": "Object Name",
+  "@objectName": {
+    "description": "Label for object name input"
+  },
+  "menuFile": "File",
+  "@menuFile": {
+    "description": "File menu title"
+  },
+  "menuTutorials": "Tutorials",
+  "@menuTutorials": {
+    "description": "Tutorials menu title"
+  },
+  "menuEdit": "Edit",
+  "@menuEdit": {
+    "description": "Edit menu title"
+  },
+  "menuView": "View",
+  "@menuView": {
+    "description": "View menu title"
+  },
+  "menuNew": "New",
+  "@menuNew": {
+    "description": "New file menu item"
+  },
+  "menuOpen": "Open",
+  "@menuOpen": {
+    "description": "Open file menu item"
+  },
+  "menuReload": "Reload",
+  "@menuReload": {
+    "description": "Reload file menu item"
+  },
+  "menuSave": "Save",
+  "@menuSave": {
+    "description": "Save file menu item"
+  },
+  "menuSaveAs": "Save As",
+  "@menuSaveAs": {
+    "description": "Save As menu item"
+  },
+  "menuEditDescription": "Edit Description",
+  "@menuEditDescription": {
+    "description": "Edit Description menu item"
+  },
+  "menuShare": "Share",
+  "@menuShare": {
+    "description": "Share diagram menu item"
+  },
+  "menuLogout": "Log Out",
+  "@menuLogout": {
+    "description": "Log Out menu item"
+  },
+  "menuUndo": "Undo",
+  "@menuUndo": {
+    "description": "Undo menu item"
+  },
+  "menuRedo": "Redo",
+  "@menuRedo": {
+    "description": "Redo menu item"
+  },
+  "menuCut": "Cut",
+  "@menuCut": {
+    "description": "Cut menu item"
+  },
+  "menuCopy": "Copy",
+  "@menuCopy": {
+    "description": "Copy menu item"
+  },
+  "menuPaste": "Paste",
+  "@menuPaste": {
+    "description": "Paste menu item"
+  },
+  "menuDelete": "Delete",
+  "@menuDelete": {
+    "description": "Delete menu item"
+  },
+  "menuFitScene": "Fit Scene",
+  "@menuFitScene": {
+    "description": "Fit scene viewport menu item"
+  },
+  "lightSpeedLorentz": "Use Lorentz",
+  "@lightSpeedLorentz": {
+    "description": "Option for Lorentz transformation"
+  },
+  "lightSpeedLorentzTip": "The speed of light is constant.",
+  "@lightSpeedLorentzTip": {
+    "description": "Tooltip for Lorentz transformation"
+  },
+  "lightSpeedEther": "Use Ether",
+  "@lightSpeedEther": {
+    "description": "Option for Ether hypothesis"
+  },
+  "lightSpeedEtherTip": "The speed of light is relative to a preferred global frame.",
+  "@lightSpeedEtherTip": {
+    "description": "Tooltip for Ether hypothesis"
+  },
+  "lightSpeedEmitter": "Use Emitter Speed",
+  "@lightSpeedEmitter": {
+    "description": "Option for Emitter speed hypothesis"
+  },
+  "lightSpeedEmitterTip": "The speed of light is relative to its emitter.",
+  "@lightSpeedEmitterTip": {
+    "description": "Tooltip for Emitter speed hypothesis"
+  },
+  "toolSelect": "Select",
+  "@toolSelect": {
+    "description": "Select tool name"
+  },
+  "toolAdd": "Add",
+  "@toolAdd": {
+    "description": "Add tool name"
+  },
+  "drawTypeEvent": "Event",
+  "@drawTypeEvent": {
+    "description": "Event drawable type"
+  },
+  "drawTypeInstant": "Instant",
+  "@drawTypeInstant": {
+    "description": "Instant drawable type"
+  },
+  "drawTypeCone": "Light Cone",
+  "@drawTypeCone": {
+    "description": "Light cone drawable type"
+  },
+  "drawTypeClock": "Clock",
+  "@drawTypeClock": {
+    "description": "Clock drawable type"
+  },
+  "drawTypePerson": "Person",
+  "@drawTypePerson": {
+    "description": "Person drawable type"
+  },
+  "drawTypeTrain": "Train",
+  "@drawTypeTrain": {
+    "description": "Train drawable type"
+  },
+  "drawTypeBarn": "Barn",
+  "@drawTypeBarn": {
+    "description": "Barn drawable type"
+  },
+  "drawTypeFlag": "Flag",
+  "@drawTypeFlag": {
+    "description": "Flag drawable type"
+  },
+  "time": "Time",
+  "@time": {
+    "description": "Time slider label"
+  },
+  "velocity": "Velocity",
+  "@velocity": {
+    "description": "Velocity slider label"
+  },
+  "unsavedSceneTitle": "Unsaved Scene",
+  "@unsavedSceneTitle": {
+    "description": "Title of unsaved changes dialog"
+  },
+  "unsavedSceneBody1": "The drawing has been modified.",
+  "@unsavedSceneBody1": {
+    "description": "First line of unsaved changes dialog"
+  },
+  "unsavedSceneBody2": "Would you like to save it?",
+  "@unsavedSceneBody2": {
+    "description": "Second line of unsaved changes dialog"
+  },
+  "confirmPropertiesTitle": "Confirm Properties Before Saving",
+  "@confirmPropertiesTitle": {
+    "description": "Title of save properties confirmation dialog"
+  },
+  "tutorialCompletedTitle": "Tutorial Completed!",
+  "@tutorialCompletedTitle": {
+    "description": "Title displayed when tutorial completes"
+  },
+  "tutorialCompletedMessage": "Great job! You have completed all steps in {title}. You can now continue playing with the scene and save your result.",
+  "@tutorialCompletedMessage": {
+    "description": "Message shown when tutorial completes",
+    "placeholders": {
+      "title": {
+        "type": "String",
+        "example": "1. Introduction"
+      }
+    }
+  },
+  "tutorialFinishKeepScene": "Finish (Keep Scene)",
+  "@tutorialFinishKeepScene": {
+    "description": "Button to finish tutorial while keeping current scene"
+  },
+  "tutorialDoItForMe": "Do it for me",
+  "@tutorialDoItForMe": {
+    "description": "Button to auto-complete current tutorial step"
+  },
+  "tutorialBack": "Back",
+  "@tutorialBack": {
+    "description": "Button to go back in tutorial"
+  },
+  "tutorialContinue": "Continue",
+  "@tutorialContinue": {
+    "description": "Button to advance to next tutorial step"
+  },
+  "tutorialFinish": "Finish",
+  "@tutorialFinish": {
+    "description": "Button to finish final tutorial step"
+  },
+  "tutorialStepCounter": "Step {current} of {total}",
+  "@tutorialStepCounter": {
+    "description": "Step progress indicator in tutorial card",
+    "placeholders": {
+      "current": {
+        "type": "int",
+        "example": "1"
+      },
+      "total": {
+        "type": "int",
+        "example": "8"
+      }
+    }
+  },
+  "helpDocumentationAndGuides": "Documentation & Guides",
+  "@helpDocumentationAndGuides": {
+    "description": "Header in help sidebar"
+  },
+  "helpUserGuides": "User Guides",
+  "@helpUserGuides": {
+    "description": "Section header for user guides in help"
+  },
+  "helpAbout": "About Spacetime",
+  "@helpAbout": {
+    "description": "Help drawer item for About page"
+  },
+  "helpPrivacy": "Privacy Policy",
+  "@helpPrivacy": {
+    "description": "Help drawer item for Privacy Policy"
+  },
+  "helpTerms": "Terms of Service",
+  "@helpTerms": {
+    "description": "Help drawer item for Terms of Service"
+  },
+  "helpOverview": "Overview",
+  "@helpOverview": {
+    "description": "Help drawer item for Overview page"
+  },
+  "helpControls": "Toolbar and Sliders",
+  "@helpControls": {
+    "description": "Help drawer item for Toolbar and Sliders"
+  },
+  "helpObjects": "Spacetime Objects",
+  "@helpObjects": {
+    "description": "Help drawer item for Spacetime Objects"
+  },
+  "helpTransformations": "Relativistic Transformations",
+  "@helpTransformations": {
+    "description": "Help drawer item for Relativistic Transformations"
+  },
+  "helpFiles": "File Management",
+  "@helpFiles": {
+    "description": "Help drawer item for File Management"
+  },
+  "helpReadme": "Readme",
+  "@helpReadme": {
+    "description": "Help drawer item for Readme"
+  },
+  "helpDeveloperGuide": "Developer Guide",
+  "@helpDeveloperGuide": {
+    "description": "Help drawer item for Developer Guide"
+  },
+  "helpProjectPlan": "Project Plan",
+  "@helpProjectPlan": {
+    "description": "Help drawer item for Project Plan"
+  },
+  "themeMode": "Theme",
+  "@themeMode": {
+    "description": "Settings label for theme selection"
+  },
+  "systemTheme": "System Theme",
+  "@systemTheme": {
+    "description": "Option for system theme"
+  },
+  "lightTheme": "Light Theme",
+  "@lightTheme": {
+    "description": "Option for light theme"
+  },
+  "darkTheme": "Dark Theme",
+  "@darkTheme": {
+    "description": "Option for dark theme"
+  },
+  "semanticsLanguageSwitcher": "Select application language",
+  "@semanticsLanguageSwitcher": {
+    "description": "Accessibility label for language switcher popup button"
+  },
+  "semanticsDrawerOpen": "Open navigation drawer",
+  "@semanticsDrawerOpen": {
+    "description": "Accessibility label for open drawer button"
+  },
+  "semanticsDrawerClose": "Close navigation drawer",
+  "@semanticsDrawerClose": {
+    "description": "Accessibility label for close drawer button"
+  },
+  "semanticsTimeSlider": "Adjust simulation time",
+  "@semanticsTimeSlider": {
+    "description": "Accessibility label for time slider"
+  },
+  "semanticsVelocitySlider": "Adjust observer reference frame velocity",
+  "@semanticsVelocitySlider": {
+    "description": "Accessibility label for velocity slider"
+  },
+  "semanticsSpacetimeCanvas": "Spacetime Minkowski diagram canvas",
+  "@semanticsSpacetimeCanvas": {
+    "description": "Accessibility label for top spacetime canvas"
+  },
+  "semanticsObserverCanvas": "Observer side view canvas",
+  "@semanticsObserverCanvas": {
+    "description": "Accessibility label for bottom observer canvas"
+  }
+}

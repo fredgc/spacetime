@@ -24,8 +24,7 @@
   <link rel="stylesheet" href="../css/doc_style.css" />
 </head>
 <body>
-<h1 id="spacetime-project-plan-v6.1.40">Spacetime Project Plan
-(v6.1.4+0)</h1>
+<h1 id="spacetime-project-plan">Spacetime Project Plan</h1>
 <p>This document outlines the strategic roadmap, architecture goals, and
 long-term milestones for the <strong>Spacetime</strong> Flutter
 project.</p>
@@ -91,6 +90,75 @@ Publishing Infrastructure</h2>
 (<code>make stage</code>, <code>make release</code>).</p></li>
 <li><p>Document cross-platform build and release procedures for both web
 hosting and mobile app stores.</p></li>
+</ul>
+<hr />
+<h2 id="visual-accessibility-verification-checklist">6. Visual &amp;
+Accessibility Verification Checklist</h2>
+<p>Perform these manual checks across supported locales
+(<code>en</code>, <code>en_GB</code>, <code>de</code>, <code>es</code>,
+<code>fr</code>, <code>ja</code>, <code>lt</code>, <code>pt</code>,
+<code>zh</code>) on mobile and desktop viewports:</p>
+<ul>
+<li><p><strong>Minkowski Canvas &amp; Diagram</strong>:</p>
+<ul class="task-list">
+<li><p><label><input type="checkbox" />Verify worldlines, grids, and
+light cones render crisply in both light and dark
+themes.</label></p></li>
+<li><p><label><input type="checkbox" />Verify hyperbolic calibration
+curves and grid coordinate labels do not overlap or clip when zooming or
+boosting velocity.</label></p></li>
+</ul></li>
+<li><p><strong>Lorentz Boost &amp; Motion Controls</strong>:</p>
+<ul class="task-list">
+<li><p><label><input type="checkbox" />Drag velocity slider
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>v</mi><annotation encoding="application/x-tex">v</annotation></semantics></math>)
+from
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>−</mi><mn>0.99</mn></mrow><annotation encoding="application/x-tex">-0.99</annotation></semantics></math>
+to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>+</mi><mn>0.99</mn></mrow><annotation encoding="application/x-tex">+0.99</annotation></semantics></math>
+and verify grid shear and clock rotations animate smoothly without
+visual jitter.</label></p></li>
+<li><p><label><input type="checkbox" />Drag time slider
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>)
+and verify train positions, emitter pulses, and moving clock faces
+remain aligned with worldlines.</label></p></li>
+</ul></li>
+<li><p><strong>Interactive Tutorials (Tutorials 01–07)</strong>:</p>
+<ul class="task-list">
+<li><p><label><input type="checkbox" />In Tutorial 02, verify localized
+station names and drinks appear correctly for the active
+language:</label></p>
+<ul>
+<li><p><code>en</code> (US): Grand Central Station, coffee</p></li>
+<li><p><code>en_GB</code> (UK): Trafalgar Station, tea</p></li>
+<li><p><code>de</code>: Berliner Hauptbahnhof, Bier</p></li>
+<li><p><code>es</code>: Estación de Atocha, café</p></li>
+<li><p><code>fr</code>: gare de Lyon, café</p></li>
+<li><p><code>ja</code>:東京駅,お茶</p></li>
+<li><p><code>lt</code>: Vilniaus geležinkelio
+stotis,šaltibarščiai</p></li>
+<li><p><code>pt</code>: Estação Central, café</p></li>
+<li><p><code>zh</code>:北京站,茶</p></li>
+</ul></li>
+<li><p><label><input type="checkbox" />Verify step navigation buttons
+(Next, Previous, Reset) do not truncate or wrap awkwardly in German,
+French, or Lithuanian.</label></p></li>
+</ul></li>
+<li><p><strong>Language Menu &amp; Navigation</strong>:</p>
+<ul class="task-list">
+<li><p><label><input type="checkbox" />Switch to each language from the
+top bar language menu and confirm all UI labels, dialog headers, and
+tooltips update instantly.</label></p></li>
+<li><p><label><input type="checkbox" />Switch to <strong>Auto</strong>
+and verify the app reverts cleanly to the system default
+locale.</label></p></li>
+</ul></li>
+<li><p><strong>Screen Reader &amp; Focus</strong>:</p>
+<ul class="task-list">
+<li><label><input type="checkbox" />Enable TalkBack (Android) or
+VoiceOver (iOS/macOS) and navigate through the top bar controls,
+velocity slider, and tutorial step cards.</label></li>
+</ul></li>
 </ul>
 </body>
 </html>

@@ -38,8 +38,8 @@ round trip takes $0.4 + 0.4 = 0.8$ units of time.
 ## 3. Switch to Ben's Moving Frame
 
 Now let's view these exact same events from the reference frame of **Ben**, an
-observer moving at velocity $v = -0.60$ (where the Lorentz factor is
-$\gamma = 1.25$).
+observer moving at velocity $v = -0.60$ (where the Lorentz factor is $\gamma =
+1.25$).
 
 Set the **Velocity** slider to $v = -0.60$.
 
@@ -71,23 +71,25 @@ Observer View:
 
 * **Alice's clock** at **P3** still reads $t = 0.80$!
 
-Ben concludes that Alice's moving clock is running slow by a factor of
-$\gamma = 1.25$. Click **Continue** to see why this doesn't cause a
-contradiction.
+Ben concludes that Alice's moving clock is running slow by a factor of $\gamma
+= 1.25$. Click **Continue** to see why this doesn't cause a contradiction.
 
 > ok
 
 ## 6. Marking Instants in Ben's Frame
 
-By symmetry, shouldn't Alice also see Ben's clock running slow? To resolve this
-paradox, we have added two horizontal **Instants** in Ben's reference frame:
+By symmetry, shouldn't Alice also see Ben's clock running slow? To resolve
+this paradox, we have added two horizontal **Instants** in Ben's reference
+frame:
 
-* **I1** (red) at $t = 0.0$ (passing through **P1**, when both clocks read $0$).
+* **I1** (red) at $t = 0.0$ (passing through **P1**, when both clocks read
+  $0$).
 
 * **I2** (purple) at $t = 1.0$ (passing through **P3**, when Ben's clock reads
   $1.00$ and Alice's reads $0.80$).
 
-Now move the **Velocity** slider back to $v = 0.00$ to return to Alice's frame!
+Now move the **Velocity** slider back to $v = 0.00$ to return to Alice's
+frame!
 
 > object: instant(name="I1", x=0.0, t=0.0, v=-0.6, color=red)
 > object: instant(name="I2", x=0.0, t=0.8, v=-0.6, color=purple)
@@ -99,9 +101,9 @@ In Alice's reference frame ($v = 0.00$), the lines **I1** and **I2** are no
 longer horizontal!
 
 Events along **I2** do *not* happen at the same time for Alice. At $t = 0.80$
-in Alice's frame (when Alice reaches **P3**), Ben has not yet reached **I2**—in
-Alice's frame, Ben's clock at $t = 0.80$ only reads $0.64$! Both observers see
-the other's clock running slow because they measure "at the same time" along
-different tilted planes of simultaneity.
+in Alice's frame (when Alice reaches **P3**), Ben has not yet reached
+**I2**—in Alice's frame, Ben's clock at $t = 0.80$ only reads $0.64$! Both
+observers see the other's clock running slow because they measure "at the same
+time" along different tilted planes of simultaneity.
 
 > ok

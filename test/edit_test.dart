@@ -66,7 +66,7 @@ abstract class EditTest {
   }
 
   // Run the tests, with a possible extra check to be performed at the end.
-  void tests({Function(AppTester)? check}) {
+  void tests({Function(AppTester)? check, dynamic tags}) {
     oneTest("unsaved", (app, edits) async {
       expect(app.manager.unsaved.value, false);
       int initialUnsavedCount = app.scene.unsavedCount;
@@ -82,7 +82,7 @@ abstract class EditTest {
       expect(app.manager.unsaved.value, false);
       expect(unsavedCountBeforeSave + 1, app.scene.unsavedCount);
       if (check != null) await check(app);
-    });
+    }, tags: tags);
 
     oneTest("one undo", (app, edits) async {
       expect(app.manager.unsaved.value, false);
@@ -97,7 +97,7 @@ abstract class EditTest {
       } else {
         await checkExpected(app, edits, edits.length);
       }
-    });
+    }, tags: tags);
     oneTest("undo-redo-undo", (app, edits) async {
       int cut1 = 0;
       int cut2 = 0;
@@ -170,7 +170,7 @@ abstract class EditTest {
         print("cut3 = $cut3, undo2=$undoCount2");
         rethrow;
       }
-    });
+    }, tags: tags);
   }
 
   Future<AppTester> setup(WidgetTester tester) async {
@@ -184,14 +184,15 @@ abstract class EditTest {
 
   void oneTest(
     String testName,
-    Future<void> Function(AppTester, List<OneEdit>) doTest,
-  ) {
+    Future<void> Function(AppTester, List<OneEdit>) doTest, {
+    dynamic tags,
+  }) {
     testWidgets('$name - $testName, $seed', (tester) async {
       final app = await setup(tester);
       List<OneEdit> edits = makeList(app);
       await doTest(app, edits);
       await app.teardown();
-    });
+    }, tags: tags);
   }
 }
 
@@ -377,8 +378,11 @@ void main() {
       ].map((edit) => [SelectSide(edit), edit]).expand((l) => l).toList(),
     ).tests();
 
-    for (int i = 0; i < 50; i++) {
+    for (int i = 0; i < 2; i++) {
       RandomEditArray(seeder.seed).tests();
+    }
+    for (int i = 0; i < 48; i++) {
+      RandomEditArray(seeder.seed).tests(tags: 'stress');
     }
   });
 }

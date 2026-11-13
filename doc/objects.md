@@ -20,11 +20,11 @@ A **Light Cone** represents the path of light emitted from a single event.
 * **In Spacetime Diagram**: Drawn as a V-shape extending upward and outward at
   45-degree angles (representing the speed of light $c = 1.0$).
 
-* **In Observer View**: Appears as expanding wavefronts moving outward from the
-  emission point.
+* **In Observer View**: Appears as expanding wavefronts moving outward from
+  the emission point.
 
 If you switch from the Lorentz view to the emitter or ether view, then the
-light cone might not be at a 45-degree angle — the speed might not be 1.0 in the
+light cone might not be at a 45-degree angle—the speed might not be 1.0 in the
 current observer's reference frame.
 
 ## 3. Instants (Planes of Simultaneity)
@@ -35,7 +35,8 @@ be at the same time.
 * **In Spacetime Diagram**: Drawn as a tilted line representing the observer's
   plane of simultaneity.
 
-* **In Observer View**: Represents the spatial slice shown at the selected time.
+* **In Observer View**: Represents the spatial slice shown at the selected
+  time.
 
 If you switch from the Lorentz view to the emitter or ether view, then an
 instant is a horizontal line in the main view.

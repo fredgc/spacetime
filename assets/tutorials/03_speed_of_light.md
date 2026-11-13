@@ -8,12 +8,12 @@ consequence of a constant speed of light.
 
 Let's start in the reference frame of a train moving at $v = 0.25$.
 
-We ride along inside the train ($v = 0.25$). The purple train spans from
-$x = -0.25$ to $x = 0.25$ (rest length $0.50$), centered at $x = 0.0$.
+We ride along inside the train ($v = 0.25$). The purple train spans from $x =
+-0.25$ to $x = 0.25$ (rest length $0.50$), centered at $x = 0.0$.
 
 Switch to **Add**, choose **Light Cone**, and click in the lower Observer View
-(side view) at the center of the train $(x = 0.0, z = 0.15)$ to emit a flash of
-light inside the train (or click **Do it for me**).
+(side view) at the center of the train $(x = 0.0, z = 0.15)$ to emit a flash
+of light inside the train (or click **Do it for me**).
 
 > reset
 > setup: v=0.25, t=0.0, mode=lorentz, tool=add, type=cone
@@ -25,8 +25,8 @@ light inside the train (or click **Do it for me**).
 Advance the **Time** slider to $t = 0.25$.
 
 In the train's reference frame, light expands outward at speed $c = 1$ in both
-directions. The back and front of the train are both $0.25$ units away from the
-center.
+directions. The back and front of the train are both $0.25$ units away from
+the center.
 
 Look at the Observer View below: the two flashes hit both ends of the train at
 the exact same instant ($t = 0.25$)!
@@ -35,8 +35,8 @@ the exact same instant ($t = 0.25$)!
 
 ## 3. Switch to the Ground Frame
 
-Now let's view this scene from the ground. Move the **Velocity** slider to
-$v = 0.00$ and reset the **Time** slider to $t = 0.00$.
+Now let's view this scene from the ground. Move the **Velocity** slider to $v
+= 0.00$ and reset the **Time** slider to $t = 0.00$.
 
 Notice that under special relativity (**Use Lorentz**), light still travels at
 speed $c = 1$ ($45^\circ$ slopes) even though the train is moving!
@@ -69,9 +69,9 @@ click **Do it for me**).
 
 Now advance the **Time** slider forward to $t = 0.32$.
 
-Because the front of the train was moving away from the light flash, the forward
-beam took longer to catch up, finally striking the front of the train at
-$t \approx 0.32$ (at $x \approx 0.32$).
+Because the front of the train was moving away from the light flash, the
+forward beam took longer to catch up, finally striking the front of the train
+at $t \approx 0.32$ (at $x \approx 0.32$).
 
 > t = 0.32
 
@@ -102,9 +102,8 @@ train's rest frame.
 
 Set the **Time** slider to $t = 0.25$.
 
-Look at the spacetime diagram and the Observer View:
-In the train's frame ($v = 0.25$), both **B** and **F** happen at the exact same
-time $t = 0.25$!
+Look at the spacetime diagram and the Observer View: In the train's frame ($v
+= 0.25$), both **B** and **F** happen at the exact same time $t = 0.25$!
 
 Try toggling **Velocity** between $v = 0.25$ and $v = 0.00$. When you switch
 reference frames, the line of simultaneity tilts:
@@ -122,8 +121,8 @@ If light has the same speed in all reference frames under the Lorentz
 transformation, then whether two separated events happen at the "same time"
 depends on the observer!
 
-Absolute simultaneity does not exist. Observers in relative motion will disagree
-on the time order of distant events.
+Absolute simultaneity does not exist. Observers in relative motion will
+disagree on the time order of distant events.
 
 Click **Continue** to complete the tutorial.
 

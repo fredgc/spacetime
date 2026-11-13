@@ -25,9 +25,7 @@ else
   ~/setup/setup-ssh-jeeves.sh --no-remember spacetime
 fi
 
-chrome-hot-key -n personal -w $workspace -g 1700x1000+0+50 9 "http://localhost:$FLUTTER_PORT"
-
-# chrome-hot-key -n personal -w $workspace -g +0+26 5 "https://flutter.dev/docs/get-started/codelab"
+chrome-hot-key -n personal -w $workspace -g 1200x1000+0+50 9 "http://localhost:$FLUTTER_PORT"
 
 chrome-hot-key -n personal -w $workspace -g 980x1010-1+30 0 \
   "https://console.firebase.google.com/u/0/project/fredgc-spacetime/overview"

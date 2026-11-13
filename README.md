@@ -1,4 +1,4 @@
-# Spacetime Drawing Tool (v6.1.4+0)
+# Spacetime Drawing Tool
 
 An interactive, educational drawing and animation tool for visualizing special
 relativity in 1 time ($t$) and 2 space ($x, z$) dimensions. It helps students,
@@ -14,53 +14,50 @@ teachers, and enthusiasts build intuition around relativistic concepts.
 
 Comprehensive documentation is available in the `doc/` directory:
 
-* [doc/about.md](doc/about.md): Project origins, author attribution, and
+* [doc/about.md](doc/about.md) : Project origins, author attribution, and
   version history.
 
-* [doc/overview.md](doc/overview.md): Mathematical and physical principles of
+* [doc/overview.md](doc/overview.md) : Mathematical and physical principles of
   Minkowski spacetime diagrams.
 
-* [doc/controls.md](doc/controls.md): Guide to the toolbar, velocity sliders,
+* [doc/controls.md](doc/controls.md) : Guide to the toolbar, velocity sliders,
   playback controls, and gestures.
 
-* [doc/objects.md](doc/objects.md): Spacetime entities including events,
+* [doc/objects.md](doc/objects.md) : Spacetime entities including events,
   light cones, instants, and persistent locations.
 
-* [doc/transformations.md](doc/transformations.md): Comparative physics models
-  (Lorentz Relativity, Ether, Emitter frame).
+* [doc/transformations.md](doc/transformations.md) : Comparative physics
+  models (Lorentz Relativity, Ether, Emitter frame).
 
-* [doc/files.md](doc/files.md): Saving, loading, JSON schema, and Google Drive
-  synchronization.
+* [doc/files.md](doc/files.md) : Saving, loading, JSON schema, and Google
+  Drive synchronization.
 
-* [doc/privacy.md](doc/privacy.md): Application privacy policy and local
+* [doc/privacy.md](doc/privacy.md) : Application privacy policy and local
   storage disclosure.
 
-* [doc/terms.md](doc/terms.md): Terms of service.
+* [doc/terms.md](doc/terms.md) : Terms of service.
 
 ---
 
 ## Core Features
 
-* **Spacetime Diagram Canvas**:
-  Draw worldlines of physical entities across space and time. Scale, pan, and
-  zoom dynamically.
+* **Spacetime Diagram Canvas**: Draw worldlines of physical entities across
+  space and time. Scale, pan, and zoom dynamically.
 
-* **Observer View**:
-  Split-screen real-time simulation displaying what an observer sees at the
-  selected coordinate time, illustrating length contraction, time dilation,
-  and the relativity of simultaneity.
+* **Observer View**: Split-screen real-time simulation displaying what an
+  observer sees at the selected coordinate time, illustrating length
+  contraction, time dilation, and the relativity of simultaneity.
 
-* **Interactive Tutorials**:
-  Guided interactive lessons with UI highlight targets, automatic verification,
-  and step-by-step instructions.
+* **Interactive Tutorials**: Guided interactive lessons with UI highlight
+  targets, automatic verification, and step-by-step instructions.
 
-* **Comparative Hypotheses**:
-  Examine coordinate frames under Lorentz relativity (constant speed of light),
-  Ether drift (preferred rest frame), or Emitter ballistics.
+* **Comparative Hypotheses**: Examine coordinate frames under Lorentz
+  relativity (constant speed of light), Ether drift (preferred rest frame), or
+  Emitter ballistics.
 
-* **Save, Load, and Cloud Sync**:
-  Store scenes locally in JSON format (fully backward-compatible with legacy
-  editions) or sync across devices using Google Drive.
+* **Save, Load, and Cloud Sync**: Store scenes locally in JSON format (fully
+  backward-compatible with legacy editions) or sync across devices using
+  Google Drive.
 
 ---
 
@@ -68,10 +65,11 @@ Comprehensive documentation is available in the `doc/` directory:
 
 ### Prerequisites
 
-* [Flutter SDK](https://docs.flutter.dev/get-started/install)
-  (3.24+ recommended)
+* [Flutter SDK](https://docs.flutter.dev/get-started/install) (3.24+
+  recommended)
 
-* `make` and [Pandoc](https://pandoc.org/) (for compiling documentation assets)
+* `make` and [Pandoc](https://pandoc.org/) (for compiling documentation
+  assets)
 
 ### Forking and Cloning
 
@@ -131,4 +129,4 @@ make build_all
 ## License
 
 This project is open source and licensed under the
-[Apache 2.0 License](LICENSE).
+[Apache 2.0 License](LICENSE) .

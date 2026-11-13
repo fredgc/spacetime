@@ -189,7 +189,7 @@ class UploadRowState extends State<UploadRow> {
   @override
   Widget build(BuildContext context) {
     if (widget.load) {
-      return Row(
+      return Wrap(
         children: [
           ElevatedButton(
             key: const ValueKey('upload-button'),
@@ -212,9 +212,13 @@ class UploadRowState extends State<UploadRow> {
         ],
       );
     } else {
-      return Row(
+      return Wrap(
+        crossAxisAlignment: WrapCrossAlignment.center,
+        spacing: 8,
+        runSpacing: 4,
         children: [
-          Expanded(
+          SizedBox(
+            width: 140,
             child: TextField(
               controller: _controller,
               key: const ValueKey('download-filename'),

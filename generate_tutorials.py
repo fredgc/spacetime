@@ -33,15 +33,49 @@ def escape_dart_string(s):
 
 
 def scan_tutorials(directory):
-    """Returns sorted list of (file_path, title) tuples."""
+    """Returns sorted list of (file_path, title, {locale: localized_title}) tuples."""
     if not os.path.isdir(directory):
         return []
-    md_files = sorted(glob.glob(os.path.join(directory, "*.md")))
+    md_files = glob.glob(os.path.join(directory, "*.md"))
+    base_files = {}
+    localized_files = {}
+
+    for f in md_files:
+        norm_path = os.path.normpath(f)
+        basename = os.path.basename(norm_path)
+        name_no_ext, _ = os.path.splitext(basename)
+        parts = name_no_ext.split("_")
+        matched = False
+
+        # Check for 2-part locale suffix (e.g. en_gb, zh_cn)
+        if len(parts) >= 3 and len(parts[-2]) == 2 and len(parts[-1]) in (2, 4):
+            candidate_base = "_".join(parts[:-2]) + ".md"
+            candidate_base_path = os.path.join(os.path.dirname(norm_path), candidate_base)
+            if os.path.exists(candidate_base_path):
+                loc_key = f"{parts[-2]}_{parts[-1]}".lower()
+                localized_files[(candidate_base_path, loc_key)] = norm_path
+                matched = True
+
+        # Check for 1-part locale suffix (e.g. de, es, fr, ja, lt, pt, zh)
+        if not matched and len(parts) >= 2 and len(parts[-1]) in (2, 3):
+            candidate_base = "_".join(parts[:-1]) + ".md"
+            candidate_base_path = os.path.join(os.path.dirname(norm_path), candidate_base)
+            if os.path.exists(candidate_base_path):
+                loc_key = parts[-1].lower()
+                localized_files[(candidate_base_path, loc_key)] = norm_path
+                matched = True
+
+        if not matched:
+            base_files[norm_path] = extract_title(norm_path)
+
     results = []
-    for path in md_files:
-        norm_path = os.path.normpath(path)
-        title = extract_title(norm_path)
-        results.append((norm_path, title))
+    for base_path in sorted(base_files.keys()):
+        base_title = base_files[base_path]
+        loc_map = {}
+        for (bp, loc), loc_path in localized_files.items():
+            if bp == base_path:
+                loc_map[loc] = extract_title(loc_path)
+        results.append((base_path, base_title, loc_map))
     return results
 
 
@@ -62,20 +96,34 @@ def main():
     lines.append("import 'settings.dart';")
     lines.append("")
     lines.append("final List<AssetHolder> kBuiltInTutorials = [")
-    for path, title in built_in:
+    for path, title, loc_map in built_in:
         rel_path = os.path.relpath(path, root_dir)
         lines.append("  AssetHolder(")
         lines.append(f'    "{escape_dart_string(rel_path)}",')
         lines.append(f'    title: "{escape_dart_string(title)}",')
+        if loc_map:
+            lines.append("    localizedTitles: const {")
+            for loc, loc_title in sorted(loc_map.items()):
+                lines.append(
+                    f'      "{loc}": "{escape_dart_string(loc_title)}",'
+                )
+            lines.append("    },")
         lines.append("  ),")
     lines.append("];")
     lines.append("")
     lines.append("final List<AssetHolder> kDevTutorials = [")
-    for path, title in dev_built_in:
+    for path, title, loc_map in dev_built_in:
         rel_path = os.path.relpath(path, root_dir)
         lines.append("  AssetHolder(")
         lines.append(f'    "{escape_dart_string(rel_path)}",')
         lines.append(f'    title: "{escape_dart_string(title)}",')
+        if loc_map:
+            lines.append("    localizedTitles: const {")
+            for loc, loc_title in sorted(loc_map.items()):
+                lines.append(
+                    f'      "{loc}": "{escape_dart_string(loc_title)}",'
+                )
+            lines.append("    },")
         lines.append("  ),")
     lines.append("];")
     lines.append("")

@@ -226,6 +226,7 @@ void main() {
         2,
       );
       scene.data.drawables.addAll([train, flag, person]);
+      scene.updateScene();
 
       SceneView.velocitySticky.value = false;
       scene.updateVelocitySticky();

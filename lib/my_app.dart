@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'file_manager.dart';
 import 'help.dart';
 import 'keyboard_detector.dart';
+import 'l10n/l10n_extension.dart';
 import 'printer.dart';
 import 'scene.dart';
 import 'settings.dart';
@@ -37,11 +38,11 @@ class MyApp {
   }
 
   // Use this factory method for normal runtime, not for unit tests.
-  factory MyApp.fullApp() {
+  factory MyApp.fullApp({String url = "/scene"}) {
     var settings = Settings();
     var manager = FileManager(settings);
     //XXX use class.routeName instead?
-    return MyApp(settings, manager, "/scene");
+    return MyApp(settings, manager, url);
   }
 
   // This kicks off app initialization for both the full app and for tests.
@@ -65,21 +66,48 @@ class MyApp {
 
   Widget build() {
     Log.init.log("CYAN: building material app for $this");
-    return MaterialApp.router(
-      title: "Spacetime Drawing Tool",
-      theme: settings.theme.themeData,
-      routerConfig: router,
-      debugShowCheckedModeBanner: false,
-      builder: (context, child) {
-        final mediaQueryData = MediaQuery.of(context);
-        final browserFontSize = getBrowserRootFontSize();
-        final scaleFactor = browserFontSize / 16.0;
-        final textScaler = scaleFactor != 1.0
-            ? TextScaler.linear(scaleFactor)
-            : mediaQueryData.textScaler;
-        return MediaQuery(
-          data: mediaQueryData.copyWith(textScaler: textScaler),
-          child: child!,
+    return ValueListenableBuilder<Locale?>(
+      valueListenable: LocaleController.currentLocale,
+      builder: (context, locale, child) {
+        return MaterialApp.router(
+          title: "Spacetime Drawing Tool",
+          onGenerateTitle: (context) => context.l10n.appTitle,
+          locale: locale,
+          localeResolutionCallback: (deviceLocale, supportedLocales) {
+            if (deviceLocale != null) {
+              for (final supported in supportedLocales) {
+                if (supported.languageCode == deviceLocale.languageCode &&
+                    (deviceLocale.countryCode == null ||
+                        supported.countryCode == null ||
+                        supported.countryCode == deviceLocale.countryCode)) {
+                  return supported;
+                }
+              }
+              for (final supported in supportedLocales) {
+                if (supported.languageCode == deviceLocale.languageCode) {
+                  return supported;
+                }
+              }
+            }
+            return const Locale('en');
+          },
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          theme: settings.theme.themeData,
+          routerConfig: router,
+          debugShowCheckedModeBanner: false,
+          builder: (context, child) {
+            final mediaQueryData = MediaQuery.of(context);
+            final browserFontSize = getBrowserRootFontSize();
+            final scaleFactor = browserFontSize / 16.0;
+            final textScaler = scaleFactor != 1.0
+                ? TextScaler.linear(scaleFactor)
+                : mediaQueryData.textScaler;
+            return MediaQuery(
+              data: mediaQueryData.copyWith(textScaler: textScaler),
+              child: child!,
+            );
+          },
         );
       },
     );

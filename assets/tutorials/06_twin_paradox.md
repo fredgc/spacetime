@@ -1,7 +1,7 @@
 # 6. The Twin Paradox
 
-Follow a pair of twins separating at relativistic speed and returning to see why
-the traveling twin comes back younger.
+Follow a pair of twins separating at relativistic speed and returning to see
+why the traveling twin comes back younger.
 
 ## 1. Twins Separate at e1
 
@@ -57,8 +57,8 @@ Now move the **Time** slider forward to $t = 1.0$ to view the reunion event
 
 Look at the clock readings in the lower Observer View at $t = 1.0$:
 
-* **Carl's clock** reads $t = 0.80$ ($0.40$ outbound on Bob's clock plus $0.40$
-  inbound on Carl's clock).
+* **Carl's clock** reads $t = 0.80$ ($0.40$ outbound on Bob's clock plus
+  $0.40$ inbound on Carl's clock).
 
 * **Alice's clock** reads $t = 1.00$!
 
@@ -68,9 +68,9 @@ When the traveling twin returns, he is younger than Alice.
 
 ## 6. Why Isn't It Symmetric?
 
-Did Bob's or Carl's clock ever change speed? No—each ticked steadily in its own
-inertial frame. Switch to Bob's reference frame by setting the **Velocity**
-slider to $v = 0.60$.
+Did Bob's or Carl's clock ever change speed? No—each ticked steadily in its
+own inertial frame. Switch to Bob's reference frame by setting the
+**Velocity** slider to $v = 0.60$.
 
 > v = 0.6
 
@@ -80,8 +80,8 @@ In Bob's frame ($v = 0.60$), Alice's clock *does* tick slower than Bob's.
 However, Carl is moving even faster relative to Bob ($v_{\text{rel}} \approx
 -0.88$), so Bob sees Carl's clock ticking much slower than Alice's!
 
-Furthermore, in Bob's frame the return leg (**e2** to **e3**) takes much longer
-than the outbound leg (**e1** to **e2**), giving Alice's clock plenty of time
-to overtake Carl's clock before they meet at **e3**.
+Furthermore, in Bob's frame the return leg (**e2** to **e3**) takes much
+longer than the outbound leg (**e1** to **e2**), giving Alice's clock plenty
+of time to overtake Carl's clock before they meet at **e3**.
 
 > ok

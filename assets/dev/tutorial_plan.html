@@ -21,8 +21,9 @@
       vertical-align: middle;
     }
     /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
     pre > code.sourceCode { white-space: pre; position: relative; }
-    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
     pre > code.sourceCode > span:empty { height: 1.2em; }
     .sourceCode { overflow: visible; }
     code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -138,10 +139,10 @@ automatically sets both the <strong>highlight target</strong> and the
 class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; velocity = 0.25</span></span></code></pre></div>
 <p>This single line instructs the engine to:</p>
 <ol type="1">
-<li><strong>Highlight</strong> the observer velocity slider.</li>
-<li><strong>Wait for exit</strong>: trigger step completion when the
+<li><p><strong>Highlight</strong> the observer velocity slider.</p></li>
+<li><p><strong>Wait for exit</strong>: trigger step completion when the
 observer velocity reaches <code>0.25</code> within default
-tolerance.</li>
+tolerance.</p></li>
 </ol>
 <h3 id="built-in-directives-default-tolerances">Built-in Directives
 &amp; Default Tolerances</h3>
@@ -149,11 +150,11 @@ tolerance.</li>
 <li><p><code>&gt; v = 0.25</code> or <code>&gt; velocity = 0.25</code>:
 Highlights velocity slider; exits when observer velocity reaches target
 (default tolerance
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>±</mo><mn>0.02</mn></mrow><annotation encoding="application/x-tex">\pm 0.02</annotation></semantics></math>).</p></li>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>±</mi><mn>0.02</mn></mrow><annotation encoding="application/x-tex">\pm 0.02</annotation></semantics></math>).</p></li>
 <li><p><code>&gt; t = 2.0</code> or <code>&gt; time = 2.0</code>:
 Highlights time slider; exits when observer time reaches target (default
 tolerance
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>±</mo><mn>0.1</mn></mrow><annotation encoding="application/x-tex">\pm 0.1</annotation></semantics></math>).</p></li>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>±</mi><mn>0.1</mn></mrow><annotation encoding="application/x-tex">\pm 0.1</annotation></semantics></math>).</p></li>
 <li><p><code>&gt; mode = ether</code> or <code>&gt; ether</code>:
 Highlights light speed menu; exits when Ether mode is selected.</p></li>
 <li><p><code>&gt; lorentz</code>: Highlights light speed menu; exits
@@ -236,12 +237,14 @@ bundled into both the Web and Android builds.</p></li>
 <li><p>An asset manifest or registry lists available built-in
 tutorials:</p>
 <ul>
-<li><code>01_speed_of_light.md</code>: Light speed constancy across
-frames.</li>
-<li><code>02_time_dilation.md</code>: Moving clocks run slow.</li>
-<li><code>03_length_contraction.md</code>: Moving rulers contract.</li>
-<li><code>04_barn_pole_paradox.md</code>: Simultaneity and the barn-pole
-paradox.</li>
+<li><p><code>01_speed_of_light.md</code>: Light speed constancy across
+frames.</p></li>
+<li><p><code>02_time_dilation.md</code>: Moving clocks run
+slow.</p></li>
+<li><p><code>03_length_contraction.md</code>: Moving rulers
+contract.</p></li>
+<li><p><code>04_barn_pole_paradox.md</code>: Simultaneity and the
+barn-pole paradox.</p></li>
 </ul></li>
 <li><p>Users can open any built-in tutorial directly from the dedicated
 “Tutorials” section in the drawer or top menu bar without logging
@@ -282,10 +285,10 @@ support both scene JSON and tutorial Markdown documents:</p>
 <li><p><strong><code>FileKind</code> Enumeration</strong>: Add an
 explicit kind to <code>FileHolder</code>:</p>
 <ul>
-<li><code>FileKind.scene</code> (standard spacetime drawings,
-<code>.sp</code> / <code>.json</code>).</li>
-<li><code>FileKind.tutorial</code> (interactive tutorial lessons,
-<code>.md</code> / <code>.sptut</code>).</li>
+<li><p><code>FileKind.scene</code> (standard spacetime drawings,
+<code>.sp</code> / <code>.json</code>).</p></li>
+<li><p><code>FileKind.tutorial</code> (interactive tutorial lessons,
+<code>.md</code> / <code>.sptut</code>).</p></li>
 </ul></li>
 <li><p><strong><code>AssetHolder</code> Implementation</strong>: A
 concrete <code>FileHolder</code> that loads text assets via
@@ -293,22 +296,22 @@ concrete <code>FileHolder</code> that loads text assets via
 network or auth.</p></li>
 <li><p><strong>Drive &amp; Local File Compatibility</strong>:</p>
 <ul>
-<li><a href="lib/drive.dart"><code>DriveHolder</code></a> and <a
+<li><p><a href="lib/drive.dart"><code>DriveHolder</code></a> and <a
 href="lib/local_file.dart"><code>LocalFileHolder</code></a> already load
-and save arbitrary text strings.</li>
-<li>By associating <code>FileKind</code>, <code>FileManager</code> can
-filter file pickers to either drawings or tutorials.</li>
+and save arbitrary text strings.</p></li>
+<li><p>By associating <code>FileKind</code>, <code>FileManager</code>
+can filter file pickers to either drawings or tutorials.</p></li>
 </ul></li>
 <li><p><strong>Scene Stashing &amp; Session Safety</strong>:</p>
 <ul>
-<li>When launching a tutorial, <code>FileManager</code> checks if the
-current scene has unsaved changes.</li>
-<li>If clean (or after user saves), the active scene is stashed in
-memory.</li>
-<li>While the tutorial is active, the scene view operates in a tutorial
-sandbox.</li>
-<li>When the user exits or finishes the tutorial, the stashed user scene
-is restored cleanly.</li>
+<li><p>When launching a tutorial, <code>FileManager</code> checks if the
+current scene has unsaved changes.</p></li>
+<li><p>If clean (or after user saves), the active scene is stashed in
+memory.</p></li>
+<li><p>While the tutorial is active, the scene view operates in a
+tutorial sandbox.</p></li>
+<li><p>When the user exits or finishes the tutorial, the stashed user
+scene is restored cleanly.</p></li>
 </ul></li>
 </ol>
 <hr />
@@ -334,48 +337,49 @@ the interactive canvas or the sliders.</p>
 <ul>
 <li><p><strong>Card Positioning</strong>:</p>
 <ul>
-<li><strong>Desktop / Wide Layout</strong>: Docked in the upper right
+<li><p><strong>Desktop / Wide Layout</strong>: Docked in the upper right
 corner of the main workspace, floating over the canvas with subtle
 shadow. Can be dragged or collapsed by the user if it covers an area of
-interest.</li>
-<li><strong>Mobile / Narrow Layout</strong>: Compact panel pinned
+interest.</p></li>
+<li><p><strong>Mobile / Narrow Layout</strong>: Compact panel pinned
 between the main canvas and the sliders, with an expandable drawer for
-longer explanations.</li>
+longer explanations.</p></li>
 </ul></li>
 <li><p><strong>Header</strong>:</p>
 <ul>
-<li>Tutorial title and step badge (<code>Step 2 of 5</code>).</li>
-<li>Linear progress bar indicating completion percentage.</li>
-<li><strong>Reset Step Button</strong>: Reapplies the step’s initial
+<li><p>Tutorial title and step badge
+(<code>Step 2 of 5</code>).</p></li>
+<li><p>Linear progress bar indicating completion percentage.</p></li>
+<li><p><strong>Reset Step Button</strong>: Reapplies the step’s initial
 baseline setup if the user gets confused or makes unintentional scene
-changes.</li>
-<li><strong>Close Button
+changes.</p></li>
+<li><p><strong>Close Button
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math>)</strong>:
 Prompts confirmation to exit tutorial mode and returns to normal
-drawing.</li>
+drawing.</p></li>
 </ul></li>
 <li><p><strong>Body Content</strong>:</p>
 <ul>
-<li>Formatted Markdown text (rendered with Flutter <code>markdown</code>
-widget).</li>
-<li>Supports bullet points, emphasis, and math symbols.</li>
+<li><p>Formatted Markdown text (rendered with Flutter
+<code>markdown</code> widget).</p></li>
+<li><p>Supports bullet points, emphasis, and math symbols.</p></li>
 </ul></li>
 <li><p><strong>Live Feedback Status</strong>:</p>
 <ul>
-<li>Shows target vs current state in real time: e.g.,
-<code>Target: v = 0.25 | Current: 0.10</code>.</li>
-<li>When criteria are met, the badge flashes green:
-<code>✓ Target reached!</code>.</li>
-<li>A brief delay (400–600ms) gives the user satisfying visual feedback
-before advancing to the next step.</li>
+<li><p>Shows target vs current state in real time: e.g.,
+<code>Target: v = 0.25 | Current: 0.10</code>.</p></li>
+<li><p>When criteria are met, the badge flashes green:
+<code>✓Target reached!</code>.</p></li>
+<li><p>A brief delay (400–600ms) gives the user satisfying visual
+feedback before advancing to the next step.</p></li>
 </ul></li>
 <li><p><strong>Navigation</strong>:</p>
 <ul>
-<li><code>&lt; Back</code>: Returns to the previous step and restores
-its baseline setup.</li>
-<li><code>Continue &gt;</code>: Active for informational steps
+<li><p><code>&lt; Back</code>: Returns to the previous step and restores
+its baseline setup.</p></li>
+<li><p><code>Continue &gt;</code>: Active for informational steps
 (<code>&gt; ok</code>), or allows manual advance if the user wants to
-skip.</li>
+skip.</p></li>
 </ul></li>
 </ul>
 <h3 id="ui-highlighting-system">UI Highlighting System</h3>
@@ -383,26 +387,26 @@ skip.</li>
 <li><p><strong>Highlight Target Registry</strong>: Interactive controls
 register their target IDs:</p>
 <ul>
-<li><code>slider.velocity</code>
+<li><p><code>slider.velocity</code>
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math>
-Velocity slider row.</li>
-<li><code>slider.time</code>
+Velocity slider row.</p></li>
+<li><p><code>slider.time</code>
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math>
-Time slider row.</li>
-<li><code>menu.light_speed</code>
+Time slider row.</p></li>
+<li><p><code>menu.light_speed</code>
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math>
-Light speed model menu / dropdown.</li>
-<li><code>tutorial.continue</code>
+Light speed model menu / dropdown.</p></li>
+<li><p><code>tutorial.continue</code>
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math>
-“Continue” button on the tutorial card.</li>
+“Continue” button on the tutorial card.</p></li>
 </ul></li>
 <li><p><strong>Visual Effect</strong>:</p>
 <ul>
-<li>When highlighted, the target widget displays an animated pulsing
+<li><p>When highlighted, the target widget displays an animated pulsing
 border or glowing accent outline (using the theme’s secondary or accent
-color).</li>
-<li>When criteria are satisfied, the pulse transitions to a steady green
-check glow before advancing.</li>
+color).</p></li>
+<li><p>When criteria are satisfied, the pulse transitions to a steady
+green check glow before advancing.</p></li>
 </ul></li>
 </ul>
 <hr />
@@ -415,54 +419,56 @@ steps.</p>
 <ol type="1">
 <li><p><strong>Parser (<code>lib/script.dart</code>)</strong>:</p>
 <ul>
-<li>Parse Markdown into a <code>Tutorial</code> model containing a list
-of <code>TutorialStep</code> objects.</li>
-<li>Parse combined directives:
+<li><p>Parse Markdown into a <code>Tutorial</code> model containing a
+list of <code>TutorialStep</code> objects.</p></li>
+<li><p>Parse combined directives:</p>
 <ul>
-<li><code>&gt; v = &lt;number&gt;</code> /
+<li><p><code>&gt; v = &lt;number&gt;</code> /
 <code>&gt; velocity = &lt;number&gt;</code> (default
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>±</mo><mn>0.02</mn></mrow><annotation encoding="application/x-tex">\pm 0.02</annotation></semantics></math>
-tol).</li>
-<li><code>&gt; t = &lt;number&gt;</code> /
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>±</mi><mn>0.02</mn></mrow><annotation encoding="application/x-tex">\pm 0.02</annotation></semantics></math>
+tol).</p></li>
+<li><p><code>&gt; t = &lt;number&gt;</code> /
 <code>&gt; time = &lt;number&gt;</code> (default
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>±</mo><mn>0.1</mn></mrow><annotation encoding="application/x-tex">\pm 0.1</annotation></semantics></math>
-tol).</li>
-<li><code>&gt; ok</code> / <code>&gt; next</code> (advances on button
-tap).</li>
-<li><code>&gt; reset</code> (clears drawing).</li>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>±</mi><mn>0.1</mn></mrow><annotation encoding="application/x-tex">\pm 0.1</annotation></semantics></math>
+tol).</p></li>
+<li><p><code>&gt; ok</code> / <code>&gt; next</code> (advances on button
+tap).</p></li>
+<li><p><code>&gt; reset</code> (clears drawing).</p></li>
 </ul></li>
 </ul></li>
 <li><p><strong>File Loading (<code>AssetHolder</code>)</strong>:</p>
 <ul>
-<li>Add <code>AssetHolder</code> to
-<code>lib/file_holder.dart</code>.</li>
-<li>Bundle a 4-step tutorial at
-<code>assets/tutorials/speed_of_light.md</code>.</li>
+<li><p>Add <code>AssetHolder</code> to
+<code>lib/file_holder.dart</code>.</p></li>
+<li><p>Bundle a 4-step tutorial at
+<code>assets/tutorials/speed_of_light.md</code>.</p></li>
 </ul></li>
 <li><p><strong>Overlay &amp; Highlight UI</strong>:</p>
 <ul>
-<li>Create <code>TutorialCard</code> in <code>lib/widget.dart</code> (or
-<code>lib/tutorial_widget.dart</code>).</li>
-<li>Add highlight wrapper around the velocity and time sliders.</li>
+<li><p>Create <code>TutorialCard</code> in <code>lib/widget.dart</code>
+(or <code>lib/tutorial_widget.dart</code>).</p></li>
+<li><p>Add highlight wrapper around the velocity and time
+sliders.</p></li>
 </ul></li>
 <li><p><strong>Test Suite</strong>:</p>
 <ul>
-<li>Unit tests for directive parsing and tolerance math in
-<code>test/script_test.dart</code>.</li>
-<li>Widget test verifying tutorial step advancement in
-<code>test/tutorial_test.dart</code>.</li>
+<li><p>Unit tests for directive parsing and tolerance math in
+<code>test/script_test.dart</code>.</p></li>
+<li><p>Widget test verifying tutorial step advancement in
+<code>test/tutorial_test.dart</code>.</p></li>
 </ul></li>
 </ol>
 <hr />
 <h2 id="future-enhancements-post-poc">7. Future Enhancements
 (Post-PoC)</h2>
 <ul>
-<li>Relational entity criteria (e.g. checking position of objects in
-canvas).</li>
-<li>Canvas reticle overlays pointing to specific drawing entities.</li>
-<li>Google Drive file picker filtering for <code>.md</code> /
-<code>.sptut</code> tutorial files.</li>
-<li>Authoring mode / in-app tutorial editor.</li>
+<li><p>Relational entity criteria (e.g. checking position of objects in
+canvas).</p></li>
+<li><p>Canvas reticle overlays pointing to specific drawing
+entities.</p></li>
+<li><p>Google Drive file picker filtering for <code>.md</code> /
+<code>.sptut</code> tutorial files.</p></li>
+<li><p>Authoring mode / in-app tutorial editor.</p></li>
 </ul>
 </body>
 </html>

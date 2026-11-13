@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_math_fork/flutter_math.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -238,6 +239,117 @@ Move velocity to 0.25.
         await tester.tap(find.byKey(const ValueKey('tutorial-finish-btn')));
         await tester.pump();
         expect(closed, isTrue);
+
+        controller.dispose();
+      },
+    );
+
+    testWidgets('TutorialCard text and coaches are scrollable and selectable', (
+      WidgetTester tester,
+    ) async {
+      final longBody = List.generate(
+        20,
+        (i) => 'Paragraph $i explaining relativity physics in detail.',
+      ).join('\n\n');
+
+      final markdown =
+          '''
+# Scrollable & Selectable Tutorial
+
+Intro description.
+
+## 1. Long Step Title
+$longBody
+
+> v = 0.5
+''';
+      final tutorial = Tutorial.fromMarkdown(markdown);
+      final controller = TutorialController(scene, tutorial);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: TutorialCard(controller: controller, onClose: () {}),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Verify SelectionArea wraps tutorial content
+      final selectionAreas = find.descendant(
+        of: find.byType(TutorialCard),
+        matching: find.byType(SelectionArea),
+      );
+      expect(selectionAreas, findsOneWidget);
+
+      // Verify Scrollbar and SingleChildScrollView are present
+      expect(find.byType(Scrollbar), findsOneWidget);
+      expect(find.byType(SingleChildScrollView), findsOneWidget);
+
+      // Verify coaching text is present
+      expect(find.textContaining("Target: v = 0.50"), findsOneWidget);
+
+      // Verify scrollable behavior: can scroll down
+      final scrollableFinder = find.byType(SingleChildScrollView);
+      await tester.drag(scrollableFinder, const Offset(0, -300));
+      await tester.pumpAndSettle();
+
+      // Verify later paragraph becomes visible or was scrolled
+      expect(find.textContaining("Paragraph"), findsWidgets);
+
+      controller.dispose();
+    });
+
+    testWidgets(
+      'German Tutorial 2 Step 1 fits within maxHeight and shows Continue button',
+      (WidgetTester tester) async {
+        final germanTutorial2 = File(
+          'assets/tutorials/02_ether_vs_emitter_de.md',
+        ).readAsStringSync();
+        final tutorial = Tutorial.fromMarkdown(germanTutorial2);
+        final controller = TutorialController(scene, tutorial);
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: SizedBox(
+                height: 500,
+                width: 400,
+                child: Stack(
+                  children: [
+                    Positioned(
+                      top: 16,
+                      right: 16,
+                      child: TutorialCard(
+                        controller: controller,
+                        maxHeight: 420,
+                        onClose: () {},
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        // Verify TutorialCard does not exceed maxHeight
+        final cardBox = tester.getRect(find.byType(Card));
+        expect(cardBox.height, lessThanOrEqualTo(420.0));
+
+        // Verify Continue and Back buttons are visible and rendered
+        expect(find.byKey(const ValueKey('tutorial-next-btn')), findsOneWidget);
+        final nextBtnBox = tester.getRect(
+          find.byKey(const ValueKey('tutorial-next-btn')),
+        );
+        expect(nextBtnBox.bottom, lessThanOrEqualTo(cardBox.bottom));
+
+        // Verify scrollable behavior works on long German text
+        final scrollable = find.byType(SingleChildScrollView);
+        expect(scrollable, findsOneWidget);
+        await tester.drag(scrollable, const Offset(0, -200));
+        await tester.pumpAndSettle();
 
         controller.dispose();
       },

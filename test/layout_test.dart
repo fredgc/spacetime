@@ -60,6 +60,10 @@ void main() {
     // Verify layout settles without any RenderFlex overflows
     expect(find.byType(AppWidget), findsOneWidget);
 
+    // Verify tools are visible in narrow mode
+    expect(find.byKey(const ValueKey('object_name')), findsOneWidget);
+    expect(find.byKey(const ValueKey('Tool-Chooser')), findsOneWidget);
+
     // Open drawer on narrow layout
     await tester.tap(find.byIcon(Icons.menu));
     await tester.pumpAndSettle();
