@@ -1,19 +1,19 @@
 # 2. Constant Speed of Light & Relativity
 
-Before Einstein, scientists found that the speed of light was constant in
-a vacume. But constant relative to what?
-
-Einstein started out with a thought experiment. If we are on a train leaving
-Grand Central Station and emit a flash of light, is the light speed relative
-to the ground, or relative to the train?
+What does it mean for the speed of light to be constant?
 
 ## 1. Ether vs. Emitter Speed
 
-Before Einstein, physicists debated how light travels:
+Before Einstein, scientists found that the speed of light was constant in a
+vacume. But constant relative to what?
+
+Einstein started out with a thought experiment. If we are on a train, drinking
+coffee, leaving Grand Central Station and emit a flash of light, is the light
+speed relative to the ground, or relative to the train?
 
 * **Ether Theory**: Light is a wave traveling through a stationary universal
-  medium (the "luminiferous ether"). Its speed is always $c = 1$ relative to the
-  ether, regardless of how fast the light source moves.
+  medium (the "luminiferous ether"). Its speed is always $c = 1$ relative to
+  the ether, regardless of how fast the light source moves.
 
 * **Emitter Theory**: Light consists of particles shot out from a source at
   speed $c = 1$ relative to the emitter. If an emitter moves at velocity $v$,
@@ -23,8 +23,7 @@ Let's test both theories with a moving train. We'll look at the emitter
 hypothesis first. I've added two flags in the $v=0$ reference frame. In the
 next step we'll add a moving train that passes these flags.
 
-Switch to **Use Emitter Speed**, and set our observer
-velocity to $v = 0.25$.
+Switch to **Use Emitter Speed**, and set our observer velocity to $v = 0.25$.
 
 > reset
 > setup: v=0.0, t=0.0, mode=lorentz, tool=select
@@ -49,14 +48,15 @@ In this reference frame ($v = 0.25$), I have placed:
 
 Advance the **Time** slider to $t = 0.25$.
 
-Notice that the two flashes of light move at speed 1 in this frame. And the two
-flashes meet in the middle of the train.
+Notice that the two flashes of light move at speed 1 in this frame. And the
+two flashes meet in the middle of the train.
 
 > t = 0.25
 
 ## 3. Emitter: View from the Ground
 
-Switch to the ground's reference frame ($v = 0.0$) and go back to time $t = 0.0$.
+Switch to the ground's reference frame ($v = 0.0$) and go back to time $t =
+0.0$.
 
 Notice that the slope of the light flashes is different.
 
@@ -102,8 +102,8 @@ The light flashes start off at both ends of the train.
 
 Advance the **Time** slider to $t = 0.25$.
 
-Notice that the flashes do not meet in the middle of the train. That's
-because the two flashes have different speeds in the train's reference frame.
+Notice that the flashes do not meet in the middle of the train. That's because
+the two flashes have different speeds in the train's reference frame.
 
 > t = 0.25
 
@@ -120,7 +120,8 @@ Because the train moves forward through the ether at $v = 0.25$:
 * The back beam (**B**) struggles to catch up at speed $1 - 0.25 = 0.75$,
   reaching the middle late (at $t = 0.33$).
 
-Under ether theory, the two flashes do *not* collide in the middle of the train!
+Under ether theory, the two flashes do *not* collide in the middle of the
+train!
 
 Click **Continue** to learn about experimental results.
 

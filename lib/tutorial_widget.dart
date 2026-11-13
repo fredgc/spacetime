@@ -6,6 +6,7 @@ import 'package:flutter_math_fork/flutter_math.dart';
 import 'package:markdown/markdown.dart' as md;
 import 'package:url_launcher/url_launcher.dart';
 import 'drawable.dart';
+import 'l10n/l10n_extension.dart';
 import 'scene.dart';
 import 'script.dart';
 import 'transform.dart';
@@ -104,12 +105,14 @@ class TutorialCard extends StatefulWidget {
   final TutorialController controller;
   final VoidCallback onClose;
   final VoidCallback? onFinish;
+  final double? maxHeight;
 
   const TutorialCard({
     super.key,
     required this.controller,
     required this.onClose,
     this.onFinish,
+    this.maxHeight,
   });
 
   @override
@@ -119,6 +122,20 @@ class TutorialCard extends StatefulWidget {
 class _TutorialCardState extends State<TutorialCard> {
   Offset _offset = Offset.zero;
   bool _isMinimized = false;
+  final ScrollController _scrollController = ScrollController();
+  int _lastStepIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _lastStepIndex = widget.controller.currentStepIndex;
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -129,6 +146,17 @@ class _TutorialCardState extends State<TutorialCard> {
         final colorScheme = theme.colorScheme;
         final controller = widget.controller;
 
+        if (controller.currentStepIndex != _lastStepIndex) {
+          _lastStepIndex = controller.currentStepIndex;
+          if (_scrollController.hasClients) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (_scrollController.hasClients) {
+                _scrollController.jumpTo(0.0);
+              }
+            });
+          }
+        }
+
         if (controller.isCompleted) {
           return Transform.translate(
             offset: _offset,
@@ -137,37 +165,41 @@ class _TutorialCardState extends State<TutorialCard> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: Container(
-                width: 350,
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.check_circle_outline,
-                      color: Colors.green.shade600,
-                      size: 48,
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      "Tutorial Completed!",
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
+              child: SelectionArea(
+                child: Container(
+                  width: 350,
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.check_circle_outline,
+                        color: Colors.green.shade600,
+                        size: 48,
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      "Great job! You have completed all steps in ${controller.tutorial.title}. You can now continue playing with the scene and save your result.",
-                      textAlign: TextAlign.center,
-                      style: theme.textTheme.bodyMedium,
-                    ),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      key: const ValueKey('tutorial-finish-btn'),
-                      onPressed: widget.onFinish ?? widget.onClose,
-                      child: const Text("Finish (Keep Scene)"),
-                    ),
-                  ],
+                      const SizedBox(height: 12),
+                      Text(
+                        context.l10n.tutorialCompletedTitle,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        context.l10n.tutorialCompletedMessage(
+                          controller.tutorial.title,
+                        ),
+                        textAlign: TextAlign.center,
+                        style: theme.textTheme.bodyMedium,
+                      ),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        key: const ValueKey('tutorial-finish-btn'),
+                        onPressed: widget.onFinish ?? widget.onClose,
+                        child: Text(context.l10n.tutorialFinishKeepScene),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -233,11 +265,15 @@ class _TutorialCardState extends State<TutorialCard> {
 
         final isSatisfied = controller.isCurrentStepSatisfied;
         final isContinueEnabled = controller.isContinueEnabled;
+        final mediaHeight = MediaQuery.maybeSizeOf(context)?.height ?? 600;
+        final defaultMax = (mediaHeight - 32.0).clamp(200.0, 420.0);
+        final effectiveMaxHeight = widget.maxHeight ?? defaultMax;
 
         return Transform.translate(
           offset: _offset,
           child: Card(
             elevation: 8,
+            margin: EdgeInsets.zero,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
               side: BorderSide(
@@ -247,272 +283,290 @@ class _TutorialCardState extends State<TutorialCard> {
                 width: isSatisfied ? 2.0 : 1.0,
               ),
             ),
-            child: Container(
-              constraints: BoxConstraints(
-                maxWidth: 360,
-                maxHeight:
-                    (MediaQuery.maybeSizeOf(context)?.height ?? 600) - 32,
-              ),
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Header Row with Drag Handle
-                  GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onPanUpdate: (details) {
-                      setState(() {
-                        _offset += details.delta;
-                      });
-                    },
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.drag_indicator,
-                          size: 18,
-                          color: colorScheme.onSurfaceVariant.withValues(
-                            alpha: 0.7,
-                          ),
-                        ),
-                        const SizedBox(width: 4),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 3,
-                          ),
-                          decoration: BoxDecoration(
-                            color: colorScheme.primaryContainer,
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Text(
-                            "TUTORIAL",
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.bold,
-                              color: colorScheme.onPrimaryContainer,
-                              letterSpacing: 0.8,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            "Step ${controller.currentStepIndex + 1} of ${controller.tutorial.steps.length}",
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: colorScheme.onSurfaceVariant,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.remove, size: 20),
-                          tooltip: "Minimize",
-                          onPressed: () => setState(() => _isMinimized = true),
-                          visualDensity: VisualDensity.compact,
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.refresh, size: 20),
-                          tooltip: "Reset Step",
-                          onPressed: controller.resetCurrentStep,
-                          visualDensity: VisualDensity.compact,
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.close, size: 20),
-                          tooltip: "Close Tutorial",
-                          onPressed: widget.onClose,
-                          visualDensity: VisualDensity.compact,
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-
-                  // Progress Bar
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(3),
-                    child: LinearProgressIndicator(
-                      value: controller.progress,
-                      minHeight: 4,
-                      backgroundColor: colorScheme.surfaceContainerHighest,
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        isSatisfied
-                            ? Colors.green.shade600
-                            : colorScheme.primary,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-
-                  // Step Title & Body (Scrollable if overflowing screen)
-                  Flexible(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+            child: SelectionArea(
+              child: Container(
+                constraints: BoxConstraints(
+                  maxWidth: 360,
+                  maxHeight: effectiveMaxHeight,
+                ),
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Header Row with Drag Handle
+                    GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onPanUpdate: (details) {
+                        setState(() {
+                          _offset += details.delta;
+                        });
+                      },
+                      child: Row(
                         children: [
-                          Text(
-                            step.title,
-                            style: theme.textTheme.titleSmall?.copyWith(
-                              fontWeight: FontWeight.bold,
+                          Icon(
+                            Icons.drag_indicator,
+                            size: 18,
+                            color: colorScheme.onSurfaceVariant.withValues(
+                              alpha: 0.7,
                             ),
                           ),
-                          const SizedBox(height: 6),
-                          MarkdownBody(
-                            data: step.body,
-                            shrinkWrap: true,
-                            extensionSet: md.ExtensionSet.gitHubFlavored,
-                            blockSyntaxes: [LatexBlockSyntax()],
-                            inlineSyntaxes: [TutorialLatexInlineSyntax()],
-                            builders: {
-                              'latex': TutorialLatexElementBuilder(
-                                textStyle: theme.textTheme.bodyMedium?.copyWith(
-                                  color: colorScheme.onSurface,
-                                  height: 1.35,
-                                ),
+                          const SizedBox(width: 4),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 3,
+                            ),
+                            decoration: BoxDecoration(
+                              color: colorScheme.primaryContainer,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              "TUTORIAL",
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                color: colorScheme.onPrimaryContainer,
+                                letterSpacing: 0.8,
                               ),
-                            },
-                            styleSheet: MarkdownStyleSheet.fromTheme(theme)
-                                .copyWith(
-                                  p: theme.textTheme.bodyMedium?.copyWith(
-                                    color: colorScheme.onSurface,
-                                    height: 1.35,
-                                  ),
-                                  listBullet: theme.textTheme.bodyMedium
-                                      ?.copyWith(color: colorScheme.onSurface),
-                                  strong: theme.textTheme.bodyMedium?.copyWith(
-                                    color: colorScheme.onSurface,
-                                    fontWeight: FontWeight.bold,
-                                    height: 1.35,
-                                  ),
-                                  em: theme.textTheme.bodyMedium?.copyWith(
-                                    color: colorScheme.onSurface,
-                                    fontStyle: FontStyle.italic,
-                                    height: 1.35,
-                                  ),
-                                  code: theme.textTheme.bodySmall?.copyWith(
-                                    color: colorScheme.primary,
-                                    fontFamily: 'monospace',
-                                  ),
-                                ),
-                            onTapLink: (text, href, title) {
-                              if (href != null) {
-                                launchUrl(Uri.parse(href));
-                              }
-                            },
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              context.l10n.tutorialStepCounter(
+                                controller.currentStepIndex + 1,
+                                controller.tutorial.steps.length,
+                              ),
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: colorScheme.onSurfaceVariant,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.remove, size: 20),
+                            tooltip: "Minimize",
+                            onPressed: () =>
+                                setState(() => _isMinimized = true),
+                            visualDensity: VisualDensity.compact,
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.refresh, size: 20),
+                            tooltip: "Reset Step",
+                            onPressed: controller.resetCurrentStep,
+                            visualDensity: VisualDensity.compact,
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.close, size: 20),
+                            tooltip: "Close Tutorial",
+                            onPressed: widget.onClose,
+                            visualDensity: VisualDensity.compact,
                           ),
                         ],
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 12),
+                    const SizedBox(height: 8),
 
-                  // Status Chip
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: isSatisfied
-                          ? Colors.green.withValues(alpha: 0.15)
-                          : colorScheme.surfaceContainerHighest,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: isSatisfied
-                            ? Colors.green.shade600
-                            : Colors.transparent,
+                    // Progress Bar
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(3),
+                      child: LinearProgressIndicator(
+                        value: controller.progress,
+                        minHeight: 4,
+                        backgroundColor: colorScheme.surfaceContainerHighest,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          isSatisfied
+                              ? Colors.green.shade600
+                              : colorScheme.primary,
+                        ),
                       ),
                     ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          isSatisfied ? Icons.check_circle : Icons.info_outline,
-                          size: 16,
-                          color: isSatisfied
-                              ? Colors.green.shade700
-                              : colorScheme.onSurfaceVariant,
+                    const SizedBox(height: 12),
+
+                    // Step Title & Body (Scrollable & Selectable)
+                    Flexible(
+                      child: Scrollbar(
+                        controller: _scrollController,
+                        thumbVisibility: true,
+                        child: SingleChildScrollView(
+                          controller: _scrollController,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                step.title,
+                                style: theme.textTheme.titleSmall?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              MarkdownBody(
+                                data: step.body,
+                                shrinkWrap: true,
+                                extensionSet: md.ExtensionSet.gitHubFlavored,
+                                blockSyntaxes: [LatexBlockSyntax()],
+                                inlineSyntaxes: [TutorialLatexInlineSyntax()],
+                                builders: {
+                                  'latex': TutorialLatexElementBuilder(
+                                    textStyle: theme.textTheme.bodyMedium
+                                        ?.copyWith(
+                                          color: colorScheme.onSurface,
+                                          height: 1.35,
+                                        ),
+                                  ),
+                                },
+                                styleSheet: MarkdownStyleSheet.fromTheme(theme)
+                                    .copyWith(
+                                      p: theme.textTheme.bodyMedium?.copyWith(
+                                        color: colorScheme.onSurface,
+                                        height: 1.35,
+                                      ),
+                                      listBullet: theme.textTheme.bodyMedium
+                                          ?.copyWith(
+                                            color: colorScheme.onSurface,
+                                          ),
+                                      strong: theme.textTheme.bodyMedium
+                                          ?.copyWith(
+                                            color: colorScheme.onSurface,
+                                            fontWeight: FontWeight.bold,
+                                            height: 1.35,
+                                          ),
+                                      em: theme.textTheme.bodyMedium?.copyWith(
+                                        color: colorScheme.onSurface,
+                                        fontStyle: FontStyle.italic,
+                                        height: 1.35,
+                                      ),
+                                      code: theme.textTheme.bodySmall?.copyWith(
+                                        color: colorScheme.primary,
+                                        fontFamily: 'monospace',
+                                      ),
+                                    ),
+                                onTapLink: (text, href, title) {
+                                  if (href != null) {
+                                    launchUrl(Uri.parse(href));
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
                         ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    // Status Chip (Coaches / Guidance text)
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: isSatisfied
+                            ? Colors.green.withValues(alpha: 0.15)
+                            : colorScheme.surfaceContainerHighest,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: isSatisfied
+                              ? Colors.green.shade600
+                              : Colors.transparent,
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
                             isSatisfied
-                                ? "Target reached! Click Continue."
-                                : (step.statusText(controller.scene).isNotEmpty
-                                      ? step.statusText(controller.scene)
-                                      : "Follow the prompt above"),
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: isSatisfied
-                                  ? FontWeight.bold
-                                  : FontWeight.normal,
-                              color: isSatisfied
-                                  ? Colors.green.shade800
-                                  : colorScheme.onSurfaceVariant,
+                                ? Icons.check_circle
+                                : Icons.info_outline,
+                            size: 16,
+                            color: isSatisfied
+                                ? Colors.green.shade700
+                                : colorScheme.onSurfaceVariant,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              isSatisfied
+                                  ? "Target reached! Click Continue."
+                                  : (step
+                                            .statusText(controller.scene)
+                                            .isNotEmpty
+                                        ? step.statusText(controller.scene)
+                                        : "Follow the prompt above"),
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: isSatisfied
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
+                                color: isSatisfied
+                                    ? Colors.green.shade800
+                                    : colorScheme.onSurfaceVariant,
+                              ),
                             ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (controller.canDoItForMe) ...[
+                      const SizedBox(height: 8),
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton.icon(
+                          key: const ValueKey('tutorial-do-it-for-me-btn'),
+                          icon: const Icon(Icons.auto_fix_high, size: 16),
+                          label: Text(context.l10n.tutorialDoItForMe),
+                          onPressed: controller.doItForMe,
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: 12),
+
+                    // Action / Navigation Buttons Row
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        TextButton.icon(
+                          icon: const Icon(Icons.arrow_back, size: 16),
+                          label: Text(context.l10n.tutorialBack),
+                          onPressed: controller.currentStepIndex > 0
+                              ? controller.previousStep
+                              : null,
+                        ),
+                        TutorialHighlight(
+                          highlightId: 'tutorial.continue',
+                          activeHighlightId: controller.currentHighlightId,
+                          borderRadius: BorderRadius.circular(24),
+                          child: ElevatedButton.icon(
+                            key: const ValueKey('tutorial-next-btn'),
+                            icon: Icon(
+                              controller.currentStepIndex ==
+                                      controller.tutorial.steps.length - 1
+                                  ? Icons.done
+                                  : Icons.arrow_forward,
+                              size: 16,
+                            ),
+                            label: Text(
+                              controller.currentStepIndex ==
+                                      controller.tutorial.steps.length - 1
+                                  ? context.l10n.tutorialFinish
+                                  : context.l10n.tutorialContinue,
+                            ),
+                            style: isContinueEnabled
+                                ? ElevatedButton.styleFrom(
+                                    backgroundColor: colorScheme.primary,
+                                    foregroundColor: colorScheme.onPrimary,
+                                  )
+                                : null,
+                            onPressed: isContinueEnabled
+                                ? controller.nextStep
+                                : null,
                           ),
                         ),
                       ],
                     ),
-                  ),
-                  if (controller.canDoItForMe) ...[
-                    const SizedBox(height: 8),
-                    SizedBox(
-                      width: double.infinity,
-                      child: OutlinedButton.icon(
-                        key: const ValueKey('tutorial-do-it-for-me-btn'),
-                        icon: const Icon(Icons.auto_fix_high, size: 16),
-                        label: const Text("Do it for me"),
-                        onPressed: controller.doItForMe,
-                      ),
-                    ),
                   ],
-                  const SizedBox(height: 12),
-
-                  // Action / Navigation Buttons Row
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      TextButton.icon(
-                        icon: const Icon(Icons.arrow_back, size: 16),
-                        label: const Text("Back"),
-                        onPressed: controller.currentStepIndex > 0
-                            ? controller.previousStep
-                            : null,
-                      ),
-                      TutorialHighlight(
-                        highlightId: 'tutorial.continue',
-                        activeHighlightId: controller.currentHighlightId,
-                        borderRadius: BorderRadius.circular(24),
-                        child: ElevatedButton.icon(
-                          key: const ValueKey('tutorial-next-btn'),
-                          icon: Icon(
-                            controller.currentStepIndex ==
-                                    controller.tutorial.steps.length - 1
-                                ? Icons.done
-                                : Icons.arrow_forward,
-                            size: 16,
-                          ),
-                          label: Text(
-                            controller.currentStepIndex ==
-                                    controller.tutorial.steps.length - 1
-                                ? "Finish"
-                                : "Continue",
-                          ),
-                          style: isContinueEnabled
-                              ? ElevatedButton.styleFrom(
-                                  backgroundColor: colorScheme.primary,
-                                  foregroundColor: colorScheme.onPrimary,
-                                )
-                              : null,
-                          onPressed: isContinueEnabled
-                              ? controller.nextStep
-                              : null,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                ),
               ),
             ),
           ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'file_manager.dart';
+import 'l10n/l10n_extension.dart';
 import 'printer.dart';
 import 'scene.dart';
 
@@ -217,11 +218,32 @@ class ClipboardHolder extends FileHolder {
 
 class AssetHolder extends FileHolder {
   final String assetPath;
+  final Map<String, String> localizedTitles;
 
-  AssetHolder(this.assetPath, {String? title, super.kind = FileKind.tutorial})
-    : super(assetPath) {
+  AssetHolder(
+    this.assetPath, {
+    String? title,
+    this.localizedTitles = const {},
+    super.kind = FileKind.tutorial,
+  }) : super(assetPath) {
     this.title = title ?? assetPath.split('/').last.replaceAll('.md', '');
     tag = "asset-${assetPath.split('/').last}";
+  }
+
+  String titleForLocale([String? localeKey]) {
+    if (localeKey != null) {
+      final normalized = localeKey.toLowerCase();
+      if (localizedTitles.containsKey(normalized)) {
+        return localizedTitles[normalized]!;
+      }
+      if (normalized.contains('_')) {
+        final lang = normalized.split('_')[0];
+        if (localizedTitles.containsKey(lang)) {
+          return localizedTitles[lang]!;
+        }
+      }
+    }
+    return title;
   }
 
   static const String typeName = "asset";
@@ -234,6 +256,32 @@ class AssetHolder extends FileHolder {
   @override
   Future<String> loadData(FileManager manager) async {
     Log.files.log("Loading asset: $assetPath");
+    final activeLocale = LocaleController.currentLocale.value;
+    if (activeLocale != null) {
+      if (activeLocale.countryCode != null &&
+          activeLocale.countryCode!.isNotEmpty) {
+        final countryKey =
+            '${activeLocale.languageCode}_${activeLocale.countryCode!.toLowerCase()}';
+        final countryPath = assetPath.replaceAll(
+          RegExp(r'\.md$'),
+          '_$countryKey.md',
+        );
+        try {
+          return await rootBundle.loadString(countryPath);
+        } catch (_) {}
+      }
+      if (activeLocale.languageCode != 'en') {
+        final localizedPath = assetPath.replaceAll(
+          RegExp(r'\.md$'),
+          '_${activeLocale.languageCode}.md',
+        );
+        try {
+          return await rootBundle.loadString(localizedPath);
+        } catch (_) {
+          Log.files.log("Fallback to base asset: $assetPath");
+        }
+      }
+    }
     return await rootBundle.loadString(assetPath);
   }
 

@@ -2,8 +2,8 @@
 title: File Management
 ---
 
-The left-hand drawer (accessible via the Menu icon) provides file and clipboard
-options:
+The left-hand drawer (accessible via the Menu icon) provides file and
+clipboard options:
 
 ## 1. File Options
 
@@ -26,8 +26,8 @@ options:
 
 ## 2. Clipboard Integration
 
-* **Copy to Clipboard**: Copies the scene serialized as a raw JSON string or as
-  a shareable URL containing the encoded JSON data.
+* **Copy to Clipboard**: Copies the scene serialized as a raw JSON string or
+  as a shareable URL containing the encoded JSON data.
 
 * **Paste from Clipboard**: Parses a copied JSON string or shareable URL from
   your clipboard and loads the drawing.

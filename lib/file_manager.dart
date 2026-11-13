@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 
 import 'drive.dart';
 import 'file_holder.dart';
+import 'l10n/l10n_extension.dart';
 import 'local_file.dart';
 import 'menus.dart';
 import 'name.dart';
@@ -639,32 +640,33 @@ class FileManager {
       bool? confirmed = await showDialog<bool>(
         context: _context.context!,
         builder: (BuildContext context) {
+          final l10n = context.l10n;
           return AlertDialog(
-            title: const Text("Confirm Properties Before Saving"),
+            title: Text(l10n.confirmPropertiesTitle),
             content: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   TextField(
                     controller: titleController,
-                    decoration: const InputDecoration(labelText: "Title"),
+                    decoration: InputDecoration(labelText: l10n.title),
                   ),
                   const SizedBox(height: 8),
                   TextField(
                     controller: descController,
                     maxLines: 3,
-                    decoration: const InputDecoration(labelText: "Description"),
+                    decoration: InputDecoration(labelText: l10n.description),
                   ),
                 ],
               ),
             ),
             actions: <Widget>[
               TextButton(
-                child: const Text('Cancel'),
+                child: Text(l10n.cancel),
                 onPressed: () => Navigator.of(context).pop(false),
               ),
               TextButton(
-                child: const Text('Save'),
+                child: Text(l10n.save),
                 onPressed: () {
                   viewer.data.title = titleController.text;
                   file!.title = titleController.text;
@@ -864,17 +866,21 @@ class FileManager {
 
   List<AssetHolder> get builtInTutorials => getBuiltInTutorials();
 
-  MyMenu makeTutorialMenu() {
-    MyMenu menu = MyMenu("Tutorials");
+  MyMenu makeTutorialMenu([MyMenu? existingMenu]) {
+    MyMenu menu = existingMenu ?? MyMenu("Tutorials");
+    final currentLang = LocaleController.localeKey(
+      LocaleController.currentLocale.value,
+    );
     menu.items = [
       for (var tutorial in builtInTutorials)
         MyMenuItem(
-          tutorial.title,
+          tutorial.titleForLocale(currentLang),
           callback: () {
             loadFile(tutorial);
           },
         ),
     ];
+    menu.rebuild();
     return menu;
   }
 
@@ -890,20 +896,21 @@ class FileManager {
           context: parentContext,
           barrierDismissible: false, // user must tap button!
           builder: (BuildContext context) {
+            final l10n = context.l10n;
             return AlertDialog(
-              title: const Text('Unsaved Scene'),
-              content: const SingleChildScrollView(
+              title: Text(l10n.unsavedSceneTitle),
+              content: SingleChildScrollView(
                 child: ListBody(
                   children: <Widget>[
-                    Text('The drawing has been modified.'),
-                    Text('Would you like to save it?'),
+                    Text(l10n.unsavedSceneBody1),
+                    Text(l10n.unsavedSceneBody2),
                   ],
                 ),
               ),
               actions: <Widget>[
                 TextButton(
                   key: const ValueKey('check-discard'),
-                  child: const Text('Discard'),
+                  child: Text(l10n.discard),
                   onPressed: () {
                     // Log.files.log("CYAN: checksave discard.");
                     Navigator.of(context).pop(true);
@@ -912,7 +919,7 @@ class FileManager {
                 ),
                 TextButton(
                   key: const ValueKey('check-save'),
-                  child: const Text('Save'),
+                  child: Text(l10n.save),
                   onPressed: () async {
                     bool result = await save();
                     // Log.files.log("CYAN: checksave save $result.");
@@ -923,7 +930,7 @@ class FileManager {
                 ),
                 TextButton(
                   key: const ValueKey('check-saveas'),
-                  child: const Text('Save As...'),
+                  child: Text(l10n.saveAs),
                   onPressed: () async {
                     // XXX handle error.
                     bool result = await saveAs();
@@ -935,7 +942,7 @@ class FileManager {
                 ),
                 TextButton(
                   key: const ValueKey('check-cancel'),
-                  child: const Text('Cancel'),
+                  child: Text(l10n.cancel),
                   onPressed: () {
                     // Log.files.log("CYAN: checksave cancel.");
                     Navigator.of(context).pop(false);
@@ -987,7 +994,8 @@ class ClipboardRowState extends State<ClipboardRow> {
   @override
   Widget build(BuildContext context) {
     // XXX Turn into a ListTile.  (how to do checkbox?)
-    return Row(
+    return Wrap(
+      crossAxisAlignment: WrapCrossAlignment.center,
       children: [
         ElevatedButton(
           child: Text(
@@ -1090,6 +1098,10 @@ class FileChooser {
     return showDialog<FileHolder?>(
       context: context,
       builder: (BuildContext context) => Dialog(
+        insetPadding: const EdgeInsets.symmetric(
+          horizontal: 16.0,
+          vertical: 24.0,
+        ),
         child: DefaultTabController(
           initialIndex: 0,
           length: tabs.length,

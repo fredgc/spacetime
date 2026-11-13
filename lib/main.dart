@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
+import "l10n/l10n_extension.dart";
 import "my_app.dart";
 import "printer.dart";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await LocaleController.initialize();
 
   // Make a complete full app, instead of a unit test app.
   Log.fullApp();

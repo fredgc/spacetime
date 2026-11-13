@@ -9,6 +9,7 @@ import '../edit.dart';
 import '../file_manager.dart';
 import '../js_stub.dart' if (dart.library.html) '../js_interface.dart';
 import '../keyboard_detector.dart';
+import '../l10n/l10n_extension.dart';
 import '../menus.dart';
 import '../navigation.dart';
 import '../printer.dart';
@@ -90,6 +91,7 @@ class AppWidgetState extends State<AppWidget>
     _setupSceneViewer();
     KeyboardDetector.init();
     KeyboardDetector.hasKeyboard.addListener(_onKeyboardChanged);
+    LocaleController.currentLocale.addListener(_onLocaleChanged);
     HardwareKeyboard.instance.addHandler(keyHandler);
   }
 
@@ -164,6 +166,7 @@ class AppWidgetState extends State<AppWidget>
   void dispose() {
     _settingsListener.cancel();
     KeyboardDetector.hasKeyboard.removeListener(_onKeyboardChanged);
+    LocaleController.currentLocale.removeListener(_onLocaleChanged);
     HardwareKeyboard.instance.removeHandler(keyHandler);
     animator.dispose();
     _cleanupSceneViewer(widget.sceneViewer);
@@ -175,6 +178,13 @@ class AppWidgetState extends State<AppWidget>
     widget.tutorialMenu.rebuild();
     widget.editMenu.rebuild();
     viewMenu.rebuild();
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  void _onLocaleChanged() {
+    widget.fileManager.makeTutorialMenu(widget.tutorialMenu);
     if (mounted) {
       setState(() {});
     }
@@ -199,40 +209,69 @@ class AppWidgetState extends State<AppWidget>
           _narrow = false;
           _constraints = constraints;
         }
-        return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          theme: widget.settings.theme.themeData,
-          builder: (context, child) {
-            final mediaQueryData = MediaQuery.of(context);
-            final browserFontSize = getBrowserRootFontSize();
-            final scaleFactor = browserFontSize / 16.0;
-            final textScaler = scaleFactor != 1.0
-                ? TextScaler.linear(scaleFactor)
-                : mediaQueryData.textScaler;
-            return MediaQuery(
-              data: mediaQueryData.copyWith(textScaler: textScaler),
-              child: child!,
-            );
-          },
-          home: PopScope(
-            canPop: !widget.fileManager.unsaved.value,
-            onPopInvokedWithResult: (bool didPop, Object? result) async {
-              if (didPop) return;
-              bool saved = await widget.fileManager.checkSave(context);
-              if (saved && context.mounted) {
-                Navigator.of(context).pop();
-              }
-            },
-            child: Scaffold(
-              appBar: makeAppBar(context),
-              drawer: Builder(builder: (BuildContext c) => makeMenuDrawer(c)),
-              body: SafeArea(
-                child: Center(
-                  child: Builder(builder: (BuildContext c) => _mainBody(c)),
+        return ValueListenableBuilder<Locale?>(
+          valueListenable: LocaleController.currentLocale,
+          builder: (context, currentLocale, _) {
+            return MaterialApp(
+              debugShowCheckedModeBanner: false,
+              locale: currentLocale,
+              localeResolutionCallback: (deviceLocale, supportedLocales) {
+                if (deviceLocale != null) {
+                  for (final supported in supportedLocales) {
+                    if (supported.languageCode == deviceLocale.languageCode &&
+                        (deviceLocale.countryCode == null ||
+                            supported.countryCode == null ||
+                            supported.countryCode ==
+                                deviceLocale.countryCode)) {
+                      return supported;
+                    }
+                  }
+                  for (final supported in supportedLocales) {
+                    if (supported.languageCode == deviceLocale.languageCode) {
+                      return supported;
+                    }
+                  }
+                }
+                return const Locale('en');
+              },
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+              theme: widget.settings.theme.themeData,
+              builder: (context, child) {
+                final mediaQueryData = MediaQuery.of(context);
+                final browserFontSize = getBrowserRootFontSize();
+                final scaleFactor = browserFontSize / 16.0;
+                final textScaler = scaleFactor != 1.0
+                    ? TextScaler.linear(scaleFactor)
+                    : mediaQueryData.textScaler;
+                return MediaQuery(
+                  data: mediaQueryData.copyWith(textScaler: textScaler),
+                  child: child!,
+                );
+              },
+              home: PopScope(
+                canPop: !widget.fileManager.unsaved.value,
+                onPopInvokedWithResult: (bool didPop, Object? result) async {
+                  if (didPop) return;
+                  bool saved = await widget.fileManager.checkSave(context);
+                  if (saved && context.mounted) {
+                    Navigator.of(context).pop();
+                  }
+                },
+                child: Scaffold(
+                  appBar: makeAppBar(context),
+                  drawer: Builder(
+                    builder: (BuildContext c) => makeMenuDrawer(c),
+                  ),
+                  body: SafeArea(
+                    child: Center(
+                      child: Builder(builder: (BuildContext c) => _mainBody(c)),
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
+            );
+          },
         );
       },
     );
@@ -310,6 +349,33 @@ class AppWidgetState extends State<AppWidget>
     );
   }
 
+  Widget _languageButton(BuildContext context) {
+    final l10n = context.l10n;
+    final current = LocaleController.currentLocale.value;
+    return PopupMenuButton<Locale>(
+      key: const ValueKey('languageSwitcherButton'),
+      icon: const Icon(Icons.language_rounded),
+      tooltip: l10n.language,
+      initialValue: current ?? LocaleController.autoLocale,
+      onSelected: (locale) {
+        LocaleController.setLocale(locale);
+      },
+      itemBuilder: (BuildContext context) => <PopupMenuEntry<Locale>>[
+        CheckedPopupMenuItem<Locale>(
+          value: LocaleController.autoLocale,
+          checked: current == null,
+          child: Text(l10n.systemDefault),
+        ),
+        for (final locale in LocaleController.supportedLocales)
+          CheckedPopupMenuItem<Locale>(
+            value: locale,
+            checked: current == locale,
+            child: Text(LocaleController.languageDisplayName(locale)),
+          ),
+      ],
+    );
+  }
+
   Widget _settingsButton(BuildContext context) {
     return IconButton(
       onPressed: () {
@@ -317,30 +383,31 @@ class AppWidgetState extends State<AppWidget>
         context.push(SettingsScreen.routeName);
       },
       icon: const Icon(Icons.settings),
-      tooltip: 'Settings',
+      tooltip: context.l10n.settings,
     );
   }
 
   Widget _helpButton(BuildContext context) {
+    final l10n = context.l10n;
     return PopupMenuButton<String>(
       icon: const Icon(Icons.help),
-      tooltip: 'Help Options',
+      tooltip: l10n.helpOptions,
       onSelected: (String route) {
         context.push(route);
       },
       itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
         PopupMenuItem<String>(
           value: '/about',
-          child: Text('About Spacetime v${widget.settings.fullVersion}'),
+          child: Text('${l10n.aboutSpacetime} v${widget.settings.fullVersion}'),
         ),
-        const PopupMenuItem<String>(
+        PopupMenuItem<String>(
           value: '/help?page=overview.html',
-          child: Text('Help & User Guides'),
+          child: Text(l10n.helpAndUserGuides),
         ),
         if (Settings.kDebugEnabled && Settings.debugEnabled)
-          const PopupMenuItem<String>(
+          PopupMenuItem<String>(
             value: '/help?page=dev/README.html',
-            child: Text('Developer Docs'),
+            child: Text(l10n.developerDocs),
           ),
       ],
     );
@@ -369,6 +436,9 @@ class AppWidgetState extends State<AppWidget>
                       IconButton(
                         key: const ValueKey('closeDrawerButton'),
                         icon: const Icon(Icons.close),
+                        tooltip: MaterialLocalizations.of(
+                          context,
+                        ).closeButtonTooltip,
                         onPressed: () {
                           Scaffold.of(context).closeDrawer();
                         },
@@ -384,8 +454,14 @@ class AppWidgetState extends State<AppWidget>
                   ),
                   Row(
                     children: [
+                      _languageButton(context),
+                      Text(context.l10n.language),
+                    ],
+                  ),
+                  Row(
+                    children: [
                       _settingsButton(context),
-                      const Text('Settings'),
+                      Text(context.l10n.settings),
                     ],
                   ),
                   widget.fileMenu.buildDrawerList(context),
@@ -540,9 +616,13 @@ class AppWidgetState extends State<AppWidget>
     ];
   }
 
+  bool _isNarrow(BuildContext context) =>
+      _narrow || MediaQuery.sizeOf(context).width < 700;
+
   List<Widget> _getButtons(BuildContext context) {
     List<Widget> list = [];
-    if (!_narrow) list.addAll(_toolButtons(context));
+    if (!_isNarrow(context)) list.addAll(_toolButtons(context));
+    list.add(_languageButton(context));
     list.add(_helpButton(context));
     return list;
   }
@@ -552,44 +632,62 @@ class AppWidgetState extends State<AppWidget>
   }
 
   Widget _mainBody(BuildContext context) {
+    final isNarrow = _isNarrow(context);
     return Column(
       children: [
-        if (_narrow) Row(children: _toolButtons(context)),
+        if (isNarrow)
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(children: _toolButtons(context)),
+          ),
         Expanded(
-          child: Stack(
-            children: [
-              SplitterWidget(
-                top: (context) => _wrapCanvasTutorialHighlight(
-                  widget.sceneViewer.build(context, this),
-                  side: false,
-                ),
-                bottom: (context) => _wrapCanvasTutorialHighlight(
-                  widget.sceneViewer.buildSideView(context, this),
-                  side: true,
-                ),
-                setter: (double x) {
-                  widget.sceneViewer.data.transform.sideHeight = x;
-                },
-                initialSize: 80,
-                background: widget.settings.backgroundColor,
-                outline: widget.settings.theme.scheme.secondary,
-              ),
-              ValueListenableBuilder<TutorialController?>(
-                valueListenable: widget.fileManager.activeTutorial,
-                builder: (context, controller, child) {
-                  if (controller == null) return const SizedBox.shrink();
-                  return Positioned(
-                    top: 16,
-                    right: 16,
-                    child: TutorialCard(
-                      controller: controller,
-                      onClose: widget.fileManager.closeTutorial,
-                      onFinish: widget.fileManager.finishTutorial,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return Stack(
+                children: [
+                  SplitterWidget(
+                    top: (context) => Semantics(
+                      label: context.l10n.semanticsSpacetimeCanvas,
+                      child: _wrapCanvasTutorialHighlight(
+                        widget.sceneViewer.build(context, this),
+                        side: false,
+                      ),
                     ),
-                  );
-                },
-              ),
-            ],
+                    bottom: (context) => Semantics(
+                      label: context.l10n.semanticsObserverCanvas,
+                      child: _wrapCanvasTutorialHighlight(
+                        widget.sceneViewer.buildSideView(context, this),
+                        side: true,
+                      ),
+                    ),
+                    setter: (double x) {
+                      widget.sceneViewer.data.transform.sideHeight = x;
+                    },
+                    initialSize: 80,
+                    background: widget.settings.backgroundColor,
+                    outline: widget.settings.theme.scheme.secondary,
+                  ),
+                  ValueListenableBuilder<TutorialController?>(
+                    valueListenable: widget.fileManager.activeTutorial,
+                    builder: (context, controller, child) {
+                      if (controller == null) return const SizedBox.shrink();
+                      final maxCardHeight = (constraints.maxHeight - 32.0)
+                          .clamp(200.0, 420.0);
+                      return Positioned(
+                        top: 16,
+                        right: 16,
+                        child: TutorialCard(
+                          controller: controller,
+                          maxHeight: maxCardHeight,
+                          onClose: widget.fileManager.closeTutorial,
+                          onFinish: widget.fileManager.finishTutorial,
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              );
+            },
           ),
         ),
         ValueListenableBuilder<TutorialController?>(

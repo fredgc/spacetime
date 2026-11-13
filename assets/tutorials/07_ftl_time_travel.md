@@ -67,8 +67,8 @@ worldline), **B2** uses an identical instantaneous transmitter to send the
 message along instant **MsgB** to **B1**, who receives it immediately at event
 **P6** ($t = 0.70$).
 
-Notice that **P6** is on **B1**'s worldline *below* (earlier than) event **P1**
-($t = 1.00$)! Now set the **Velocity** slider back to $v = 0.00$.
+Notice that **P6** is on **B1**'s worldline *below* (earlier than) event
+**P1** ($t = 1.00$)! Now set the **Velocity** slider back to $v = 0.00$.
 
 > object: event(name="P5", x=0.65, t=0.95, z=0.15, color=red)
 > object: instant(name="MsgB", x=0.65, t=0.95, v=0.6, color=purple)
@@ -81,8 +81,8 @@ Trace the full chain of events on the spacetime diagram:
 
 $$\text{P1} \rightarrow \text{P2} \rightarrow \text{P3} \rightarrow \text{P4} \rightarrow \text{P5} \rightarrow \text{P6} \rightarrow \text{P1}$$
 
-Because **B1** receives the message at **P6** ($t = 0.125$) and meets **A1** at
-**P1** ($t = 0.50$), **B1** can hand the message to **A1** *before* **A1**
+Because **B1** receives the message at **P6** ($t = 0.125$) and meets **A1**
+at **P1** ($t = 0.50$), **B1** can hand the message to **A1** *before* **A1**
 creates it at **P1**! Under special relativity, faster-than-light signaling in
 any frame inevitably leads to backwards-in-time causal paradoxes.
 

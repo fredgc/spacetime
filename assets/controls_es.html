@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Barra de Herramientas y Deslizadores</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+  </style>
+  <link rel="stylesheet" href="css/doc_style.css" />
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Barra de Herramientas y Deslizadores</h1>
+</header>
+<p>Las barras superior e inferior de la aplicación contienen controles
+para manipular y explorar el diagrama de espacio-tiempo:</p>
+<h2 id="menú">Menú</h2>
+<h3 id="configuración">Configuración</h3>
+<p>Al hacer clic en el icono de engranaje se abrirála página de
+configuración. Las configuraciones se guardan localmente. Los colores
+están vinculados a la configuración, no al dibujo.</p>
+<h3 id="archivo">Archivo</h3>
+<p>Guarde o cargue archivos. Consulte <a href="files.html">Gestión de
+Archivos</a> para obtener ayuda.</p>
+<h3 id="menú-editar">Menú Editar</h3>
+<p>Cortar y Pegar.</p>
+<h3 id="vista">Vista</h3>
+<p>Elija Lorentz,Éter o Emisor para la transformación de la velocidad de
+la luz. Consulte <a href="transformations.html">Transformaciones
+Relativistas</a> para más información.</p>
+<h2 id="herramientas-del-editor-barra-superior">Herramientas del Editor
+(Barra Superior)</h2>
+<ul>
+<li><p><strong>Añadir/Seleccionar</strong>: Toque este botón para
+alternar entre añadir o seleccionar un objeto.</p>
+<ul>
+<li><p><strong>Seleccionar</strong>: Permite seleccionar objetos en el
+Diagrama de Espacio-Tiempo o en la Vista Lateral para ver detalles,
+editar nombres o cambiar colores.</p></li>
+<li><p><strong>Añadir</strong>: Añade un objeto a la escena. Haga clic
+en la vista principal o en la vista lateral para añadir un
+objeto.</p></li>
+</ul></li>
+<li><p><strong>Nombre</strong>: El nombre del objeto seleccionado o del
+objeto que se añadirá. Toque el texto para cambiar el nombre.</p></li>
+<li><p><strong>Tipo</strong>: El tipo del objeto seleccionado o del
+objeto que se añadirá.</p>
+<ul>
+<li><p><strong>Evento</strong>. Unúnico punto en el tiempo y el
+espacio.</p></li>
+<li><p><strong>Instante</strong>. Un instante en el tiempo, relativo al
+observador actual. Es una línea horizontal cuando no se utiliza la
+transformación de Lorentz.</p></li>
+<li><p><strong>Cono de Luz</strong>. Un par de rayos de luz que se
+mueven a izquierda y derecha. La velocidad de la luz es
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mo>=</mo><mn>1.0</mn></mrow><annotation encoding="application/x-tex">c = 1.0</annotation></semantics></math>.</p></li>
+<li><p><strong>Ubicación (Reloj/Persona/Tren/Granero/Bandera)</strong>:
+Una ubicaciónúnica, relativa al observador actual.</p></li>
+</ul></li>
+<li><p><strong>Color</strong>: El color del objeto seleccionado o del
+objeto que se añadirá.</p></li>
+</ul>
+<h2 id="deslizadores-barra-inferior">Deslizadores (Barra Inferior)</h2>
+<ul>
+<li><p><strong>Deslizador de Tiempo
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>)</strong>:
+Mueve el tiempo del observador actual hacia adelante y hacia atrás.
+Ajustar este control anima la posición de las ubicaciones y el estado de
+eventos/relojes en la Vista Lateral. Presione la flecha a la derecha
+para iniciar la animación hacia adelante. La flecha a la izquierda anima
+hacia atrás.</p></li>
+<li><p><strong>Deslizador de Velocidad
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>v</mi><annotation encoding="application/x-tex">v</annotation></semantics></math>)</strong>:
+Cambia la velocidad relativa del marco del observador. Modificar la
+velocidad recalcula y transforma instantáneamente las posiciones de
+todos los objetos en ambos diagramas según el modelo de transformación
+seleccionado.</p></li>
+</ul>
+</body>
+</html>

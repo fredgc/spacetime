@@ -21,8 +21,9 @@
       vertical-align: middle;
     }
     /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
     pre > code.sourceCode { white-space: pre; position: relative; }
-    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
     pre > code.sourceCode > span:empty { height: 1.2em; }
     .sourceCode { overflow: visible; }
     code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -88,8 +89,7 @@
   <link rel="stylesheet" href="../css/doc_style.css" />
 </head>
 <body>
-<h1 id="spacetime-drawing-tool-v6.1.40">Spacetime Drawing Tool
-(v6.1.4+0)</h1>
+<h1 id="spacetime-drawing-tool">Spacetime Drawing Tool</h1>
 <p>An interactive, educational drawing and animation tool for
 visualizing special relativity in 1 time
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>)
@@ -108,23 +108,23 @@ href="https://spacetime.gchouse.org">spacetime.gchouse.org</a></p></li>
 <p>Comprehensive documentation is available in the <code>doc/</code>
 directory:</p>
 <ul>
-<li><p><a href="doc/about.md">doc/about.md</a>: Project origins, author
+<li><p><a href="doc/about.md">doc/about.md</a> : Project origins, author
 attribution, and version history.</p></li>
-<li><p><a href="doc/overview.md">doc/overview.md</a>: Mathematical and
+<li><p><a href="doc/overview.md">doc/overview.md</a> : Mathematical and
 physical principles of Minkowski spacetime diagrams.</p></li>
-<li><p><a href="doc/controls.md">doc/controls.md</a>: Guide to the
+<li><p><a href="doc/controls.md">doc/controls.md</a> : Guide to the
 toolbar, velocity sliders, playback controls, and gestures.</p></li>
-<li><p><a href="doc/objects.md">doc/objects.md</a>: Spacetime entities
+<li><p><a href="doc/objects.md">doc/objects.md</a> : Spacetime entities
 including events, light cones, instants, and persistent
 locations.</p></li>
-<li><p><a href="doc/transformations.md">doc/transformations.md</a>:
+<li><p><a href="doc/transformations.md">doc/transformations.md</a> :
 Comparative physics models (Lorentz Relativity, Ether, Emitter
 frame).</p></li>
-<li><p><a href="doc/files.md">doc/files.md</a>: Saving, loading, JSON
+<li><p><a href="doc/files.md">doc/files.md</a> : Saving, loading, JSON
 schema, and Google Drive synchronization.</p></li>
-<li><p><a href="doc/privacy.md">doc/privacy.md</a>: Application privacy
+<li><p><a href="doc/privacy.md">doc/privacy.md</a> : Application privacy
 policy and local storage disclosure.</p></li>
-<li><p><a href="doc/terms.md">doc/terms.md</a>: Terms of
+<li><p><a href="doc/terms.md">doc/terms.md</a> : Terms of
 service.</p></li>
 </ul>
 <hr />
@@ -189,6 +189,6 @@ class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="
 <hr />
 <h2 id="license">License</h2>
 <p>This project is open source and licensed under the <a
-href="LICENSE">Apache 2.0 License</a>.</p>
+href="LICENSE">Apache 2.0 License</a> .</p>
 </body>
 </html>

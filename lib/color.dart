@@ -55,7 +55,7 @@ class SavableColor extends Savable<Color> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text('$description: '),
+          Flexible(child: Text('$description: ')),
           ColorIndicator(
             width: 30,
             height: 30,
@@ -174,7 +174,7 @@ class SavableColorArray extends Savable<List<Color>> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text('$description: '),
+          Flexible(child: Text('$description: ')),
           ColorIndicator(
             width: 30,
             height: 30,
@@ -382,12 +382,12 @@ class SavableTheme extends Savable<int> {
   Widget switcher(BuildContext context, VoidCallback callback) {
     List<bool> isSelected = List<bool>.filled(ThemeMode.values.length, false);
     isSelected[themeMode.index] = true;
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
+    return Wrap(
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: 10,
+      runSpacing: 8,
       children: [
         const Text('Theme Brightness: '),
-        const SizedBox(width: 10),
         ToggleButtons(
           isSelected: isSelected,
           onPressed: (int index) {

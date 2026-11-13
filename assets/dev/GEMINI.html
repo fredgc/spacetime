@@ -21,8 +21,9 @@
       vertical-align: middle;
     }
     /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
     pre > code.sourceCode { white-space: pre; position: relative; }
-    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
     pre > code.sourceCode > span:empty { height: 1.2em; }
     .sourceCode { overflow: visible; }
     code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -94,7 +95,6 @@ Developer Guide for Spacetime Drawing Tool</h1>
 <p>Welcome! This guide is designed to help future LLM agents and human
 developers get up to speed quickly on the <strong>Spacetime</strong>
 Flutter application.</p>
-<p>Build Version v6.1.4+0</p>
 <hr />
 <h2 id="developer-rules-environment-configuration">Developer Rules &amp;
 Environment Configuration</h2>
@@ -105,11 +105,13 @@ in <code>~/source/gemini/config/rules/</code>:</p>
 tasks and issues are tracked using <code>~/bin/todo.py</code>. When
 asked about tasks or what to work on next, execute:</p>
 <div class="sourceCode" id="cb1"><pre
-class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">~/bin/todo.py</span> list</span></code></pre></div>
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">~/bin/todo.py</span> list</span></code></pre></div></li>
+</ul>
 <p>Before starting an item, mark it in progress
 (<code>~/bin/todo.py doing &lt;N&gt;</code>). Once completed, mark it
 done (<code>~/bin/todo.py done &lt;N&gt;</code>). Do not archive
-completed tasks until reviewed and verified.</p></li>
+completed tasks until reviewed and verified.</p>
+<ul>
 <li><p><strong>Communication Style (<code>style.md</code>)</strong>: Be
 blunt and direct. Avoid polite filler and superlatives. Keep responses
 concise, technical, and focused strictly on facts and
@@ -197,17 +199,17 @@ top-level screens.</p></li>
 <li><p><strong><code>lib/widget.dart</code> &amp;
 <code>lib/widgets/</code></strong>:</p>
 <ul>
-<li><p><a href="lib/widgets/splash_widget.dart#L16">SplashWidget</a>:
+<li><p><a href="lib/widgets/splash_widget.dart#L16">SplashWidget</a> :
 Wraps loading states (settings, sprites, file initialization).</p></li>
-<li><p><a href="lib/widgets/app_widget.dart#L24">AppWidget</a>: Primary
+<li><p><a href="lib/widgets/app_widget.dart#L24">AppWidget</a> : Primary
 editor interface. Contains App Bar, toolbar, and layout columns, wrapped
 in <code>PopScope</code> to intercept back gestures when unsaved edits
 exist.</p></li>
-<li><p><a href="lib/widgets/tap_to_edit.dart#L7">TapToEditText</a>:
+<li><p><a href="lib/widgets/tap_to_edit.dart#L7">TapToEditText</a> :
 Inline editing textfield with escape-key and keyboard handling.</p></li>
 <li><p><a
-href="lib/widgets/json_syntax_dialog.dart#L6">JsonSyntaxEditorDialog</a>:
-Live JSON syntax correction dialog.</p></li>
+href="lib/widgets/json_syntax_dialog.dart#L6">JsonSyntaxEditorDialog</a>
+: Live JSON syntax correction dialog.</p></li>
 <li><p>Sliders (<code>MySlider.buildTable</code>): Handles interactive
 sliders for changing current observer time
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>)
@@ -220,15 +222,15 @@ active.</p></li>
 <li><p><strong><code>lib/scene.dart</code> &amp;
 <code>lib/scene/</code></strong>:</p>
 <ul>
-<li><p><a href="lib/scene/scene_data.dart#L13">SceneData</a>: Serialized
-document state (list of drawables, time, velocity, viewport
+<li><p><a href="lib/scene/scene_data.dart#L13">SceneData</a> :
+Serialized document state (list of drawables, time, velocity, viewport
 center/zoom).</p></li>
-<li><p><a href="lib/scene/scene_view.dart#L23">SceneView</a>: High-level
-state manager for the active editor. Coordinates painting, selections,
-tool choices, and contains a <code>Worker</code> to dispatch
+<li><p><a href="lib/scene/scene_view.dart#L23">SceneView</a> :
+High-level state manager for the active editor. Coordinates painting,
+selections, tool choices, and contains a <code>Worker</code> to dispatch
 asynchronous drawable calculations.</p></li>
 <li><p><a href="lib/scene/scene_painters.dart#L5">ScenePainter &amp;
-SideViewPainter</a>: Custom painters connecting Flutter canvas repaints
+SideViewPainter</a> : Custom painters connecting Flutter canvas repaints
 to <code>SceneView</code>.</p></li>
 </ul></li>
 <li><p><strong><code>lib/transform.dart</code></strong>:</p>
@@ -248,13 +250,13 @@ spaces.</li>
 <li><p>Models entity types placed in spacetime (inheriting from
 <code>Drawable</code>):</p>
 <ul>
-<li><p><a href="lib/drawables/event.dart#L22">Event</a>: A single
+<li><p><a href="lib/drawables/event.dart#L22">Event</a> : A single
 coordinate point. Fades out in side view over time.</p></li>
-<li><p><a href="lib/drawables/light_cone.dart#L22">LightCone</a>:
+<li><p><a href="lib/drawables/light_cone.dart#L22">LightCone</a> :
 Expands outward along light paths.</p></li>
-<li><p><a href="lib/drawables/instant.dart#L22">Instant</a>: Tilted
+<li><p><a href="lib/drawables/instant.dart#L22">Instant</a> : Tilted
 plane of simultaneity.</p></li>
-<li><p><a href="lib/drawables/location.dart#L23">Location</a>: Moving
+<li><p><a href="lib/drawables/location.dart#L23">Location</a> : Moving
 entities (Person, Train, Barn, Flag, Clock) represented by worldlines.
 These render as length-contracted sprites in the side view.</p></li>
 </ul></li>
@@ -268,12 +270,12 @@ directives (<code>TutorialDirective</code>), evaluates conditions
 against <code>SceneView</code>, and renders floating
 <code>TutorialCard</code>, canvas overlays, and UI highlights:</p>
 <ul>
-<li><p><a href="lib/script/tutorial_parser.dart#L27">TutorialParser</a>:
-Markdown parser.</p></li>
-<li><p><a href="lib/script/tutorial_step.dart#L446">TutorialStep</a>:
+<li><p><a href="lib/script/tutorial_parser.dart#L27">TutorialParser</a>
+: Markdown parser.</p></li>
+<li><p><a href="lib/script/tutorial_step.dart#L446">TutorialStep</a> :
 Step evaluation and <code>TutorialDirective</code> classes.</p></li>
 <li><p><a
-href="lib/script/tutorial_controller.dart#L9">TutorialController</a>:
+href="lib/script/tutorial_controller.dart#L9">TutorialController</a> :
 Reactive controller tracking progress and driving step
 criteria.</p></li>
 </ul></li>
@@ -284,12 +286,12 @@ criteria.</p></li>
 <li><p>Google Drive v3 REST API integration, OAuth authentication, query
 parsing (<code>buildDriveQuery</code>), and file picker dialogs:</p>
 <ul>
-<li><p><a href="lib/drive/drive_auth.dart#L18">MyDriveAccess</a>:
+<li><p><a href="lib/drive/drive_auth.dart#L18">MyDriveAccess</a> :
 Authentication manager, OAuth token storage, sign in/out, and status
 stream.</p></li>
-<li><p><a href="lib/drive/drive_service.dart#L44">DriveHolder</a>:
+<li><p><a href="lib/drive/drive_service.dart#L44">DriveHolder</a> :
 FileHolder storage driver for Google Drive files and metadata.</p></li>
-<li><p><a href="lib/drive/drive_dialog.dart#L11">DriveDialog</a>: Drive
+<li><p><a href="lib/drive/drive_dialog.dart#L11">DriveDialog</a> : Drive
 file picker and search dialog UI.</p></li>
 </ul></li>
 </ul></li>
@@ -353,7 +355,7 @@ by:</p>
 <li><p>Relative velocity
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>v</mi><annotation encoding="application/x-tex">v</annotation></semantics></math>
 ranges within
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">[</mo><mo>−</mo><mn>0.999</mn><mo>,</mo><mn>0.999</mn><mo stretchy="true" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[-0.999, 0.999]</annotation></semantics></math>.</p></li>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">[</mo><mi>−</mi><mn>0.999</mn><mo>,</mo><mn>0.999</mn><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[-0.999, 0.999]</annotation></semantics></math>.</p></li>
 <li><p>Lorentz factor
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mo>=</mo><mfrac><mn>1</mn><msqrt><mrow><mn>1</mn><mo>−</mo><msup><mi>v</mi><mn>2</mn></msup></mrow></msqrt></mfrac></mrow><annotation encoding="application/x-tex">\gamma = \frac{1}{\sqrt{1 - v^2}}</annotation></semantics></math>.</p></li>
 </ul>
@@ -363,19 +365,20 @@ Frame Transform (World Frame
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>↔</mo><annotation encoding="application/x-tex">\leftrightarrow</annotation></semantics></math>
 Reference Frame)</h3>
 <p>Transform from observer frame to world frame:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mn>0</mn></msub><mo>=</mo><mi>γ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo>+</mo><mi>v</mi><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">x_0 = \gamma (x + v t)</annotation></semantics></math></p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>t</mi><mn>0</mn></msub><mo>=</mo><mi>γ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo>+</mo><mi>v</mi><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">t_0 = \gamma (t + v x)</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mn>0</mn></msub><mo>=</mo><mi>γ</mi><mo stretchy="false" form="prefix">(</mo><mi>x</mi><mo>+</mo><mi>v</mi><mi>t</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">x_0 = \gamma (x + v t)</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>t</mi><mn>0</mn></msub><mo>=</mo><mi>γ</mi><mo stretchy="false" form="prefix">(</mo><mi>t</mi><mo>+</mo><mi>v</mi><mi>x</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">t_0 = \gamma (t + v x)</annotation></semantics></math></p>
 <p>Transform from world frame to observer frame:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>=</mo><mi>γ</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>x</mi><mn>0</mn></msub><mo>−</mo><mi>v</mi><msub><mi>t</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">x = \gamma (x_0 - v t_0)</annotation></semantics></math></p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>=</mo><mi>γ</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>t</mi><mn>0</mn></msub><mo>−</mo><mi>v</mi><msub><mi>x</mi><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">t = \gamma (t_0 - v x_0)</annotation></semantics></math></p>
-<p>In code (see <a href="lib/transform.dart#L49">Point.toFrame</a>):</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>=</mo><mi>γ</mi><mo stretchy="false" form="prefix">(</mo><msub><mi>x</mi><mn>0</mn></msub><mo>−</mo><mi>v</mi><msub><mi>t</mi><mn>0</mn></msub><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">x = \gamma (x_0 - v t_0)</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>=</mo><mi>γ</mi><mo stretchy="false" form="prefix">(</mo><msub><mi>t</mi><mn>0</mn></msub><mo>−</mo><mi>v</mi><msub><mi>x</mi><mn>0</mn></msub><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">t = \gamma (t_0 - v x_0)</annotation></semantics></math></p>
+<p>In code (see <a href="lib/transform.dart#L49">Point.toFrame</a>
+):</p>
 <div class="sourceCode" id="cb3"><pre
 class="sourceCode dart"><code class="sourceCode dart"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> x0 <span class="op">=</span> frame<span class="op">.</span>gamma <span class="op">*</span> (x <span class="op">-</span> frame<span class="op">.</span>velocity <span class="op">*</span> t);</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> t0 <span class="op">=</span> frame<span class="op">.</span>gamma <span class="op">*</span> (t <span class="op">-</span> frame<span class="op">.</span>velocity <span class="op">*</span> x);</span></code></pre></div>
 <h3 id="length-contraction">Length Contraction</h3>
 <p>For <code>Location</code> entities, visual width in the side view is
 length-contracted based on relative velocity to the observer (see <a
-href="lib/drawable.dart#L565">Location.update</a>):</p>
+href="lib/drawable.dart#L565">Location.update</a> ):</p>
 <div class="sourceCode" id="cb4"><pre
 class="sourceCode dart"><code class="sourceCode dart"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> v <span class="op">=</span> frame<span class="op">.</span>velocity;</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> u <span class="op">=</span> transform<span class="op">.</span>frame<span class="op">.</span>velocity;</span>
@@ -517,9 +520,11 @@ leakage.</p></li>
 when running on web (controlled via <code>remote_logging</code>
 setting). Start logging server by running:</p>
 <div class="sourceCode" id="cb5"><pre
-class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> log_server.py</span></code></pre></div>
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> log_server.py</span></code></pre></div></li>
+</ul>
 <p>This server runs on port 5001 and writes client logs to
-<code>client_logs.log</code> and standard output.</p></li>
+<code>client_logs.log</code> and standard output.</p>
+<ul>
 <li><p><strong>Drive Auth &amp; Token Invalidation</strong>:
 <code>MyDriveAccess</code> (<code>lib/drive.dart</code>) clears cached
 credentials on sign-in if Drive scopes are missing, and automatically
@@ -613,8 +618,17 @@ compilation, icon generation, and builds:</p>
 <code>pandoc</code>.</p></li>
 <li><p><code>make ASSETS</code>: Generates icons, favicons, version
 metadata, tutorials, and compiled documentation.</p></li>
-<li><p><code>make test</code>: Runs all Flutter unit and widget
-tests.</p></li>
+<li><p><code>make test</code>: Runs standard Flutter unit, widget, and
+ARB localization parity tests on every commit
+(<code>flutter test --exclude-tags release_audit</code>). Fast execution
+(~2-5 seconds).</p></li>
+<li><p><code>make audit</code>: Runs exhaustive pre-release
+accessibility and multi-locale layout audits
+(<code>flutter test test/audit_test.dart</code>). Tests all 9 supported
+locales, compact mobile/tablet/desktop viewports, 1.5x/2.0x font
+scaling, and WCAG AA guidelines
+(<code>labeledTapTargetGuideline</code>). Required automatically by
+<code>make stage-release</code> and <code>make release</code>.</p></li>
 <li><p><code>make stage</code>: Builds the web application with debug
 flags enabled and runs <code>firebase_stage.pl</code> to deploy to the
 staging preview channel.</p></li>
@@ -661,6 +675,18 @@ executing:</p>
 <div class="sourceCode" id="cb7"><pre
 class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">dart</span> format .</span></code></pre></div></li>
 </ul>
+<h3 id="internationalization-and-translation">Internationalization and
+Translation</h3>
+<p>In addition to maintaing the UI in various languages, we should also
+translate the tutorials. When translating the words, we should follow
+the lead of the original translator and change the name of the railroad
+station from US: Grand Central German: Berliner Hauptbahnhof British:
+Trafalgar Station Other: The biggest or most popular train station used
+by people who speak that language.</p>
+<p>Also, we need to translate “drinking coffee” in american english to
+“drinking tea” in British English. US: coffee British: tea German: beer
+(Bier) French: coffee Lithuanian:šaltibarščiai Other: The most popular
+drink among people who speak that langauge.</p>
 <h3 id="git-commit-preferences">Git Commit Preferences</h3>
 <p>To ensure clean and standard commit logs:</p>
 <ul>
@@ -678,81 +704,124 @@ which files are modified. Only run the entire test suite
 (<code>flutter test</code>) before doing a git commit or staging a
 release.</p>
 <ul>
-<li><p><strong>Name Validation</strong> (<code>lib/name.dart</code>)</p>
-<p>Run: <code>flutter test test/name_test.dart</code></p></li>
-<li><p><strong>Routing &amp; Navigation</strong>
-(<code>lib/navigation.dart</code>, <code>lib/my_app.dart</code>)</p>
-<p>Run: <code>flutter test test/nav_test.dart</code></p></li>
-<li><p><strong>Upload &amp; Clipboard</strong>
-(<code>lib/upload.dart</code>)</p>
-<p>Run: <code>flutter test test/upload_test.dart</code></p></li>
-<li><p><strong>JSON &amp; Scene Serialization</strong>
-(<code>lib/scene.dart</code>)</p>
-<p>Run: <code>flutter test test/json_test.dart</code></p></li>
-<li><p><strong>Coordinate Math</strong>
-(<code>lib/transform.dart</code>)</p>
-<p>Run: <code>flutter test test/transform_test.dart</code></p></li>
-<li><p><strong>Relativity Physics Correctness</strong>
-(<code>lib/transform.dart</code>, <code>lib/drawable.dart</code>)</p>
-<p>Run: <code>flutter test test/relativity_test.dart</code></p></li>
-<li><p><strong>Spacetime Entities / Drawables</strong>
-(<code>lib/drawable.dart</code>)</p>
-<p>Run:
-<code>flutter test test/simple_test.dart test/scene_editor.dart</code></p></li>
-<li><p><strong>Axes &amp; Grid Lines</strong>
-(<code>lib/axis.dart</code>)</p>
-<p>Run: <code>flutter test test/axis_test.dart</code></p></li>
-<li><p><strong>Sprites &amp; Silhouettes</strong>
-(<code>lib/sprites.dart</code>)</p>
-<p>Run: <code>flutter test test/sprites_test.dart</code></p></li>
-<li><p><strong>Split Screen Layout</strong>
-(<code>lib/splitter.dart</code>)</p>
-<p>Run: <code>flutter test test/splitter_test.dart</code></p></li>
-<li><p><strong>Colors &amp; Themes</strong>
-(<code>lib/color.dart</code>)</p>
-<p>Run: <code>flutter test test/color_test.dart</code></p></li>
-<li><p><strong>Undo/Redo History &amp; Unsaved Sync</strong>
-(<code>lib/edit.dart</code>)</p>
-<p>Run: <code>flutter test test/edit_test.dart</code></p></li>
-<li><p><strong>File IO &amp; Recent Files</strong>
-(<code>lib/file_manager.dart</code>, <code>lib/file_holder.dart</code>,
-<code>lib/local_file.dart</code>, <code>lib/recent_file.dart</code>)</p>
-<p>Run: <code>flutter test test/local_file_test.dart</code></p></li>
-<li><p><strong>Drive Authentication &amp; Token Caching</strong>
-(<code>lib/drive.dart</code>)</p>
-<p>Run: <code>flutter test test/drive_cache_test.dart</code></p></li>
-<li><p><strong>Mouse Clicks &amp; Drags</strong>
-(<code>lib/mouse.dart</code>)</p>
-<p>Run: <code>flutter test test/mouse_test.dart</code></p></li>
-<li><p><strong>Velocity &amp; Time Sliders</strong>
-(<code>lib/slider.dart</code>)</p>
-<p>Run: <code>flutter test test/slider_test.dart</code></p></li>
-<li><p><strong>Settings Management</strong>
-(<code>lib/settings.dart</code>)</p>
-<p>Run: <code>flutter test test/settings_test.dart</code></p></li>
-<li><p><strong>Background Worker</strong>
-(<code>lib/worker.dart</code>)</p>
-<p>Run: <code>flutter test test/worker_test.dart</code></p></li>
-<li><p><strong>Interactive Scripts &amp; Tutorials</strong>
-(<code>lib/script.dart</code>,
-<code>lib/tutorial_widget.dart</code>)</p>
-<p>Run:
-<code>flutter test test/script_test.dart test/tutorial_test.dart</code></p></li>
-<li><p><strong>Animation Timing &amp; Helpers</strong>
-(<code>lib/animate.dart</code>)</p>
-<p>Run:
-<code>flutter test test/async_test.dart test/animator_test.dart</code></p></li>
-<li><p><strong>Printer &amp; Logging Utilities</strong>
-(<code>lib/printer.dart</code>)</p>
-<p>Run: <code>flutter test test/printer_test.dart</code></p></li>
-<li><p><strong>General UI / Layout</strong>
-(<code>lib/widget.dart</code>)</p>
-<p>Run:
-<code>flutter test test/widget_test.dart test/layout_test.dart</code></p></li>
+<li><strong>Name Validation</strong> (<code>lib/name.dart</code>)</li>
 </ul>
-<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
-<script>
-  mermaid.initialize({ startOnLoad: true, theme: 'default' });
+<p>Run: <code>flutter test test/name_test.dart</code></p>
+<ul>
+<li><strong>Routing &amp; Navigation</strong>
+(<code>lib/navigation.dart</code>, <code>lib/my_app.dart</code>)</li>
+</ul>
+<p>Run: <code>flutter test test/nav_test.dart</code></p>
+<ul>
+<li><strong>Upload &amp; Clipboard</strong>
+(<code>lib/upload.dart</code>)</li>
+</ul>
+<p>Run: <code>flutter test test/upload_test.dart</code></p>
+<ul>
+<li><strong>JSON &amp; Scene Serialization</strong>
+(<code>lib/scene.dart</code>)</li>
+</ul>
+<p>Run: <code>flutter test test/json_test.dart</code></p>
+<ul>
+<li><strong>Coordinate Math</strong>
+(<code>lib/transform.dart</code>)</li>
+</ul>
+<p>Run: <code>flutter test test/transform_test.dart</code></p>
+<ul>
+<li><strong>Relativity Physics Correctness</strong>
+(<code>lib/transform.dart</code>, <code>lib/drawable.dart</code>)</li>
+</ul>
+<p>Run: <code>flutter test test/relativity_test.dart</code></p>
+<ul>
+<li><strong>Spacetime Entities / Drawables</strong>
+(<code>lib/drawable.dart</code>)</li>
+</ul>
+<p>Run:
+<code>flutter test test/simple_test.dart test/scene_editor.dart</code></p>
+<ul>
+<li><strong>Axes &amp; Grid Lines</strong>
+(<code>lib/axis.dart</code>)</li>
+</ul>
+<p>Run: <code>flutter test test/axis_test.dart</code></p>
+<ul>
+<li><strong>Sprites &amp; Silhouettes</strong>
+(<code>lib/sprites.dart</code>)</li>
+</ul>
+<p>Run: <code>flutter test test/sprites_test.dart</code></p>
+<ul>
+<li><strong>Split Screen Layout</strong>
+(<code>lib/splitter.dart</code>)</li>
+</ul>
+<p>Run: <code>flutter test test/splitter_test.dart</code></p>
+<ul>
+<li><strong>Colors &amp; Themes</strong>
+(<code>lib/color.dart</code>)</li>
+</ul>
+<p>Run: <code>flutter test test/color_test.dart</code></p>
+<ul>
+<li><strong>Undo/Redo History &amp; Unsaved Sync</strong>
+(<code>lib/edit.dart</code>)</li>
+</ul>
+<p>Run: <code>flutter test test/edit_test.dart</code></p>
+<ul>
+<li><strong>File IO &amp; Recent Files</strong>
+(<code>lib/file_manager.dart</code>, <code>lib/file_holder.dart</code>,
+<code>lib/local_file.dart</code>,
+<code>lib/recent_file.dart</code>)</li>
+</ul>
+<p>Run: <code>flutter test test/local_file_test.dart</code></p>
+<ul>
+<li><strong>Drive Authentication &amp; Token Caching</strong>
+(<code>lib/drive.dart</code>)</li>
+</ul>
+<p>Run: <code>flutter test test/drive_cache_test.dart</code></p>
+<ul>
+<li><strong>Mouse Clicks &amp; Drags</strong>
+(<code>lib/mouse.dart</code>)</li>
+</ul>
+<p>Run: <code>flutter test test/mouse_test.dart</code></p>
+<ul>
+<li><strong>Velocity &amp; Time Sliders</strong>
+(<code>lib/slider.dart</code>)</li>
+</ul>
+<p>Run: <code>flutter test test/slider_test.dart</code></p>
+<ul>
+<li><strong>Settings Management</strong>
+(<code>lib/settings.dart</code>)</li>
+</ul>
+<p>Run: <code>flutter test test/settings_test.dart</code></p>
+<ul>
+<li><strong>Background Worker</strong>
+(<code>lib/worker.dart</code>)</li>
+</ul>
+<p>Run: <code>flutter test test/worker_test.dart</code></p>
+<ul>
+<li><strong>Interactive Scripts &amp; Tutorials</strong>
+(<code>lib/script.dart</code>,
+<code>lib/tutorial_widget.dart</code>)</li>
+</ul>
+<p>Run:
+<code>flutter test test/script_test.dart test/tutorial_test.dart</code></p>
+<ul>
+<li><strong>Animation Timing &amp; Helpers</strong>
+(<code>lib/animate.dart</code>)</li>
+</ul>
+<p>Run:
+<code>flutter test test/async_test.dart test/animator_test.dart</code></p>
+<ul>
+<li><strong>Printer &amp; Logging Utilities</strong>
+(<code>lib/printer.dart</code>)</li>
+</ul>
+<p>Run: <code>flutter test test/printer_test.dart</code></p>
+<ul>
+<li><strong>General UI / Layout</strong>
+(<code>lib/widget.dart</code>)</li>
+</ul>
+<p>Run:
+<code>flutter test test/widget_test.dart test/layout_test.dart</code></p>
+<script
+src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script> mermaid.initialize({ startOnLoad: true, theme: 'default' });
 </script>
 </body>
 </html>

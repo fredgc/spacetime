@@ -2,7 +2,7 @@ DRIVE_ICON_SIZES := 256 128 64 32 16
 DRIVE_ICONS := $(patsubst %,assets/icons/drive-icon-%.png,$(DRIVE_ICON_SIZES))
 FIREBASE_FILES := lib/firebase_options.dart android/app/google-services.json firebase.json
 
-ASSETS := docs web/favicon.ico web/favicon.png web/privacy.html web/terms.html $(DRIVE_ICONS) web/version.json lib/transform.g.dart lib/tutorials.g.dart $(FIREBASE_FILES)
+ASSETS := docs web/favicon.ico web/favicon.png web/privacy.html web/terms.html web/privacy_es.html web/terms_es.html $(DRIVE_ICONS) lib/transform.g.dart lib/tutorials.g.dart $(FIREBASE_FILES)
 
 build_all: $(ASSETS)
 	flutter build web
@@ -20,9 +20,9 @@ DEV_DOCS_HTML := $(patsubst %.md,assets/dev/%.html,$(DEV_DOCS_MD))
 TUTORIALS_MD := $(wildcard assets/tutorials/*.md)
 DEV_TUTORIALS_MD := $(wildcard assets/dev/tutorials/*.md)
 
-.PHONY: docs stage build_all test release ASSETS
+.PHONY: docs stage build_all test test-fast test-all test-stress release ASSETS audit
 
-docs: $(USER_DOCS_HTML) $(DEV_DOCS_HTML) web/privacy.html web/terms.html
+docs: $(USER_DOCS_HTML) $(DEV_DOCS_HTML) web/privacy.html web/terms.html web/privacy_es.html web/terms_es.html
 
 assets/%.html: doc/%.md
 	@mkdir -p assets
@@ -53,7 +53,19 @@ assets/icons/icon.png assets/icons/foreground.png assets/icons/background.png: i
 ASSETS: $(ASSETS)
 
 test:
-	flutter test
+	python3 scripts/test_changed.py
+
+test-fast:
+	flutter test --exclude-tags release_audit,stress
+
+test-all:
+	flutter test --exclude-tags release_audit
+
+test-stress:
+	flutter test --tags stress
+
+audit: $(ASSETS)
+	flutter test test/audit_test.dart
 
 stage:  $(ASSETS)
 	# ./roll_build_number.sh
@@ -61,16 +73,16 @@ stage:  $(ASSETS)
 	echo "PURPLE: Beginning push to staging."
 	firebase_stage.pl
 
-stage-release:  $(ASSETS)
+stage-release:  $(ASSETS) audit
 	# ./roll_build_number.sh
 	flutter build web
 	echo "PURPLE: Beginning push to staging."
 	firebase_stage.pl
 
-release: $(ASSETS)
-	./roll_build_number.sh --release
+release: $(ASSETS) audit
+	# ./roll_build_number.sh --release
 	make build_all
-	firebase deploy
+	firebase_release.pl
 
 # 
 lib/transform.g.dart: lib/transform.dart
@@ -80,9 +92,5 @@ lib/transform.g.dart: lib/transform.dart
 lib/tutorials.g.dart: $(TUTORIALS_MD) $(DEV_TUTORIALS_MD) generate_tutorials.py
 	python3 generate_tutorials.py
 
-web/version.json: pubspec.yaml
-	@version=$$(grep '^version: ' pubspec.yaml | sed 's/version: //'); \
-	echo "{\"version\": \"$$version\"}" > web/version.json
-
-lib/firebase_options.dart android/app/google-services.json firebase.json:
+$(FIREBASE_FILES):
 	flutterfire configure -y

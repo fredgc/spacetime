@@ -44,8 +44,11 @@ class Location extends Drawable {
     if (transform.lightSpeed == LightSpeed.lorentz) {
       double v = frame.velocity;
       double u = transform.frame.velocity;
-      double w = (v - u) / (1.0 - u * v); // Relative velocity.
-      double gammaInv = math.sqrt(1.0 - w * w);
+      double denom = 1.0 - u * v;
+      double w = denom.abs() > 1e-9
+          ? (v - u) / denom
+          : 0.0; // Relative velocity.
+      double gammaInv = (1.0 - w * w > 0.0) ? math.sqrt(1.0 - w * w) : 0.0;
       contractedWidth = width * gammaInv;
     } else {
       contractedWidth = width;
@@ -198,7 +201,7 @@ class Location extends Drawable {
   /// Find the coordinate of this object, at the specified time, in observer coord.
   /// This should only be called after update.
   Point findPoint(double time, CoordinateTransform transform) {
-    double dx = (time - ptObs.t) * vObs.dx / vObs.dt;
+    double dx = vObs.dt != 0.0 ? (time - ptObs.t) * vObs.dx / vObs.dt : 0.0;
     return Point(x: ptObs.x + dx, t: time, z: ptObs.z);
   }
 

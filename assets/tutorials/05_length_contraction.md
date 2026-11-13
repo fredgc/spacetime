@@ -5,9 +5,9 @@ relativity of simultaneity resolves the classic Train-and-Barn paradox.
 
 ## 1. Distance in a Rest Frame
 
-We have placed two stationary people, **A1** at $x = -1.0$ and **A2** at
-$x = 1.0$. In their own reference frame ($v = 0.00$), the distance between them
-is $2.0$ units.
+We have placed two stationary people, **A1** at $x = -1.0$ and **A2** at $x =
+1.0$. In their own reference frame ($v = 0.00$), the distance between them is
+$2.0$ units.
 
 Click **Continue** to see what happens to their separation when viewed from a
 moving frame.
@@ -34,8 +34,8 @@ Just like time dilation, length contraction seems to create a paradox: if the
 barn sees the moving train as shorter, and the train sees the barn as shorter,
 does the train fit inside the barn?
 
-Here is a stationary **Barn** ($v = 0.0$, width $0.50$, spanning $x = -0.25$ to
-$0.25$) and a moving **Train** ($v = 0.60$, rest width $0.50$). Set the
+Here is a stationary **Barn** ($v = 0.0$, width $0.50$, spanning $x = -0.25$
+to $0.25$) and a moving **Train** ($v = 0.60$, rest width $0.50$). Set the
 **Velocity** slider to $v = 0.00$ to view the Barn's rest frame.
 
 > reset
@@ -91,7 +91,7 @@ Now move the **Time** slider forward to $t = 0.15$ (when **B** occurs).
 
 By the time the back of the train is inside the left door of the barn, the
 front of the train has already passed well beyond the right door! Both frames
-agree on the events **F** and **B**, but they only happen simultaneously in the
-Barn's reference frame.
+agree on the events **F** and **B**, but they only happen simultaneously in
+the Barn's reference frame.
 
 > t = 0.15

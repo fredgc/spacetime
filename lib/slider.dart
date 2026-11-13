@@ -16,6 +16,7 @@
 
 import 'package:flutter/material.dart';
 
+import 'l10n/l10n_extension.dart';
 import "printer.dart";
 import 'settings.dart';
 
@@ -426,14 +427,18 @@ class MySlider with ChangeNotifier {
     backgroundColor = theme.colorScheme.surface;
     textColor = theme.colorScheme.onSurface;
     gridColor = theme.colorScheme.primary;
+    final displayName = name == 'Time'
+        ? context.l10n.time
+        : (name == 'Velocity' ? context.l10n.velocity : name);
     return IntrinsicHeight(
       child: Row(
         children: <Widget>[
-          Text("$name: "),
+          Text("$displayName: "),
           Opacity(
             opacity: allowAnimate ? 1.0 : 0.0,
             child: IconButton(
               icon: const Icon(Icons.arrow_left),
+              tooltip: "Decrease $displayName speed",
               onPressed: () {
                 Log.animate.log("Button $name decrease speed.");
                 incrementSpeed(-speedDelta);
@@ -441,15 +446,24 @@ class MySlider with ChangeNotifier {
             ),
           ),
           Expanded(
-            child: GestureDetector(
-              onScaleStart: scaleStart,
-              onScaleUpdate: scaleUpdate,
-              onScaleEnd: scaleEnd,
-              onTapUp: tapUp,
-              child: ClipRect(
-                child: CustomPaint(
-                  painter: SliderPainter(slider: this, repaint: this),
-                  child: Container(),
+            child: Semantics(
+              slider: true,
+              label: displayName,
+              value: value.toStringAsFixed(2),
+              increasedValue: (value + 0.1).clamp(min, max).toStringAsFixed(2),
+              decreasedValue: (value - 0.1).clamp(min, max).toStringAsFixed(2),
+              onIncrease: () => value = (value + 0.1).clamp(min, max),
+              onDecrease: () => value = (value - 0.1).clamp(min, max),
+              child: GestureDetector(
+                onScaleStart: scaleStart,
+                onScaleUpdate: scaleUpdate,
+                onScaleEnd: scaleEnd,
+                onTapUp: tapUp,
+                child: ClipRect(
+                  child: CustomPaint(
+                    painter: SliderPainter(slider: this, repaint: this),
+                    child: Container(),
+                  ),
                 ),
               ),
             ),
@@ -458,6 +472,7 @@ class MySlider with ChangeNotifier {
             opacity: allowAnimate ? 1.0 : 0.0,
             child: IconButton(
               icon: const Icon(Icons.arrow_right),
+              tooltip: "Increase $displayName speed",
               onPressed: () {
                 Log.animate.log("Button $name increase speed.");
                 incrementSpeed(speedDelta);
@@ -533,10 +548,13 @@ class MySlider with ChangeNotifier {
     }
     textColor = theme.colorScheme.onSurface;
     gridColor = theme.colorScheme.primary;
+    final displayName = name == 'Time'
+        ? context.l10n.time
+        : (name == 'Velocity' ? context.l10n.velocity : name);
     return <Widget>[
       TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,
-        child: Text(" $name:"),
+        child: Text(" $displayName:"),
       ),
       TableCell(
         verticalAlignment: TableCellVerticalAlignment.middle,
@@ -547,6 +565,7 @@ class MySlider with ChangeNotifier {
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(),
             icon: const Icon(Icons.arrow_left),
+            tooltip: "Decrease $displayName speed",
             onPressed: () {
               Log.animate.log("Button $name decrease speed.");
               incrementSpeed(-speedDelta);
@@ -556,16 +575,25 @@ class MySlider with ChangeNotifier {
       ),
       TableCell(
         verticalAlignment: TableCellVerticalAlignment.fill,
-        child: GestureDetector(
-          key: ValueKey("canvas-$name"),
-          onScaleStart: scaleStart,
-          onScaleUpdate: scaleUpdate,
-          onScaleEnd: scaleEnd,
-          onTapUp: tapUp,
-          child: ClipRect(
-            child: CustomPaint(
-              painter: SliderPainter(slider: this, repaint: this),
-              child: Container(),
+        child: Semantics(
+          slider: true,
+          label: displayName,
+          value: value.toStringAsFixed(2),
+          increasedValue: (value + 0.1).clamp(min, max).toStringAsFixed(2),
+          decreasedValue: (value - 0.1).clamp(min, max).toStringAsFixed(2),
+          onIncrease: () => value = (value + 0.1).clamp(min, max),
+          onDecrease: () => value = (value - 0.1).clamp(min, max),
+          child: GestureDetector(
+            key: ValueKey("canvas-$name"),
+            onScaleStart: scaleStart,
+            onScaleUpdate: scaleUpdate,
+            onScaleEnd: scaleEnd,
+            onTapUp: tapUp,
+            child: ClipRect(
+              child: CustomPaint(
+                painter: SliderPainter(slider: this, repaint: this),
+                child: Container(),
+              ),
             ),
           ),
         ),
@@ -579,6 +607,7 @@ class MySlider with ChangeNotifier {
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(),
             icon: const Icon(Icons.arrow_right),
+            tooltip: "Increase $displayName speed",
             onPressed: () {
               Log.animate.log("Button $name increase speed.");
               incrementSpeed(speedDelta);

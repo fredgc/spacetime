@@ -1,8 +1,11 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
 
 import 'package:spacetime/drive.dart';
 import 'package:spacetime/file_holder.dart';
+import 'package:spacetime/help.dart';
 import 'package:spacetime/local_file.dart';
 import 'package:spacetime/scene.dart';
 import 'package:spacetime/transform.dart';
@@ -469,6 +472,59 @@ void main() {
       expect(app.manager.current.holder, isA<LocalFileHolder>());
       await app.loadAndFindScene("initial", TestData.train.data);
       await app.teardown();
+    });
+  });
+
+  group('Help HTML Parsing & Encoding Tests.', () {
+    test(
+      'decodeHttpResponse decodes UTF-8 curly quotes without charset header',
+      () {
+        const htmlText =
+            '<p>Useful for the “ladder/train in barn” paradox — Einstein’s book.</p>';
+        final response = http.Response.bytes(
+          utf8.encode(htmlText),
+          200,
+          headers: {'content-type': 'text/html'},
+        );
+        // Verify that HelpScreen.decodeHttpResponse preserves UTF-8 smart quotes
+        // instead of corrupting them via Latin-1 decoding.
+        final decoded = HelpScreen.decodeHttpResponse(response);
+        expect(decoded, equals(htmlText));
+        expect(decoded, contains('“ladder/train in barn”'));
+        expect(decoded, contains('Einstein’s'));
+      },
+    );
+
+    test('prepareHtmlContent unescapes Mermaid entities and injects script', () {
+      const rawHtml = '''<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="../css/doc_style.css" />
+</head>
+<body>
+<h1>Title (v{{ VERSION }})</h1>
+<pre class="mermaid"><code>graph TD
+    Main[&quot;main.dart&quot;] --&gt; MyApp[&quot;my_app.dart&lt;br&gt;Init &amp; Run&quot;]</code></pre>
+</body>
+</html>''';
+      final result = HelpScreen.prepareHtmlContent(
+        rawHtml,
+        cssContent: 'body { color: black; }',
+        isDark: true,
+        versionTag: '6.1.4+16',
+      );
+      expect(result, contains('Title (v6.1.4+16)'));
+      expect(result, contains('<style>body { color: black; }</style>'));
+      expect(result, contains('<html class="dark-theme">'));
+      expect(
+        result,
+        contains(
+          '<pre class="mermaid">graph TD\n'
+          '    Main["main.dart"] --> MyApp["my_app.dart<br>Init & Run"]</pre>',
+        ),
+      );
+      expect(result, contains('mermaid.min.js'));
+      expect(result, contains("theme: 'dark'"));
     });
   });
 }

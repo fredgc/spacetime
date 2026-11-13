@@ -38,8 +38,8 @@ in the spacetime diagram to select her.
 
 ## 5. Drag an Object
 
-With Alice selected, drag her worldline to the right to x = 0.5 (or click
-"Do it for me").
+With Alice selected, drag her worldline to the right to x = 0.5 (or click "Do
+it for me").
 
 > move = Alice(x=0.5, tol=0.25)
 

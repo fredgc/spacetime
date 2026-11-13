@@ -23,6 +23,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import 'color.dart';
+import 'l10n/l10n_extension.dart';
 import 'navigation.dart';
 import 'printer.dart';
 import 'js_stub.dart' if (dart.library.html) 'js_interface.dart';
@@ -93,7 +94,7 @@ class SavableBool extends Savable<bool> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text("$description: "),
+          Flexible(child: Text("$description: ")),
           Checkbox(
             value: value,
             onChanged: (bool? value) {
@@ -140,7 +141,7 @@ class SavableDouble extends Savable<double> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text("$description: "),
+          Flexible(child: Text("$description: ")),
           SizedBox(
             width: 80,
             child: TextField(
@@ -193,7 +194,7 @@ class SavableInt extends Savable<int> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text("$description: "),
+          Flexible(child: Text("$description: ")),
           SizedBox(
             width: 80,
             child: TextField(
@@ -260,20 +261,21 @@ class SavableBoolGroup extends Savable<int> {
   @override
   List<Widget?> build(BuildContext context, VoidCallback rebuild) {
     return [
-      Row(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
+      Wrap(
+        crossAxisAlignment: WrapCrossAlignment.center,
+        spacing: 8,
+        runSpacing: 4,
         children: [
           Text("$description: "),
           ElevatedButton(
             onPressed: () => turnAllOn(rebuild),
             child: const Text("Turn All On"),
           ),
+          ElevatedButton(
+            onPressed: () => turnAllOff(rebuild),
+            child: const Text("Turn All Off"),
+          ),
         ],
-      ),
-      ElevatedButton(
-        onPressed: () => turnAllOff(rebuild),
-        child: const Text("Turn All Off"),
       ),
     ];
   }
@@ -429,7 +431,12 @@ class Settings {
       );
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = jsonDecode(response.body);
-        final String? serverVersion = data['version'];
+        final String? serverVer = data['version'];
+        final String? serverBuild = data['build_number'];
+        final String? serverVersion =
+            (serverBuild != null && serverBuild.isNotEmpty && serverVer != null)
+            ? '$serverVer+$serverBuild'
+            : serverVer;
         final String clientVersion = "$version+$buildNumber";
         Log.settings.log(
           "Server version check: client=$clientVersion, server=$serverVersion",
@@ -538,16 +545,42 @@ class _SettingsScreenState extends State<SettingsScreen> {
       },
       separatorBuilder: (BuildContext context, int index) => const Divider(),
     );
-    return MaterialApp(
-      // XXX debugShowCheckedModeBanner: false,
-      theme: widget.settings.theme.themeData,
-      home: Scaffold(appBar: appBar(context), body: list),
+    return ValueListenableBuilder<Locale?>(
+      valueListenable: LocaleController.currentLocale,
+      builder: (context, currentLocale, _) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          locale: currentLocale,
+          localeResolutionCallback: (deviceLocale, supportedLocales) {
+            if (deviceLocale != null) {
+              for (final supported in supportedLocales) {
+                if (supported.languageCode == deviceLocale.languageCode &&
+                    (deviceLocale.countryCode == null ||
+                        supported.countryCode == null ||
+                        supported.countryCode == deviceLocale.countryCode)) {
+                  return supported;
+                }
+              }
+              for (final supported in supportedLocales) {
+                if (supported.languageCode == deviceLocale.languageCode) {
+                  return supported;
+                }
+              }
+            }
+            return const Locale('en');
+          },
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          theme: widget.settings.theme.themeData,
+          home: Scaffold(appBar: appBar(context), body: list),
+        );
+      },
     );
   }
 
   AppBar appBar(BuildContext context) {
     return AppBar(
-      title: const Text("Settings"),
+      title: Text(context.l10n.settingsTitle),
       actions: <Widget>[
         ElevatedButton(
           child: const Icon(Icons.close),
