@@ -8,7 +8,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:flutter/services.dart' show rootBundle;
-import 'webview_stub.dart' if (dart.library.html) 'webview_web.dart';
+import 'webview_stub.dart' if (dart.library.js_interop) 'webview_web.dart';
 
 import "printer.dart";
 import 'settings.dart';
@@ -29,12 +29,74 @@ class HelpScreen extends StatefulWidget {
     return utf8.decode(response.bodyBytes, allowMalformed: true);
   }
 
+  static String colorToHex(Color color) {
+    return '#${color.toARGB32().toRadixString(16).padLeft(8, '0').substring(2)}';
+  }
+
+  static String generateThemeCss(ColorScheme scheme) {
+    final bgHex = colorToHex(scheme.surface);
+    final textHex = colorToHex(scheme.onSurface);
+    final sectionHex = colorToHex(scheme.surfaceContainerHighest);
+    final primaryHex = colorToHex(scheme.primary);
+    final borderHex = colorToHex(scheme.outline);
+
+    return '''
+<style id="theme-style">
+html, body, .container {
+  background: $bgHex !important;
+  color: $textHex !important;
+}
+section {
+  background: $sectionHex !important;
+  border: 1px solid $borderHex !important;
+  color: $textHex !important;
+}
+h1, h2, h3, h4, .title {
+  color: $primaryHex !important;
+}
+p, li, td, th {
+  color: $textHex !important;
+}
+table, th, td {
+  border-color: $borderHex !important;
+}
+th {
+  background: $sectionHex !important;
+  color: $primaryHex !important;
+}
+a {
+  color: $primaryHex !important;
+}
+a:visited {
+  color: $primaryHex !important;
+}
+a:hover {
+  color: $textHex !important;
+}
+code {
+  background: $sectionHex !important;
+  color: $textHex !important;
+  padding: 2px 4px !important;
+  border-radius: 4px !important;
+}
+nav {
+  background-color: $sectionHex !important;
+}
+header, footer {
+  background: inherit !important;
+  color: $textHex !important;
+}
+</style>
+''';
+  }
+
   /// Prepares raw HTML documentation for display in the WebView.
   static String prepareHtmlContent(
     String htmlContent, {
     required String cssContent,
     required bool isDark,
     String? versionTag,
+    ColorScheme? colorScheme,
   }) {
     if (versionTag != null && versionTag.isNotEmpty) {
       htmlContent = htmlContent.replaceAll(
@@ -86,18 +148,14 @@ class HelpScreen extends StatefulWidget {
     final linkRegExp = RegExp(
       r'''<link\s+rel=["']stylesheet["']\s+href=["'][^"']*doc_style\.css["']\s*/?>''',
     );
+    final themeCss = colorScheme != null ? generateThemeCss(colorScheme) : '';
+    final combinedCss = '<style>$cssContent</style>$themeCss';
     if (htmlContent.contains(linkRegExp)) {
-      htmlContent = htmlContent.replaceFirst(
-        linkRegExp,
-        '<style>$cssContent</style>',
-      );
+      htmlContent = htmlContent.replaceFirst(linkRegExp, combinedCss);
     } else if (htmlContent.contains('</head>')) {
-      htmlContent = htmlContent.replaceFirst(
-        '</head>',
-        '<style>$cssContent</style></head>',
-      );
+      htmlContent = htmlContent.replaceFirst('</head>', '$combinedCss</head>');
     } else {
-      htmlContent = '<head><style>$cssContent</style></head>$htmlContent';
+      htmlContent = '<head>$combinedCss</head>$htmlContent';
     }
 
     if (isDark) {
@@ -158,6 +216,8 @@ class _HelpScreenState extends State<HelpScreen> {
   String _currentFilename = "about.html";
   bool _isMenuOpen = false;
   Brightness? _lastLoadedBrightness;
+  Color? _lastLoadedSurface;
+  Color? _lastLoadedPrimary;
   late final StreamSubscription<SettingsStatus> _settingsListener;
 
   @override
@@ -294,12 +354,12 @@ class _HelpScreenState extends State<HelpScreen> {
   }
 
   void _checkAndReloadTheme() {
-    final currentBrightness = widget.settings.theme.scheme.brightness;
-    if (_lastLoadedBrightness != currentBrightness) {
+    final scheme = widget.settings.theme.scheme;
+    if (_lastLoadedBrightness != scheme.brightness ||
+        _lastLoadedSurface != scheme.surface ||
+        _lastLoadedPrimary != scheme.primary) {
       try {
-        webViewController.setBackgroundColor(
-          widget.settings.theme.themeData.colorScheme.surface,
-        );
+        webViewController.setBackgroundColor(scheme.surface);
       } catch (e) {
         // Ignored on platforms not supporting setBackgroundColor.
       }
@@ -318,7 +378,10 @@ class _HelpScreenState extends State<HelpScreen> {
   }
 
   void loadHelpFile(String filename) async {
-    _lastLoadedBrightness = widget.settings.theme.scheme.brightness;
+    final scheme = widget.settings.theme.scheme;
+    _lastLoadedBrightness = scheme.brightness;
+    _lastLoadedSurface = scheme.surface;
+    _lastLoadedPrimary = scheme.primary;
     final cleanBase = filename.replaceAll(
       RegExp(r'_[a-z]{2}(?:_[a-z]{2})?\.html$'),
       '.html',
@@ -376,6 +439,7 @@ class _HelpScreenState extends State<HelpScreen> {
         cssContent: cssContent,
         isDark: _lastLoadedBrightness == Brightness.dark,
         versionTag: versionTag,
+        colorScheme: widget.settings.theme.scheme,
       );
       await webViewController.loadHtmlString(htmlContent);
     } catch (e) {
@@ -432,15 +496,17 @@ class _HelpScreenState extends State<HelpScreen> {
         const Divider(),
       ] else ...[
         DrawerHeader(
-          decoration: BoxDecoration(color: Theme.of(context).primaryColor),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primaryContainer,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              const Text(
+              Text(
                 "Spacetime Help",
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.onPrimaryContainer,
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
@@ -448,7 +514,10 @@ class _HelpScreenState extends State<HelpScreen> {
               const SizedBox(height: 8),
               Text(
                 l10n.helpDocumentationAndGuides,
-                style: const TextStyle(color: Colors.white70, fontSize: 14),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onPrimaryContainer,
+                  fontSize: 14,
+                ),
               ),
             ],
           ),
@@ -458,9 +527,9 @@ class _HelpScreenState extends State<HelpScreen> {
         padding: const EdgeInsets.only(left: 16, top: 16, bottom: 8),
         child: Text(
           l10n.helpUserGuides,
-          style: const TextStyle(
+          style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: Colors.grey,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
         ),
       ),
@@ -528,9 +597,9 @@ class _HelpScreenState extends State<HelpScreen> {
           padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
           child: Text(
             l10n.developerDocs,
-            style: const TextStyle(
+            style: TextStyle(
               fontWeight: FontWeight.bold,
-              color: Colors.grey,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
         ),
@@ -608,83 +677,64 @@ class _HelpScreenState extends State<HelpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Theme(
-      data: widget.settings.theme.themeData,
-      child: Builder(
-        builder: (BuildContext context) {
-          final double screenWidth = MediaQuery.of(context).size.width;
-          final bool isWideScreen = screenWidth > 750;
-          return Scaffold(
-            appBar: appBar(context, isWideScreen: isWideScreen),
-            body: SafeArea(
-              child: isWideScreen
-                  ? Row(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final bool isWideScreen = screenWidth > 750;
+    return Scaffold(
+      appBar: appBar(context, isWideScreen: isWideScreen),
+      body: SafeArea(
+        child: isWideScreen
+            ? Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  SizedBox(
+                    width: 280,
+                    child: Material(
+                      color: Theme.of(context).cardColor,
+                      child: buildNavigationList(context, isSidebar: true),
+                    ),
+                  ),
+                  const VerticalDivider(width: 1, thickness: 1),
+                  Expanded(
+                    child: Column(
                       children: [
-                        SizedBox(
-                          width: 280,
-                          child: Material(
-                            color: Theme.of(context).cardColor,
-                            child: buildNavigationList(
-                              context,
-                              isSidebar: true,
-                            ),
-                          ),
-                        ),
-                        const VerticalDivider(width: 1, thickness: 1),
                         Expanded(
-                          child: Column(
+                          child: Stack(
                             children: [
-                              Expanded(
-                                child: Stack(
-                                  children: [
-                                    Builder(
-                                      builder: (BuildContext c) =>
-                                          webview(context),
-                                    ),
-                                    progress < 1.0
-                                        ? LinearProgressIndicator(
-                                            value: progress,
-                                          )
-                                        : Container(),
-                                  ],
-                                ),
+                              Builder(
+                                builder: (BuildContext c) => webview(context),
                               ),
+                              progress < 1.0
+                                  ? LinearProgressIndicator(value: progress)
+                                  : Container(),
                             ],
                           ),
                         ),
                       ],
+                    ),
+                  ),
+                ],
+              )
+            : (_isMenuOpen
+                  ? Material(
+                      color: Theme.of(context).cardColor,
+                      child: buildNavigationList(context, isSidebar: false),
                     )
-                  : (_isMenuOpen
-                        ? Material(
-                            color: Theme.of(context).cardColor,
-                            child: buildNavigationList(
-                              context,
-                              isSidebar: false,
-                            ),
-                          )
-                        : Column(
-                            children: <Widget>[
-                              Expanded(
-                                child: Stack(
-                                  children: [
-                                    Builder(
-                                      builder: (BuildContext c) =>
-                                          webview(context),
-                                    ),
-                                    progress < 1.0
-                                        ? LinearProgressIndicator(
-                                            value: progress,
-                                          )
-                                        : Container(),
-                                  ],
-                                ),
+                  : Column(
+                      children: <Widget>[
+                        Expanded(
+                          child: Stack(
+                            children: [
+                              Builder(
+                                builder: (BuildContext c) => webview(context),
                               ),
+                              progress < 1.0
+                                  ? LinearProgressIndicator(value: progress)
+                                  : Container(),
                             ],
-                          )),
-            ),
-          );
-        },
+                          ),
+                        ),
+                      ],
+                    )),
       ),
     );
   }

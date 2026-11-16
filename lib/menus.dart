@@ -26,7 +26,10 @@ class MyShortcutManager {
 
     return Shortcuts(
       shortcuts: shortcuts,
-      child: Actions(actions: actions, child: child),
+      child: Actions(
+        actions: actions,
+        child: Focus(autofocus: true, child: child),
+      ),
     );
   }
 

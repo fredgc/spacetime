@@ -66,46 +66,53 @@ class MyApp {
 
   Widget build() {
     Log.init.log("CYAN: building material app for $this");
-    return ValueListenableBuilder<Locale?>(
-      valueListenable: LocaleController.currentLocale,
-      builder: (context, locale, child) {
-        return MaterialApp.router(
-          title: "Spacetime Drawing Tool",
-          onGenerateTitle: (context) => context.l10n.appTitle,
-          locale: locale,
-          localeResolutionCallback: (deviceLocale, supportedLocales) {
-            if (deviceLocale != null) {
-              for (final supported in supportedLocales) {
-                if (supported.languageCode == deviceLocale.languageCode &&
-                    (deviceLocale.countryCode == null ||
-                        supported.countryCode == null ||
-                        supported.countryCode == deviceLocale.countryCode)) {
-                  return supported;
+    return StreamBuilder<SettingsStatus>(
+      stream: settings.statusStream(),
+      initialData: settings.status,
+      builder: (context, _) {
+        return ValueListenableBuilder<Locale?>(
+          valueListenable: LocaleController.currentLocale,
+          builder: (context, locale, child) {
+            return MaterialApp.router(
+              title: "Spacetime Drawing Tool",
+              onGenerateTitle: (context) => context.l10n.appTitle,
+              locale: locale,
+              localeResolutionCallback: (deviceLocale, supportedLocales) {
+                if (deviceLocale != null) {
+                  for (final supported in supportedLocales) {
+                    if (supported.languageCode == deviceLocale.languageCode &&
+                        (deviceLocale.countryCode == null ||
+                            supported.countryCode == null ||
+                            supported.countryCode ==
+                                deviceLocale.countryCode)) {
+                      return supported;
+                    }
+                  }
+                  for (final supported in supportedLocales) {
+                    if (supported.languageCode == deviceLocale.languageCode) {
+                      return supported;
+                    }
+                  }
                 }
-              }
-              for (final supported in supportedLocales) {
-                if (supported.languageCode == deviceLocale.languageCode) {
-                  return supported;
-                }
-              }
-            }
-            return const Locale('en');
-          },
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          theme: settings.theme.themeData,
-          routerConfig: router,
-          debugShowCheckedModeBanner: false,
-          builder: (context, child) {
-            final mediaQueryData = MediaQuery.of(context);
-            final browserFontSize = getBrowserRootFontSize();
-            final scaleFactor = browserFontSize / 16.0;
-            final textScaler = scaleFactor != 1.0
-                ? TextScaler.linear(scaleFactor)
-                : mediaQueryData.textScaler;
-            return MediaQuery(
-              data: mediaQueryData.copyWith(textScaler: textScaler),
-              child: child!,
+                return const Locale('en');
+              },
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+              theme: settings.theme.themeData,
+              routerConfig: router,
+              debugShowCheckedModeBanner: false,
+              builder: (context, child) {
+                final mediaQueryData = MediaQuery.of(context);
+                final browserFontSize = getBrowserRootFontSize();
+                final scaleFactor = browserFontSize / 16.0;
+                final textScaler = scaleFactor != 1.0
+                    ? TextScaler.linear(scaleFactor)
+                    : mediaQueryData.textScaler;
+                return MediaQuery(
+                  data: mediaQueryData.copyWith(textScaler: textScaler),
+                  child: child!,
+                );
+              },
             );
           },
         );

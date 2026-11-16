@@ -279,13 +279,13 @@ class SavableTheme extends Savable<int> {
     "theme_color",
     "Theme Color",
     Colors.purple,
-    (scheme) => Colors.red,
+    (scheme) => scheme.primary,
   );
   SavableColor backgroundColor = SavableColor(
     "backgroud_color",
     "Background Color",
     Colors.black,
-    (scheme) => Colors.red,
+    (scheme) => scheme.surface,
   );
   ColorScheme _scheme = const ColorScheme.light();
   ThemeMode themeMode = ThemeMode.system;
@@ -317,8 +317,8 @@ class SavableTheme extends Savable<int> {
       Log.settings.log("Bad theme value? ${prefs.getInt("theme_mode")}");
     }
     themeColor.load(prefs);
-    backgroundColor.load(prefs);
     update();
+    backgroundColor.load(prefs);
   }
 
   @override
@@ -337,7 +337,7 @@ class SavableTheme extends Savable<int> {
   }
 
   // Update the colors based on the theme color.
-  void update() {
+  void update({bool resetBackground = true}) {
     Brightness brightness = _sysBrightness;
     if (themeMode == ThemeMode.light) brightness = Brightness.light;
     if (themeMode == ThemeMode.dark) brightness = Brightness.dark;
@@ -350,10 +350,19 @@ class SavableTheme extends Savable<int> {
     );
     themeData = ThemeData(
       colorScheme: _scheme,
+      scaffoldBackgroundColor: _scheme.surface,
       canvasColor: _scheme.surface,
       cardColor: _scheme.surface,
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: _scheme.primaryContainer,
+          foregroundColor: _scheme.onPrimaryContainer,
+        ),
+      ),
     );
-    backgroundColor.value = _scheme.surface;
+    if (resetBackground) {
+      backgroundColor.value = _scheme.surface;
+    }
     Log.settings.log("--- scheme.brightness = ${scheme.brightness}");
     Log.settings.log("--- surface = ${scheme.surface}.");
     Log.settings.log("--- onSurface = ${scheme.onSurface}.");

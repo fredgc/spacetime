@@ -153,6 +153,40 @@ void main() {
       theme.updateAndCallback();
       expect(callbackCalled, true);
       expect(theme.scheme.brightness, Brightness.dark);
+
+      final expectedSurface = ColorScheme.fromSeed(
+        seedColor: theme.themeColor.value,
+        brightness: Brightness.dark,
+      ).surface;
+      expect(theme.scheme.surface, expectedSurface);
+      expect(theme.themeData.scaffoldBackgroundColor, expectedSurface);
+
+      final buttonStyle = theme.themeData.elevatedButtonTheme.style!;
+      expect(
+        buttonStyle.backgroundColor?.resolve({}),
+        theme.scheme.primaryContainer,
+      );
+      expect(
+        buttonStyle.foregroundColor?.resolve({}),
+        theme.scheme.onPrimaryContainer,
+      );
     });
+
+    test(
+      'SavableTheme.load preserves saved backgroundColor after update',
+      () async {
+        final prefs = await SharedPreferencesWithCache.create(
+          cacheOptions: const SharedPreferencesWithCacheOptions(),
+        );
+        await prefs.setInt('theme_color', Colors.teal.toARGB32());
+        await prefs.setInt('backgroud_color', 0xFF112233);
+
+        final theme = SavableTheme();
+        theme.load(prefs);
+
+        expect(theme.themeColor.value.toARGB32(), Colors.teal.toARGB32());
+        expect(theme.backgroundColor.value.toARGB32(), 0xFF112233);
+      },
+    );
   });
 }

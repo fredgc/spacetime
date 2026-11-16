@@ -406,7 +406,9 @@ Done immediately.
     testWidgets('AppWidget drawer contains File, Tutorials, Edit, and View', (
       WidgetTester tester,
     ) async {
-      await tester.pumpWidget(AppWidget(scene, settings, fileManager));
+      await tester.pumpWidget(
+        MaterialApp(home: AppWidget(scene, settings, fileManager)),
+      );
       await tester.pumpAndSettle();
 
       final scaffoldState = tester.state<ScaffoldState>(find.byType(Scaffold));
@@ -539,7 +541,9 @@ Done immediately.
       'AppWidget highlights tool.mode, tool.type, and canvas.point during add = cone directive, and canvas.object during select directive',
       (WidgetTester tester) async {
         fileManager.current.scene = scene;
-        await tester.pumpWidget(AppWidget(scene, settings, fileManager));
+        await tester.pumpWidget(
+          MaterialApp(home: AppWidget(scene, settings, fileManager)),
+        );
         await tester.pumpAndSettle();
 
         final tutorial = Tutorial.fromMarkdown('''
@@ -553,7 +557,9 @@ Select the light cone.
 ''');
         fileManager.startTutorial(tutorial);
         final activeScene = fileManager.current.scene!;
-        await tester.pumpWidget(AppWidget(activeScene, settings, fileManager));
+        await tester.pumpWidget(
+          MaterialApp(home: AppWidget(activeScene, settings, fileManager)),
+        );
         await tester.pump();
 
         // Initially tool is Select, so highlight-tool.mode is active
@@ -636,7 +642,7 @@ Change mode from Lorentz to Ether.
         appWidget.tutorialMenu.isExpanded = true;
         appWidget.editMenu.isExpanded = true;
 
-        await tester.pumpWidget(appWidget);
+        await tester.pumpWidget(MaterialApp(home: appWidget));
         await tester.pump();
 
         // 1. Hamburger menu button is highlighted while drawer is closed

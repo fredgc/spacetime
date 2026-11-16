@@ -76,13 +76,18 @@ class _JsonSyntaxEditorDialogState extends State<JsonSyntaxEditorDialog> {
                 Container(
                   padding: const EdgeInsets.all(8.0),
                   decoration: BoxDecoration(
-                    color: Colors.red.shade100,
+                    color: Theme.of(context).colorScheme.errorContainer,
                     borderRadius: BorderRadius.circular(6),
-                    border: Border.all(color: Colors.red.shade400),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
                   ),
                   child: Text(
                     _errorMessage!,
-                    style: TextStyle(color: Colors.red.shade900, fontSize: 12),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onErrorContainer,
+                      fontSize: 12,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 12),

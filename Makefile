@@ -6,7 +6,7 @@ ASSETS := docs web/favicon.ico web/favicon.png web/privacy.html web/terms.html w
 
 build_all: $(ASSETS)
 	flutter build web
-	echo XXX flutter build apk
+	flutter build apk
 
 # User documentation files built from doc/*.md to assets/*.html
 USER_DOCS_MD := $(wildcard doc/*.md)
@@ -68,19 +68,19 @@ audit: $(ASSETS)
 	flutter test test/audit_test.dart
 
 stage:  $(ASSETS)
-	# ./roll_build_number.sh
+	# roll_build_number.sh
 	flutter build web --dart-define=DEBUG_ENABLED=true
 	echo "PURPLE: Beginning push to staging."
 	firebase_stage.pl
 
 stage-release:  $(ASSETS) audit
-	# ./roll_build_number.sh
+	# roll_build_number.sh
 	flutter build web
 	echo "PURPLE: Beginning push to staging."
 	firebase_stage.pl
 
 release: $(ASSETS) audit
-	# ./roll_build_number.sh --release
+	# roll_build_number.sh --release
 	make build_all
 	firebase_release.pl
 
