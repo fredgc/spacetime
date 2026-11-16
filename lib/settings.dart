@@ -545,37 +545,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       },
       separatorBuilder: (BuildContext context, int index) => const Divider(),
     );
-    return ValueListenableBuilder<Locale?>(
-      valueListenable: LocaleController.currentLocale,
-      builder: (context, currentLocale, _) {
-        return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          locale: currentLocale,
-          localeResolutionCallback: (deviceLocale, supportedLocales) {
-            if (deviceLocale != null) {
-              for (final supported in supportedLocales) {
-                if (supported.languageCode == deviceLocale.languageCode &&
-                    (deviceLocale.countryCode == null ||
-                        supported.countryCode == null ||
-                        supported.countryCode == deviceLocale.countryCode)) {
-                  return supported;
-                }
-              }
-              for (final supported in supportedLocales) {
-                if (supported.languageCode == deviceLocale.languageCode) {
-                  return supported;
-                }
-              }
-            }
-            return const Locale('en');
-          },
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          theme: widget.settings.theme.themeData,
-          home: Scaffold(appBar: appBar(context), body: list),
-        );
-      },
-    );
+    return Scaffold(appBar: appBar(context), body: list);
   }
 
   AppBar appBar(BuildContext context) {

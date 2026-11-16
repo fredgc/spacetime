@@ -560,10 +560,10 @@ class FileManager {
                           padding: const EdgeInsets.all(8.0),
                           child: SelectableText(
                             errorMsg,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontFamily: 'monospace',
                               fontSize: 12,
-                              color: Colors.red,
+                              color: Theme.of(context).colorScheme.error,
                             ),
                           ),
                         ),
@@ -726,10 +726,10 @@ class FileManager {
                           padding: const EdgeInsets.all(8.0),
                           child: SelectableText(
                             errorMsg,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontFamily: 'monospace',
                               fontSize: 12,
-                              color: Colors.red,
+                              color: Theme.of(context).colorScheme.error,
                             ),
                           ),
                         ),

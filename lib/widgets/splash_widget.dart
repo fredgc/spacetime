@@ -167,10 +167,10 @@ class SplashWidgetState extends State<SplashWidget>
                     child: SelectableText(
                       widget.fileManager.exception?.toString() ??
                           'Unknown load error',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: 'monospace',
                         fontSize: 12,
-                        color: Colors.red,
+                        color: Theme.of(context).colorScheme.error,
                       ),
                     ),
                   ),

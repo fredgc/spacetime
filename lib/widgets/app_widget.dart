@@ -7,7 +7,6 @@ import 'package:go_router/go_router.dart';
 import '../animate.dart';
 import '../edit.dart';
 import '../file_manager.dart';
-import '../js_stub.dart' if (dart.library.html) '../js_interface.dart';
 import '../keyboard_detector.dart';
 import '../l10n/l10n_extension.dart';
 import '../menus.dart';
@@ -209,69 +208,24 @@ class AppWidgetState extends State<AppWidget>
           _narrow = false;
           _constraints = constraints;
         }
-        return ValueListenableBuilder<Locale?>(
-          valueListenable: LocaleController.currentLocale,
-          builder: (context, currentLocale, _) {
-            return MaterialApp(
-              debugShowCheckedModeBanner: false,
-              locale: currentLocale,
-              localeResolutionCallback: (deviceLocale, supportedLocales) {
-                if (deviceLocale != null) {
-                  for (final supported in supportedLocales) {
-                    if (supported.languageCode == deviceLocale.languageCode &&
-                        (deviceLocale.countryCode == null ||
-                            supported.countryCode == null ||
-                            supported.countryCode ==
-                                deviceLocale.countryCode)) {
-                      return supported;
-                    }
-                  }
-                  for (final supported in supportedLocales) {
-                    if (supported.languageCode == deviceLocale.languageCode) {
-                      return supported;
-                    }
-                  }
-                }
-                return const Locale('en');
-              },
-              localizationsDelegates: AppLocalizations.localizationsDelegates,
-              supportedLocales: AppLocalizations.supportedLocales,
-              theme: widget.settings.theme.themeData,
-              builder: (context, child) {
-                final mediaQueryData = MediaQuery.of(context);
-                final browserFontSize = getBrowserRootFontSize();
-                final scaleFactor = browserFontSize / 16.0;
-                final textScaler = scaleFactor != 1.0
-                    ? TextScaler.linear(scaleFactor)
-                    : mediaQueryData.textScaler;
-                return MediaQuery(
-                  data: mediaQueryData.copyWith(textScaler: textScaler),
-                  child: child!,
-                );
-              },
-              home: PopScope(
-                canPop: !widget.fileManager.unsaved.value,
-                onPopInvokedWithResult: (bool didPop, Object? result) async {
-                  if (didPop) return;
-                  bool saved = await widget.fileManager.checkSave(context);
-                  if (saved && context.mounted) {
-                    Navigator.of(context).pop();
-                  }
-                },
-                child: Scaffold(
-                  appBar: makeAppBar(context),
-                  drawer: Builder(
-                    builder: (BuildContext c) => makeMenuDrawer(c),
-                  ),
-                  body: SafeArea(
-                    child: Center(
-                      child: Builder(builder: (BuildContext c) => _mainBody(c)),
-                    ),
-                  ),
-                ),
-              ),
-            );
+        return PopScope(
+          canPop: !widget.fileManager.unsaved.value,
+          onPopInvokedWithResult: (bool didPop, Object? result) async {
+            if (didPop) return;
+            bool saved = await widget.fileManager.checkSave(context);
+            if (saved && context.mounted) {
+              Navigator.of(context).pop();
+            }
           },
+          child: Scaffold(
+            appBar: makeAppBar(context),
+            drawer: Builder(builder: (BuildContext c) => makeMenuDrawer(c)),
+            body: SafeArea(
+              child: Center(
+                child: Builder(builder: (BuildContext c) => _mainBody(c)),
+              ),
+            ),
+          ),
         );
       },
     );

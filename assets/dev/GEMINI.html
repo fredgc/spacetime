@@ -640,13 +640,10 @@ rebuilds all assets, and deploys to production on Firebase
 </ul>
 <h3 id="version-rolling-roll_build_number.sh">Version Rolling
 (<code>roll_build_number.sh</code>)</h3>
-<p>Increments the build/release number in <code>pubspec.yaml</code> and
-propagates the update to <code>doc/about.md</code>,
-<code>README.md</code>, <code>GEMINI.md</code>, and
-<code>plan.md</code>:</p>
+<p>Increments the build/release number in <code>pubspec.yaml</code>:</p>
 <div class="sourceCode" id="cb6"><pre
-class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./roll_build_number.sh</span>           <span class="co"># Increments build number (+1)</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">./roll_build_number.sh</span> <span class="at">--release</span> <span class="co"># Increments patch and resets build number</span></span></code></pre></div>
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">roll_build_number.sh</span>           <span class="co"># Increments build number (+1)</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">roll_build_number.sh</span> <span class="at">--release</span> <span class="co"># Increments patch and resets build number</span></span></code></pre></div>
 <h3 id="icon-management-icon.xcf-icon-generate">Icon Management
 (<code>icon.xcf</code>, <code>icon-generate</code>)</h3>
 <ul>
