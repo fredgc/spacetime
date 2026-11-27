@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:spacetime/drawable.dart';
+import 'package:spacetime/edit.dart';
 import 'package:spacetime/keyboard_detector.dart';
 import 'package:spacetime/menus.dart';
 import 'package:spacetime/scene.dart';
 import 'package:spacetime/transform.dart';
+import 'package:spacetime/widgets/app_widget.dart';
 
 import 'app_tester.dart';
 
@@ -151,5 +154,103 @@ void main() {
         expect(cutButtonAfter.shortcut, isNotNull);
       },
     );
+
+    testWidgets(
+      'Toolbar shows undo, redo, delete when hasKeyboard is false and hides them when true',
+      (tester) async {
+        KeyboardDetector.reset(overrideValue: false);
+
+        final app = AppTester(tester);
+        await app.setup();
+        await app.initialize();
+        await app.loadAndFindScene('initial', SceneData());
+
+        final undoFinder = find.byKey(const ValueKey('toolbar-undo-btn'));
+        final redoFinder = find.byKey(const ValueKey('toolbar-redo-btn'));
+        final deleteFinder = find.byKey(const ValueKey('toolbar-delete-btn'));
+
+        expect(undoFinder, findsOneWidget);
+        expect(redoFinder, findsOneWidget);
+        expect(deleteFinder, findsOneWidget);
+
+        // Initially disabled
+        expect(tester.widget<IconButton>(undoFinder).onPressed, isNull);
+        expect(tester.widget<IconButton>(redoFinder).onPressed, isNull);
+        expect(tester.widget<IconButton>(deleteFinder).onPressed, isNull);
+
+        // Access SceneView from AppWidget
+        final appWidget = tester.widget<AppWidget>(find.byType(AppWidget));
+        final scene = appWidget.sceneViewer;
+
+        // Add a drawable via undoManager
+        final d = DrawType.event.make('E1', ReferenceFrame(), 0);
+        scene.undoManager.add(
+          UndoCallback(
+            'Add E1',
+            undoCallback: () => scene.data.drawables.remove(d),
+            redoCallback: () => scene.data.drawables.add(d),
+          ),
+        );
+        await tester.pump();
+
+        expect(scene.data.drawables.length, 1);
+        expect(tester.widget<IconButton>(undoFinder).onPressed, isNotNull);
+        expect(tester.widget<IconButton>(redoFinder).onPressed, isNull);
+
+        // Tap Undo
+        await tester.tap(undoFinder);
+        await tester.pump();
+        expect(scene.data.drawables.length, 0);
+        expect(tester.widget<IconButton>(undoFinder).onPressed, isNull);
+        expect(tester.widget<IconButton>(redoFinder).onPressed, isNotNull);
+
+        // Tap Redo
+        await tester.tap(redoFinder);
+        await tester.pump();
+        expect(scene.data.drawables.length, 1);
+        expect(tester.widget<IconButton>(undoFinder).onPressed, isNotNull);
+        expect(tester.widget<IconButton>(redoFinder).onPressed, isNull);
+
+        // Select drawable and tap Delete
+        scene.selected = d;
+        scene.undoManager.rebuildMenu();
+        await tester.pump();
+        expect(tester.widget<IconButton>(deleteFinder).onPressed, isNotNull);
+
+        await tester.tap(deleteFinder);
+        await tester.pump();
+        expect(scene.data.drawables.length, 0);
+        expect(scene.selected, isNull);
+        expect(tester.widget<IconButton>(deleteFinder).onPressed, isNull);
+
+        // Transition hasKeyboard to true via key event
+        await tester.sendKeyEvent(LogicalKeyboardKey.keyA);
+        await tester.pumpAndSettle();
+
+        expect(KeyboardDetector.hasKeyboard.value, isTrue);
+        expect(undoFinder, findsNothing);
+        expect(redoFinder, findsNothing);
+        expect(deleteFinder, findsNothing);
+      },
+    );
+
+    testWidgets('Narrow mode flushes second toolbar left', (tester) async {
+      KeyboardDetector.reset(overrideValue: true);
+
+      final app = AppTester(tester);
+      await app.setup();
+      tester.view.physicalSize = const Size(500, 800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await app.initialize();
+      await app.loadAndFindScene('initial', SceneData());
+
+      final toolChooserTopLeft = tester.getTopLeft(
+        find.byKey(const ValueKey('Tool-Chooser')),
+      );
+      expect(toolChooserTopLeft.dx, equals(0.0));
+    });
   });
 }

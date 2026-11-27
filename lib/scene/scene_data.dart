@@ -157,8 +157,11 @@ class SceneData {
       try {
         return SceneData.fromJsonLegacy(json);
       } catch (ex2) {
-        Log.json.log("RED: $ex2. From the legacy file.");
-        throw ex1;
+        Log.errors.log("Scene parse failed. Modern: $ex1 | Legacy: $ex2");
+        if (json["drawables"] is Map) {
+          throw FormatException("Legacy file parse error: $ex2");
+        }
+        throw FormatException("Modern format: $ex1\nLegacy format: $ex2");
       }
     }
   }
@@ -206,9 +209,16 @@ class SceneData {
       x: (json["center_x"] as num?)?.toDouble() ?? 0.0,
       t: (json["center_t"] as num?)?.toDouble() ?? 0.0,
     );
-    scene.transform.zoom = 1.0 / json["scale"];
-    final drawables = json["drawables"]["list"];
-    final list = (drawables as List).cast<Map<String, dynamic>>();
+    final scale = (json["scale"] as num?)?.toDouble();
+    scene.transform.zoom = (scale != null && scale != 0.0)
+        ? 1.0 / scale
+        : 100.0;
+    final rawDrawables = json["drawables"];
+    final drawables = rawDrawables is Map ? rawDrawables["list"] : rawDrawables;
+    if (drawables is! List) {
+      throw const FormatException("Legacy drawables list is missing");
+    }
+    final list = drawables.cast<Map<String, dynamic>>();
     Log.json.log("Found ${list.length} drawables.");
     scene.drawables = list
         .map<Drawable>((json) => Drawable.fromJsonLegacy(json))

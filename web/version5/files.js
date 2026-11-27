@@ -4,8 +4,9 @@
 var CLIENT_ID = '1008051861201.apps.googleusercontent.com';
 var SCOPES = ['https://www.googleapis.com/auth/drive',
               'email', 'profile'];
+// Drive is no longer supported in v5. Use v6 for drive support.
 var APP_ID = "1008051861201";   // Drive SDK App ID.
-var browserKey = "AIzaSyDuUEjGwmbFLd2rWCWpfzTqAf5GTTtu3G4"; // API key for browser.
+var browserKey = "invalid"; // API key for browser.
 var authorized = false;
 var retryWhenAuthorized = null; // Callback to run after authorized.
 var current_file = null;

@@ -339,5 +339,49 @@ void main() {
 
       await app.teardown();
     });
+
+    test('legacy JSON with missing optional fields parses cleanly', () {
+      const legacyJson = '''
+{
+  "time": 1.0,
+  "velocity": 0.2,
+  "drawables": {
+    "list": [
+      {"type": "event", "name": "E1", "coords": {"x": 1.0, "t": 2.0}},
+      {"type": "location", "name": "L1", "coords": {"x": -1.0, "t": 0.0}}
+    ]
+  }
+}
+''';
+      final scene = SceneData.fromJsonString(legacyJson);
+      expect(scene.isLegacy, isTrue);
+      expect(scene.drawables.length, 2);
+      expect(scene.drawables[0].type, DrawType.event);
+      expect(scene.drawables[1].type, DrawType.flag);
+    });
+
+    test('legacy JSON parse failure surfaces legacy error message', () {
+      const badLegacyJson = '''
+{
+  "scale": 0.01,
+  "drawables": {
+    "list": [
+      {"type": "mystery_type", "name": "Bad"}
+    ]
+  }
+}
+''';
+      expect(
+        () => SceneData.fromJsonString(badLegacyJson),
+        throwsA(
+          predicate(
+            (e) =>
+                e is FormatException &&
+                e.message.contains('Legacy file parse error') &&
+                e.message.contains('Unknown drawable type mystery_type'),
+          ),
+        ),
+      );
+    });
   });
 }

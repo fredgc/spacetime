@@ -24,10 +24,11 @@ class MyDriveAccess {
   GoogleSignInAccount? user;
   Map<String, String>? cachedUserInfo;
   DriveApi? driveApi;
+  String? lastAuthError;
 
   static final String mimeType = 'application/spacetime';
 
-  static final scopes = [DriveApi.driveScope];
+  static final scopes = [DriveApi.driveFileScope];
   final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
   bool isTesting = false;
 
@@ -92,6 +93,7 @@ class MyDriveAccess {
   ) async {
     switch (event) {
       case GoogleSignInAuthenticationEventSignIn():
+        lastAuthError = null;
         user = event.user;
         Log.drive.log('PURPLE: authentication event sets user = $user');
         if (user == null) {
@@ -125,6 +127,7 @@ class MyDriveAccess {
         break;
 
       case GoogleSignInAuthenticationEventSignOut():
+        lastAuthError = null;
         user = null;
         cachedUserInfo = null;
         driveApi = null;
@@ -136,9 +139,21 @@ class MyDriveAccess {
 
   Future<void> _handleAuthenticationError(Object e) async {
     Log.drive.log('RED: AUTHENTICATION ERROR: $e');
+    lastAuthError = _formatAuthError(e);
     user = null;
     driveApi = null;
     status = DriveAccessStatus.loggedOut;
+  }
+
+  String _formatAuthError(Object error) {
+    if (error is GoogleSignInException) {
+      final desc = error.description;
+      if (desc != null && desc.isNotEmpty) {
+        return 'Sign-in failed (${error.code.name}): $desc';
+      }
+      return 'Sign-in failed (${error.code.name})';
+    }
+    return 'Sign-in failed: $error';
   }
 
   Future<DriveApi?> getCachedDriveApi() async {
@@ -218,16 +233,21 @@ class MyDriveAccess {
     Log.drive.log(
       'PURPLE: $this handle signin. This should happen after the button was clicked.',
     );
+    lastAuthError = null;
+    notify();
     try {
       await _googleSignIn.authenticate();
       Log.drive.log('PURPLE: $this handle signin was successful.');
     } catch (error) {
       Log.drive.log('PURPLE: $this handle signin failed: $error.');
+      lastAuthError = _formatAuthError(error);
+      notify();
     }
   }
 
   Future<void> logout() async {
     Log.drive.log('PURPLE: $this log out.');
+    lastAuthError = null;
     user = null;
     cachedUserInfo = null;
     driveApi = null;
@@ -297,8 +317,10 @@ class MyDriveAccess {
 
   Future<bool> requestScopes() async {
     Log.drive.log('Request scopes.');
+    lastAuthError = null;
     if (user == null) {
       Log.drive.log('User is null. Cannot request scopes.');
+      lastAuthError = 'Not signed in. Cannot request Google Drive permissions.';
       setAuthorized(false);
       return false;
     }
@@ -313,6 +335,7 @@ class MyDriveAccess {
       return true;
     } catch (e) {
       Log.drive.log('Error requesting scopes: $e');
+      lastAuthError = _formatAuthError(e);
       setAuthorized(false);
       return false;
     }
@@ -712,83 +735,119 @@ class DriveAuthorizeWidgetState extends State<DriveAuthorizeWidget> {
     }
   }
 
+  Widget? _buildErrorBanner(BuildContext context) {
+    final error = widget.access.lastAuthError;
+    if (error == null || error.isEmpty) return null;
+    final colorScheme = Theme.of(context).colorScheme;
+    return Container(
+      key: const ValueKey('drive-auth-error'),
+      width: double.infinity,
+      padding: const EdgeInsets.all(12.0),
+      decoration: BoxDecoration(
+        color: colorScheme.errorContainer,
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      child: SelectableText(
+        error,
+        style: TextStyle(color: colorScheme.onErrorContainer, fontSize: 13),
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final GoogleSignInAccount? user = widget.access.user;
     final bool isLoggedIn = user != null;
     final Widget? avatar = widget.access.getAvatar(user);
+    final Widget? errorBanner = _buildErrorBanner(context);
     if (isLoggedIn) {
-      return Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            ?avatar,
-            const SizedBox(height: 12),
-            const Text(
-              'Signed in successfully.',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-            ),
-            const SizedBox(height: 16),
-            if (_authorized) ...<Widget>[
-              ElevatedButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: const Text('OK'),
-              ),
+      return SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              ?avatar,
               const SizedBox(height: 12),
-            ],
-            if (!_authorized) ...<Widget>[
               const Text(
-                'Additional permissions needed to access Google Drive files.',
-                textAlign: TextAlign.center,
+                'Signed in successfully.',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
               ),
-              const SizedBox(height: 12),
-              ElevatedButton(
-                onPressed: _handleAuthorizeScopes,
-                child: const Text('REQUEST PERMISSIONS'),
+              const SizedBox(height: 16),
+              if (errorBanner != null) ...<Widget>[
+                errorBanner,
+                const SizedBox(height: 12),
+              ],
+              if (_authorized) ...<Widget>[
+                ElevatedButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: const Text('OK'),
+                ),
+                const SizedBox(height: 12),
+              ],
+              if (!_authorized) ...<Widget>[
+                const Text(
+                  'Additional permissions needed to access Google Drive files.',
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 12),
+                ElevatedButton(
+                  onPressed: _handleAuthorizeScopes,
+                  child: const Text('REQUEST PERMISSIONS'),
+                ),
+                const SizedBox(height: 12),
+              ],
+              OutlinedButton(
+                onPressed: widget.access.logout,
+                child: const Text('SIGN OUT'),
               ),
-              const SizedBox(height: 12),
             ],
-            OutlinedButton(
-              onPressed: widget.access.logout,
-              child: const Text('SIGN OUT'),
-            ),
-          ],
+          ),
         ),
       );
     } else {
       final String? cachedEmail = widget.access.cachedUserInfo?['email'];
-      return Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              cachedEmail != null
-                  ? 'Session expired for $cachedEmail.\nPlease sign in again.'
-                  : 'You are not currently signed in.',
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            CheckboxListTile(
-              title: const Text('Remember me on this device'),
-              value: _rememberMe,
-              onChanged: (bool? value) {
-                if (value != null) {
-                  setState(() {
-                    _rememberMe = value;
-                  });
-                  widget.access.setRememberMe(value);
-                }
-              },
-              controlAffinity: ListTileControlAffinity.leading,
-            ),
-            const SizedBox(height: 16),
-            buildSignInButton(onPressed: widget.access.handleSignIn),
-          ],
+      return SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                cachedEmail != null
+                    ? 'Session expired for $cachedEmail.\nPlease sign in again.'
+                    : 'You are not currently signed in.',
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              if (errorBanner != null) ...<Widget>[
+                const SizedBox(height: 12),
+                errorBanner,
+              ],
+              const SizedBox(height: 16),
+              CheckboxListTile(
+                title: const Text('Remember me on this device'),
+                value: _rememberMe,
+                onChanged: (bool? value) {
+                  if (value != null) {
+                    setState(() {
+                      _rememberMe = value;
+                    });
+                    widget.access.setRememberMe(value);
+                  }
+                },
+                controlAffinity: ListTileControlAffinity.leading,
+              ),
+              const SizedBox(height: 16),
+              buildSignInButton(onPressed: widget.access.handleSignIn),
+            ],
+          ),
         ),
       );
     }

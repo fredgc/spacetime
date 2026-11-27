@@ -2,14 +2,17 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/mockito.dart';
 
 import 'package:spacetime/file_holder.dart';
 import 'package:spacetime/file_manager.dart';
 import 'package:spacetime/local_file.dart';
 import 'package:spacetime/scene.dart';
 import 'package:spacetime/settings.dart';
+import 'package:spacetime/upload.dart';
 
 import 'app_tester.dart';
+import 'app_tester.mocks.dart';
 import 'test_data.dart';
 
 void main() {
@@ -47,6 +50,58 @@ void main() {
     await app.findScene(TestData.train.data..title = title2);
     await app.teardown();
   });
+
+  testWidgets(
+    'SaveAs download cancelled does not show error or clear unsaved',
+    (tester) async {
+      final app = AppTester(tester);
+      await app.setup();
+      await app.initialize();
+      await app.loadAndFindScene("initial", SceneData());
+      await app.openLocal("3", TestData.train.data);
+      await app.scene.editTitle("Unsaved Title");
+      expect(app.manager.unsaved.value, isTrue);
+
+      await app.tapMenu("Save As");
+      when(
+        app.downloadManager.saveFile(
+          name: anyNamed('name'),
+          data: anyNamed('data'),
+        ),
+      ).thenAnswer((_) async => '');
+
+      await tester.tap(find.byKey(const ValueKey("download-button")));
+      await tester.pumpAndSettle();
+      await app.finishFile("saveas", null);
+      await tester.pumpAndSettle();
+
+      expect(find.text("Save Failed"), findsNothing);
+      expect(app.manager.unsaved.value, isTrue);
+      await app.teardown();
+    },
+  );
+
+  test(
+    'UploadHolder.saveData marks wasCancelled when saveFile returns empty',
+    () async {
+      final settings = Settings();
+      final manager = FileManager(settings);
+      final origManager = UploadHolder.downloadManager;
+      final mockManager = MockDownloadManager();
+      UploadHolder.downloadManager = mockManager;
+      try {
+        when(
+          mockManager.saveFile(name: anyNamed('name'), data: anyNamed('data')),
+        ).thenAnswer((_) async => '');
+        final holder = UploadHolder('scene.st.json');
+        final saved = await holder.saveData('{}', manager);
+        expect(saved, isFalse);
+        expect(holder.wasCancelled, isTrue);
+      } finally {
+        UploadHolder.downloadManager = origManager;
+      }
+    },
+  );
 
   group('open errors.', () {
     testWidgets('canceled', (tester) async {
@@ -117,27 +172,62 @@ void main() {
           .setMockMethodCallHandler(SystemChannels.platform, null);
     });
 
-    test('ClipboardHolder saves JSON as URL and loads it back cleanly', () async {
-      final settings = Settings();
-      final manager = FileManager(settings);
-      final saveHolder = ClipboardHolder(true);
-      final sampleJson = jsonEncode(TestData.person.data);
+    test(
+      'ClipboardHolder saves JSON as URL and loads it back cleanly',
+      () async {
+        final settings = Settings();
+        final manager = FileManager(settings);
+        final saveHolder = ClipboardHolder(true);
+        final sampleJson = jsonEncode(TestData.person.data);
 
-      final saved = await saveHolder.saveData(sampleJson, manager);
-      expect(saved, isTrue);
-      expect(clipboardText, isNotNull);
-      expect(clipboardText!, contains('/scene?json='));
+        final saved = await saveHolder.saveData(sampleJson, manager);
+        expect(saved, isTrue);
+        expect(clipboardText, isNotNull);
+        expect(
+          clipboardText!,
+          startsWith('https://spacetime.gchouse.org/scene?json='),
+        );
 
-      // Also verify loading a full http:// URL with query parameters works
-      clipboardText =
-          'https://spacetime.gchouse.org/scene?json=${Uri.encodeQueryComponent(sampleJson)}';
-      final loadHolder = ClipboardHolder(false);
-      final loadedJson = await loadHolder.loadData(manager);
-      final loadedScene = SceneData.fromJsonString(loadedJson);
-      expect(loadedScene.title, equals(TestData.person.data.title));
+        // Verify loading the saved URL directly back works cleanly
+        final loadHolder = ClipboardHolder(false);
+        final loadedJson = await loadHolder.loadData(manager);
+        final loadedScene = SceneData.fromJsonString(loadedJson);
+        expect(loadedScene.title, equals(TestData.person.data.title));
+        expect(
+          loadedScene.drawables.length,
+          equals(TestData.person.data.drawables.length),
+        );
+      },
+    );
+
+    test('ClipboardHolder.buildSceneUrl handles web and non-web base URIs', () {
+      const sampleJson = '{"title":"Test"}';
+
+      final fileUrl = ClipboardHolder.buildSceneUrl(
+        sampleJson,
+        baseUri: Uri.parse('file:///'),
+      );
       expect(
-        loadedScene.drawables.length,
-        equals(TestData.person.data.drawables.length),
+        fileUrl.toString(),
+        startsWith('https://spacetime.gchouse.org/scene?json='),
+      );
+
+      final localhostUrl = ClipboardHolder.buildSceneUrl(
+        sampleJson,
+        baseUri: Uri.parse('http://localhost:5505/scene'),
+      );
+      expect(
+        localhostUrl.toString(),
+        startsWith('http://localhost:5505/scene?json='),
+      );
+
+      final prodUrl = ClipboardHolder.buildSceneUrl(
+        sampleJson,
+        baseUri: Uri.parse('https://spacetime.gchouse.org/scene'),
+      );
+      expect(
+        prodUrl.toString(),
+        startsWith('https://spacetime.gchouse.org/scene?json='),
       );
     });
 

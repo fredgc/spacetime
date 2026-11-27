@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 
@@ -464,6 +465,80 @@ void main() {
       await app.loadAndFindScene("initial", TestData.person.data);
       await app.teardown();
     });
+
+    testWidgets(
+      'Saving edited JsonHolder updates URL path and copies URL to clipboard',
+      (tester) async {
+        String? clipboardText;
+        String? updatedRouteLocation;
+        final messenger =
+            TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+        messenger.setMockMethodCallHandler(SystemChannels.platform, (
+          call,
+        ) async {
+          if (call.method == 'Clipboard.setData') {
+            clipboardText = (call.arguments as Map)['text'] as String?;
+            return null;
+          }
+          if (call.method == 'Clipboard.getData') {
+            return <String, dynamic>{'text': clipboardText};
+          }
+          return null;
+        });
+        messenger.setMockMethodCallHandler(SystemChannels.navigation, (
+          call,
+        ) async {
+          if (call.method == 'routeInformationUpdated') {
+            updatedRouteLocation = (call.arguments as Map)['uri'] as String?;
+          }
+          return null;
+        });
+        addTearDown(() {
+          messenger.setMockMethodCallHandler(SystemChannels.platform, null);
+          messenger.setMockMethodCallHandler(SystemChannels.navigation, null);
+        });
+
+        final app = AppTester(tester, url: TestData.person.url());
+        await app.setup();
+        await app.initialize();
+        await app.loadAndFindScene("initial", TestData.person.data);
+        expect(app.manager.current.holder, isA<JsonHolder>());
+
+        const editedTitle = 'Edited URL Drawing';
+        await app.scene.editTitle(editedTitle);
+        expect(app.manager.unsaved.value, isTrue);
+
+        app.tagCurrentFile('json-save');
+        final saveFuture = app.manager.save();
+        await tester.pumpAndSettle();
+        await app.finish('save-json-save');
+        await tester.pumpAndSettle();
+        expect(await saveFuture, isTrue);
+        expect(app.manager.unsaved.value, isFalse);
+
+        // Wait for fixAddressBar's 100ms timer.
+        await tester.pump(const Duration(milliseconds: 150));
+
+        // Verify JsonHolder's data/path updated to the edited scene.
+        final holder = app.manager.current.holder as JsonHolder;
+        final savedScene = SceneData.fromJsonString(holder.data);
+        expect(savedScene.title, equals(editedTitle));
+        expect(updatedRouteLocation, equals(holder.path));
+
+        // Verify clipboard contains full URL with the edited scene JSON.
+        expect(clipboardText, isNotNull);
+        final clipboardUri = Uri.parse(clipboardText!);
+        expect(clipboardUri.path, equals('/scene'));
+        final clipboardJson = clipboardUri.queryParameters['json'];
+        expect(clipboardJson, isNotNull);
+        expect(
+          SceneData.fromJsonString(clipboardJson!).title,
+          equals(editedTitle),
+        );
+
+        await app.teardown();
+      },
+    );
 
     testWidgets('Deep link via local parameter', (tester) async {
       final app = AppTester(tester, url: "/scene?local=3");

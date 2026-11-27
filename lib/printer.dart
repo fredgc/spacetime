@@ -126,6 +126,12 @@ enum Log {
   }
 
   void log(Object message) {
+    if (this == Log.errors && !runningTests) {
+      final evaluated =
+          "($name) ${message is Function ? (message as dynamic)() : message}";
+      print(evaluated);
+      return;
+    }
     // If debug disabled at compile time.
     if (!Settings.kDebugEnabled) return;
     // If debug disabled in settings.
