@@ -49,11 +49,11 @@ class AppWidgetState extends State<AppWidget>
     with SingleTickerProviderStateMixin {
   final MyMenu viewMenu = MyMenu('View');
   final MyShortcutManager shortcutManager = MyShortcutManager();
-  late final MyAnimator animator;
+  late MyAnimator animator;
   BoxConstraints _constraints = const BoxConstraints();
   bool _narrow = false;
 
-  late final Timer _debugTimer;
+  late Timer _debugTimer;
   int _timerCounter = 0;
   int _buildCount = 0;
 
@@ -369,92 +369,94 @@ class AppWidgetState extends State<AppWidget>
 
   Drawer makeMenuDrawer(BuildContext context) {
     return Drawer(
-      child: ValueListenableBuilder<TutorialController?>(
-        valueListenable: widget.fileManager.activeTutorial,
-        builder: (context, controller, _) {
-          return ListenableBuilder(
-            listenable: Listenable.merge([?controller, viewMenu]),
-            builder: (context, _) {
-              final highlightLightSpeed =
-                  controller?.currentHighlightId == 'menu.light_speed';
-              final targetMode = controller?.targetLightSpeed;
-              final highlightViewHeader =
-                  highlightLightSpeed && !viewMenu.isExpanded;
-              return ListView(
-                // ignore: deprecated_member_use
-                cacheExtent: 2000,
-                padding: EdgeInsets.zero,
-                children: <Widget>[
-                  Row(
-                    children: [
-                      IconButton(
-                        key: const ValueKey('closeDrawerButton'),
-                        icon: const Icon(Icons.close),
-                        tooltip: MaterialLocalizations.of(
-                          context,
-                        ).closeButtonTooltip,
-                        onPressed: () {
-                          Scaffold.of(context).closeDrawer();
-                        },
-                      ),
-                      Expanded(
-                        child: Text(
-                          widget.sceneViewer.data.title,
-                          softWrap: false,
-                          overflow: TextOverflow.ellipsis,
+      child: SafeArea(
+        child: ValueListenableBuilder<TutorialController?>(
+          valueListenable: widget.fileManager.activeTutorial,
+          builder: (context, controller, _) {
+            return ListenableBuilder(
+              listenable: Listenable.merge([?controller, viewMenu]),
+              builder: (context, _) {
+                final highlightLightSpeed =
+                    controller?.currentHighlightId == 'menu.light_speed';
+                final targetMode = controller?.targetLightSpeed;
+                final highlightViewHeader =
+                    highlightLightSpeed && !viewMenu.isExpanded;
+                return ListView(
+                  // ignore: deprecated_member_use
+                  cacheExtent: 2000,
+                  padding: EdgeInsets.zero,
+                  children: <Widget>[
+                    Row(
+                      children: [
+                        IconButton(
+                          key: const ValueKey('closeDrawerButton'),
+                          icon: const Icon(Icons.close),
+                          tooltip: MaterialLocalizations.of(
+                            context,
+                          ).closeButtonTooltip,
+                          onPressed: () {
+                            Scaffold.of(context).closeDrawer();
+                          },
                         ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      _languageButton(context),
-                      Text(context.l10n.language),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      _settingsButton(context),
-                      Text(context.l10n.settings),
-                    ],
-                  ),
-                  widget.fileMenu.buildDrawerList(context),
-                  widget.tutorialMenu.buildDrawerList(context),
-                  widget.editMenu.buildDrawerList(context),
-                  viewMenu.buildDrawerList(
-                    context,
-                    null,
-                    (context, tileWidget) {
-                      return TutorialHighlight(
-                        highlightId: 'menu.light_speed.view',
-                        activeHighlightId: highlightViewHeader
-                            ? 'menu.light_speed.view'
-                            : null,
-                        ensureVisible: true,
-                        child: tileWidget,
-                      );
-                    },
-                    (context, item, itemWidget) {
-                      final isTargetItem =
-                          highlightLightSpeed &&
-                          viewMenu.isExpanded &&
-                          item is RadioItem &&
-                          item.item == targetMode;
-                      return TutorialHighlight(
-                        highlightId: 'menu.light_speed.${item.name}',
-                        activeHighlightId: isTargetItem
-                            ? 'menu.light_speed.${item.name}'
-                            : null,
-                        ensureVisible: true,
-                        child: itemWidget,
-                      );
-                    },
-                  ),
-                ],
-              );
-            },
-          );
-        },
+                        Expanded(
+                          child: Text(
+                            widget.sceneViewer.data.title,
+                            softWrap: false,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        _languageButton(context),
+                        Text(context.l10n.language),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        _settingsButton(context),
+                        Text(context.l10n.settings),
+                      ],
+                    ),
+                    widget.fileMenu.buildDrawerList(context),
+                    widget.tutorialMenu.buildDrawerList(context),
+                    widget.editMenu.buildDrawerList(context),
+                    viewMenu.buildDrawerList(
+                      context,
+                      null,
+                      (context, tileWidget) {
+                        return TutorialHighlight(
+                          highlightId: 'menu.light_speed.view',
+                          activeHighlightId: highlightViewHeader
+                              ? 'menu.light_speed.view'
+                              : null,
+                          ensureVisible: true,
+                          child: tileWidget,
+                        );
+                      },
+                      (context, item, itemWidget) {
+                        final isTargetItem =
+                            highlightLightSpeed &&
+                            viewMenu.isExpanded &&
+                            item is RadioItem &&
+                            item.item == targetMode;
+                        return TutorialHighlight(
+                          highlightId: 'menu.light_speed.${item.name}',
+                          activeHighlightId: isTargetItem
+                              ? 'menu.light_speed.${item.name}'
+                              : null,
+                          ensureVisible: true,
+                          child: itemWidget,
+                        );
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }
@@ -512,6 +514,7 @@ class AppWidgetState extends State<AppWidget>
   }
 
   List<Widget> _toolButtons(BuildContext context) {
+    final l10n = context.l10n;
     return [
       _wrapTutorialHighlight(
         'tool.mode',
@@ -537,6 +540,41 @@ class AppWidgetState extends State<AppWidget>
         'tool.color',
         widget.sceneViewer.currentColor.build(context),
       ),
+      if (!KeyboardDetector.hasKeyboard.value)
+        ListenableBuilder(
+          listenable: widget.undoManager,
+          builder: (context, _) {
+            return Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  key: const ValueKey('toolbar-undo-btn'),
+                  icon: const Icon(Icons.undo),
+                  tooltip: l10n.menuUndo,
+                  onPressed: widget.undoManager.undoList.isNotEmpty
+                      ? widget.undoManager.undo
+                      : null,
+                ),
+                IconButton(
+                  key: const ValueKey('toolbar-redo-btn'),
+                  icon: const Icon(Icons.redo),
+                  tooltip: l10n.menuRedo,
+                  onPressed: widget.undoManager.redoList.isNotEmpty
+                      ? widget.undoManager.redo
+                      : null,
+                ),
+                IconButton(
+                  key: const ValueKey('toolbar-delete-btn'),
+                  icon: const Icon(Icons.delete),
+                  tooltip: l10n.menuDelete,
+                  onPressed: widget.sceneViewer.selected != null
+                      ? widget.sceneViewer.delete
+                      : null,
+                ),
+              ],
+            );
+          },
+        ),
       if (Settings.kDebugEnabled && Settings.debugEnabled)
         _makeButton('DumpDebug', Icons.info, () {
           setState(() {
@@ -590,9 +628,12 @@ class AppWidgetState extends State<AppWidget>
     return Column(
       children: [
         if (isNarrow)
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(children: _toolButtons(context)),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(children: _toolButtons(context)),
+            ),
           ),
         Expanded(
           child: LayoutBuilder(

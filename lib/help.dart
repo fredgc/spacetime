@@ -29,6 +29,12 @@ class HelpScreen extends StatefulWidget {
     return utf8.decode(response.bodyBytes, allowMalformed: true);
   }
 
+  /// Detects when Firebase Hosting's SPA catch-all rewrite returned the app's
+  /// own `index.html` (HTTP 200) for a missing localized asset.
+  static bool isSpaFallback(String html) {
+    return html.contains('flutter_bootstrap.js');
+  }
+
   static String colorToHex(Color color) {
     return '#${color.toARGB32().toRadixString(16).padLeft(8, '0').substring(2)}';
   }
@@ -280,6 +286,8 @@ class _HelpScreenState extends State<HelpScreen> {
       webViewController
         ..setJavaScriptMode(JavaScriptMode.unrestricted)
         ..setNavigationDelegate(delegate);
+    } else {
+      progress = 1.0;
     }
     _settingsListener = widget.settings.statusStream().listen((status) {
       if (mounted) {
@@ -404,25 +412,28 @@ class _HelpScreenState extends State<HelpScreen> {
         var htmlResponse = await http.get(htmlUri);
         final cssResponse = await http.get(cssUri);
 
-        if (htmlResponse.statusCode == 200) {
-          htmlContent = HelpScreen.decodeHttpResponse(htmlResponse);
+        String? tryDecode(http.Response response) {
+          if (response.statusCode != 200) return null;
+          final text = HelpScreen.decodeHttpResponse(response);
+          return HelpScreen.isSpaFallback(text) ? null : text;
+        }
+
+        final localizedHtml = tryDecode(htmlResponse);
+        if (localizedHtml != null) {
+          htmlContent = localizedHtml;
         } else if (localizedFilename != cleanBase) {
           htmlUri = Uri.parse('assets/assets/$cleanBase?v=$versionTag');
           htmlResponse = await http.get(htmlUri);
-          if (htmlResponse.statusCode == 200) {
-            htmlContent = HelpScreen.decodeHttpResponse(htmlResponse);
-          } else {
-            htmlContent = await rootBundle.loadString('assets/$cleanBase');
-          }
+          htmlContent =
+              tryDecode(htmlResponse) ??
+              await rootBundle.loadString('assets/$cleanBase');
         } else {
           htmlContent = await rootBundle.loadString('assets/$cleanBase');
         }
 
-        if (cssResponse.statusCode == 200) {
-          cssContent = HelpScreen.decodeHttpResponse(cssResponse);
-        } else {
-          cssContent = await rootBundle.loadString('assets/css/doc_style.css');
-        }
+        cssContent =
+            tryDecode(cssResponse) ??
+            await rootBundle.loadString('assets/css/doc_style.css');
       } else {
         try {
           htmlContent = await rootBundle.loadString(

@@ -1,12 +1,19 @@
 ---
-title: About Spacetime (v{{ VERSION }})
+title: Spacetime Drawing Tool (v{{ VERSION }})
 ---
 
 The **Spacetime Drawing Tool** is an interactive application designed to teach
 and visualize special relativity thought experiments.
 
-It helps you construct diagrams to visualize thought experiments, such as
-those presented in Einstein’s book [Relativity][book].
+It helps you construct spacetime diagrams with worldlines, events, light cones,
+and planes of simultaneity, such as those presented in Einstein’s book
+[Relativity][book].
+
+-   [Launch Spacetime Drawing Tool][app]
+
+-   [Privacy Policy][privacy]
+
+-   [Terms of Service][terms]
 
 This application is written in Dart with Flutter—the source code is available
 on GitHub at [https://github.com/fredgc/spacetime][github].
@@ -22,15 +29,21 @@ Other apps and drawing tools can be found at [www.gchouse.org][gchouse].
 ## Privacy and Data Retention
 
 This program allows you to customize settings that are saved locally on your
-device (using SharedPreferences / LocalStorage). No personal data is
-collected.
+device (using SharedPreferences / LocalStorage). No personal data is sent to or
+stored on the `gchouse.org` server.
 
 On Android, local settings are deleted when you uninstall the app. On Web,
 settings are deleted when you clear your browser's local application data.
 
-Drawings may be downloaded to your local device or saved to your Google Drive
-account. You may also load drawings shared by others, but no files are sent to
-the `gchouse.org` server.
+Drawings may be downloaded to your local device or optionally saved to and
+opened from your Google Drive account via Google Sign-In. See our [Privacy
+Policy][privacy] and [Terms of Service][terms] for details.
+
+[app]: https://spacetime.gchouse.org/
+
+[privacy]: https://spacetime.gchouse.org/privacy.html
+
+[terms]: https://spacetime.gchouse.org/terms.html
 
 [book]:
 https://en.wikipedia.org/wiki/Relativity:_The_Special_and_the_General_Theory

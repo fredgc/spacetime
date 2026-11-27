@@ -461,6 +461,30 @@ void main() {
         expect(find.text('REQUEST PERMISSIONS'), findsNothing);
       },
     );
+
+    testWidgets('displays lastAuthError when sign-in fails', (tester) async {
+      final access = MyDriveAccess();
+      access.isTesting = true;
+      access.setAuthorized(false);
+
+      await tester.pumpWidget(
+        MaterialApp(home: Scaffold(body: DriveAuthorizeWidget(access, (_) {}))),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const ValueKey('drive-auth-error')), findsNothing);
+
+      access.lastAuthError =
+          'Sign-in failed (unknownError): Account reauth failed.';
+      access.notify();
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const ValueKey('drive-auth-error')), findsOneWidget);
+      expect(
+        find.text('Sign-in failed (unknownError): Account reauth failed.'),
+        findsOneWidget,
+      );
+    });
   });
 
   group('buildDriveQuery', () {

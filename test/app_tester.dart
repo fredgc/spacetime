@@ -89,7 +89,7 @@ class AppTester {
 
   // Create the widget and initialize it, but don't actually start the ui
   // initialization.
-  Future<void> setup() async {
+  Future<void> setup({EdgeInsets padding = EdgeInsets.zero}) async {
     setSize(const Size(1000, 2000)); // XXX why is this needed?
 
     // XXX await seedRecent();
@@ -99,9 +99,11 @@ class AppTester {
     await tester.pumpWidget(
       MediaQuery(
         // Shrink the text avoid overflow caused by large Ahem font.
-        data: const MediaQueryData(
-          size: Size(1000, 2000),
-          textScaler: TextScaler.linear(0.5),
+        data: MediaQueryData(
+          size: const Size(1000, 2000),
+          textScaler: const TextScaler.linear(0.5),
+          padding: padding,
+          viewPadding: padding,
         ),
         child: app.build(),
       ),

@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'file_holder.dart';
 import 'file_manager.dart';
 import 'name.dart';
+import 'platform_stub.dart' if (dart.library.io) 'platform_io.dart';
 import "printer.dart";
 import 'recent_file.dart';
 
@@ -58,9 +59,20 @@ class DownloadManager {
     File? file,
     String? filePath,
   }) async {
+    final bytes = utf8.encoder.convert(data);
+    if (isAndroidPlatform) {
+      final path = await FileSaver.instance.saveAs(
+        name: name,
+        bytes: bytes,
+        file: file,
+        filePath: filePath,
+        mimeType: MimeType.json,
+      );
+      return path ?? '';
+    }
     return await FileSaver.instance.saveFile(
       name: name,
-      bytes: utf8.encoder.convert(data),
+      bytes: bytes,
       file: file,
       filePath: filePath,
       mimeType: MimeType.other,
@@ -119,8 +131,16 @@ class UploadHolder extends FileHolder {
   Future<bool> saveData(String data, FileManager manager) async {
     // Log.local.log("Download file to $filename.");
     // Log.local.log("data = $data");
+    wasCancelled = false;
     try {
-      await downloadManager.saveFile(name: filename, data: data);
+      final savedPath = await downloadManager.saveFile(
+        name: filename,
+        data: data,
+      );
+      if (savedPath.isEmpty) {
+        wasCancelled = true;
+        return false;
+      }
       return true;
     } catch (e) {
       Log.local.log("Download file error: $e");

@@ -218,13 +218,18 @@ abstract class Drawable {
   }
 
   factory Drawable.fromJsonLegacy(Map<String, dynamic> json) {
-    String type = json['type'].toLowerCase();
-    String name = json['name'];
-    double velocity = json['transform']['velocity'].toDouble();
-    String icon = json['icon_name'];
-    bool clock = json['clock'];
+    String type = (json['type']?.toString() ?? '').toLowerCase();
+    String name = json['name']?.toString() ?? '';
+    final transformMap = json['transform'];
+    double velocity =
+        (transformMap is Map
+            ? (transformMap['velocity'] as num?)?.toDouble()
+            : (json['velocity'] as num?)?.toDouble()) ??
+        0.0;
+    String icon = (json['icon_name']?.toString() ?? '').toLowerCase();
+    bool clock = json['clock'] == true;
 
-    String colorName = json['color'];
+    String colorName = (json['color']?.toString() ?? 'black').toLowerCase();
     final List<String> legacyColors = [
       'black',
       'aqua',
@@ -243,11 +248,15 @@ abstract class Drawable {
       'white',
       'yellow',
     ];
-    int color = legacyColors.indexOf(colorName);
-    color = color % SceneView.colorList.value.length;
+    int colorIndex = legacyColors.indexOf(colorName);
+    if (colorIndex < 0) colorIndex = 0;
+    int color = colorIndex % SceneView.colorList.value.length;
 
     var frame = ReferenceFrame.fromV(velocity);
-    frame.center = Point.fromJson(json['coords']);
+    final coords = json['coords'];
+    if (coords is Map<String, dynamic>) {
+      frame.center = Point.fromJson(coords);
+    }
 
     Drawable drawable;
     if (type == 'event') {
@@ -266,10 +275,12 @@ abstract class Drawable {
       drawable = DrawType.barn.make(name, frame, color);
     } else if (icon == 'person') {
       drawable = DrawType.person.make(name, frame, color);
+    } else if (type == 'location' || type == 'path') {
+      drawable = DrawType.flag.make(name, frame, color);
     } else {
       throw FormatException("Unknown drawable type ${json['type']}");
     }
-    if (type == 'path') {
+    if (type == 'path' && json['pts'] is List) {
       final pts = (json['pts'] as List).cast<Map<String, dynamic>>();
       (drawable as Location).path = (pts
           .map<Point>((json) => Point.fromJson(json))

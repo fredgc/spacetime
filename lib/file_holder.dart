@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import 'file_manager.dart';
 import 'l10n/l10n_extension.dart';
+import 'navigation.dart';
 import 'printer.dart';
 import 'scene.dart';
 
@@ -13,6 +14,7 @@ class FileHolder {
   String title = "Untitled Drawing";
   SceneView? viewer;
   bool changed = false;
+  bool wasCancelled = false;
   FileKind kind;
 
   static int _debugCounter = 0;
@@ -119,11 +121,18 @@ class JsonHolder extends FileHolder {
   @override
   String get type => typeName;
 
-  // Saves to clipboard?
+  // Updates URL and copies the updated scene URL to clipboard.
   @override
   Future<bool> saveData(String data, FileManager manager) async {
-    Log.files.log("Json save $this. fails.");
-    return false;
+    Log.files.log("Json save $this -> updating URL and clipboard.");
+    manager.recent.remove(this);
+    id = data;
+    final uri = ClipboardHolder.buildSceneUrl(data);
+    await Clipboard.setData(ClipboardData(text: uri.toString()));
+    if (manager.context != null && manager.context!.mounted) {
+      fixAddressBar(manager.context!, path);
+    }
+    return true;
   }
 
   // Loads from clipboard? Or from text edit?
@@ -151,6 +160,8 @@ class JsonHolder extends FileHolder {
 }
 
 class ClipboardHolder extends FileHolder {
+  static final Uri defaultBaseUri = Uri.parse('https://spacetime.gchouse.org');
+
   bool makeUrl;
   ClipboardHolder(this.makeUrl) : super("");
 
@@ -163,18 +174,27 @@ class ClipboardHolder extends FileHolder {
     return "$title (clipboard)";
   }
 
+  static Uri buildSceneUrl(String data, {Uri? baseUri}) {
+    final base = baseUri ?? Uri.base;
+    final useBase =
+        (base.scheme == 'http' || base.scheme == 'https') &&
+        base.host.isNotEmpty;
+    final effectiveBase = useBase ? base : defaultBaseUri;
+    return Uri(
+      scheme: effectiveBase.scheme,
+      host: effectiveBase.host,
+      port: effectiveBase.hasPort ? effectiveBase.port : null,
+      path: "/scene",
+      queryParameters: {"json": data},
+    );
+  }
+
   @override
   Future<bool> saveData(String data, FileManager manager) async {
     Log.files.log("Save to clipboard.");
     if (makeUrl) {
       Log.files.log("URI.base = ${Uri.base}");
-      var uri = Uri(
-        scheme: Uri.base.scheme,
-        host: Uri.base.host,
-        port: Uri.base.port,
-        path: "/scene",
-        queryParameters: {"json": data},
-      );
+      var uri = buildSceneUrl(data);
       Log.files.log("BLUE: Maybe do this? XXX uri = $uri"); // fix navigation.
       await Clipboard.setData(ClipboardData(text: uri.toString()));
     } else {

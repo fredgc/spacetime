@@ -18,6 +18,7 @@ import 'upload.dart';
 import 'script.dart';
 import 'tutorials.g.dart';
 import 'js_stub.dart' if (dart.library.html) 'js_interface.dart';
+import 'platform_stub.dart' if (dart.library.io) 'platform_io.dart';
 
 enum LoadingStatus { notInitialized, initialized, loading, loaded, error }
 
@@ -144,6 +145,25 @@ class FileManager {
     yield* _statusStream.stream;
   }
 
+  static const MethodChannel _intentChannel = MethodChannel(
+    'org.gchouse.spacetime/intent',
+  );
+
+  Future<void> _openFromIntentPayload(dynamic args) async {
+    if (args is! Map) return;
+    final content = args['content']?.toString();
+    if (content == null || content.isEmpty) return;
+    final rawName = args['name']?.toString() ?? '';
+    final holder = JsonHolder(content);
+    if (rawName.isNotEmpty) {
+      holder.title = rawName.replaceFirst(
+        RegExp(r'\.spacetime$', caseSensitive: false),
+        '',
+      );
+    }
+    await loadFile(holder, navigate: false);
+  }
+
   Future<void> initialize() async {
     // Log.files.log("BLUE: Initialize file manager.");
     await dsleep("file_manager", 5);
@@ -162,7 +182,28 @@ class FileManager {
     previous.scene = SceneView(this, settings, SceneData());
 
     status = LoadingStatus.initialized;
-    await reload();
+    bool loadedFromIntent = false;
+    if (isAndroidPlatform && !isTesting && !driveAccess.isTesting) {
+      _intentChannel.setMethodCallHandler((call) async {
+        if (call.method == 'openFile') {
+          await _openFromIntentPayload(call.arguments);
+        }
+      });
+      try {
+        final initial = await _intentChannel.invokeMethod<dynamic>(
+          'getInitialFile',
+        );
+        if (initial != null) {
+          loadedFromIntent = true;
+          await _openFromIntentPayload(initial);
+        }
+      } catch (_) {
+        // Platform does not implement the Android intent channel.
+      }
+    }
+    if (!loadedFromIntent) {
+      await reload();
+    }
     // Log.files.log("Done with reload in initialization.");
   }
 
@@ -375,6 +416,7 @@ class FileManager {
         );
       }
     } catch (ex) {
+      Log.errors.log("Error loading ${holder.type} '${holder.title}': $ex");
       if (ex is Error) {
         Log.files.log("(file_manager says) Stack Trace: ${ex.stackTrace}");
       }
@@ -518,6 +560,7 @@ class FileManager {
     if ("empty" == current.holder.type) {
       return saveAs();
     }
+    current.holder.wasCancelled = false;
     try {
       saved = await current.holder.saveData(data, this);
     } catch (e) {
@@ -531,6 +574,9 @@ class FileManager {
       recent.add(current.holder);
       // Log.files.log("Done with save ${current}.");
       return true;
+    }
+    if (current.holder.wasCancelled) {
+      return false;
     }
     if (lastError != null) {
       final errorMsg = lastError?.toString() ?? "Save failed";
@@ -687,6 +733,7 @@ class FileManager {
     var encoder = const JsonEncoder.withIndent("  ");
     String data = encoder.convert(viewer.data);
     bool saved = false;
+    file.wasCancelled = false;
     try {
       saved = await file.saveData(data, this);
     } catch (e) {
@@ -696,6 +743,9 @@ class FileManager {
     await dsleep("saveas-${current.holder.tag}", 5);
     // Log.files.log("Done with saving $file.");
     if (!saved) {
+      if (file.wasCancelled) {
+        return false;
+      }
       Log.files.log("XXX figure out why and share error with user?");
       final errorMsg =
           lastError?.toString() ??

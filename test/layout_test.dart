@@ -81,4 +81,31 @@ void main() {
 
     await app.teardown();
   });
+
+  testWidgets('drawer respects top system bar padding', (tester) async {
+    tester.view.physicalSize = const Size(360, 640);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+
+    final app = AppTester(tester);
+    await app.setup(padding: const EdgeInsets.only(top: 48, bottom: 24));
+    await app.initialize();
+    await app.loadAndFindScene("initial", SceneData());
+
+    await tester.tap(find.byIcon(Icons.menu));
+    await tester.pumpAndSettle();
+
+    final closeTop = tester
+        .getTopLeft(find.byKey(const ValueKey('closeDrawerButton')))
+        .dy;
+    expect(closeTop, greaterThanOrEqualTo(48.0));
+
+    await tester.tap(find.byKey(const ValueKey('closeDrawerButton')));
+    await tester.pumpAndSettle();
+
+    await app.teardown();
+  });
 }
